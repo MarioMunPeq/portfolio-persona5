@@ -76,10 +76,10 @@ function TechIcon({ name }: { name: string }) {
 
 export function SkillMenuSection({ skills }: Props) {
   const CATEGORIES: Category[] = [
-    { suit: "♦", label: "PROGRAMMING", items: skills.programming },
-    { suit: "♣", label: "TECHNOLOGIES", items: skills.technologies },
-    { suit: "♥", label: "AI & DATA", items: skills.aiData },
-    { suit: "♠", label: "OTHERS", items: skills.other },
+    { suit: "♦", label: "LENGUAJES DE PROGRAMACIÓN", items: skills.programming },
+    { suit: "♣", label: "TECNOLOGÍAS", items: skills.technologies },
+    { suit: "♥", label: "IA Y DATA SCIENCE", items: skills.aiData },
+    { suit: "♠", label: "OTROS", items: skills.other },
   ];
 
   return (
