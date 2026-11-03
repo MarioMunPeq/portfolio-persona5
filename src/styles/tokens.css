@@ -360,25 +360,6 @@
    hueca (contorno) a estrella dorada rellena segun el estado de cada
    categoria. Solo dos estados (empty → full) con transicion limpia; sin
    estados intermedios. */
-/* Flotacion del antifaz: respiracion casi imperceptible (4px en ~7s).
-   La silueta del antifaz no tiene filtro propio: el rim-light rojo lo
-   anima motion (fases de entrada). reduced-motion anula el loop via la
-   regla global. */
-@keyframes load-mask-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-.load-mask-float {
-  animation: load-mask-float 7s ease-in-out infinite;
-  will-change: transform;
-}
-
 /* ============================================================
    Inventario de proyectos — haz de seleccion por colision de vigas
    ============================================================ */
@@ -503,7 +484,7 @@
 .load-panel {
   position: relative;
   padding: 2px;
-  background: rgba(230, 0, 18, 0.4);
+  background: rgba(230, 0, 18, 0.55);
   clip-path: polygon(
     0 0,
     calc(100% - 16px) 0,
@@ -1139,9 +1120,8 @@ html.lenis body {
 }
 
 /* ============================================================
-   LoadScreen v2 — entrada cinematografica en fases
-   Todas las animaciones de este bloque son one-shot o loops casi
-   imperceptibles; reduced-motion las anula via la regla global.
+   LoadScreen — piezas atmosfericas compartidas
+   (anillos del antifaz; el resto de la coreografia vive en GSAP)
    ============================================================ */
 
 /* Aro punteado exterior: rotacion lentisima (atmosferica), para que la
@@ -1179,91 +1159,340 @@ html.lenis body {
   animation: rings-flash 0.55s ease-out;
 }
 
-/* FASE 1 — AUSENCIA: linea roja que crece en el centro (indicio), se
-   mantiene un instante y se apaga al empezar el revelado del antifaz. */
-@keyframes core-line-grow {
-  from {
-    width: 0;
-    opacity: 0;
-  }
-  30% {
-    opacity: 0.9;
-  }
-  to {
-    width: 64px;
-    opacity: 0.9;
-  }
+/* ------------------------------------------------------------
+   LoadScreen v3 — el antifaz se dibuja
+   GSAP dirige la coreografia (trazo → relleno → glitch → corte
+   diagonal); aqui viven solo las geometrias y los estados base.
+   ------------------------------------------------------------ */
+
+/* Raiz del splash: el clip-path de salida lo escribe GSAP por frame. */
+.load-root {
+  contain: layout paint;
+  will-change: clip-path;
 }
 
-@keyframes core-line-hide {
-  to {
-    opacity: 0;
-  }
+/* --- Escenario del antifaz ---------------------------------- */
+.load-mask-frame {
+  position: relative;
+  width: min(82vw, 560px);
+  aspect-ratio: 400 / 233;
+  isolation: isolate;
 }
 
-.load-core-line {
-  animation:
-    core-line-grow 0.7s ease-out both,
-    core-line-hide 0.4s ease-in 1s forwards;
+/* Halo rojo: capa estatica con blur (se rasteriza una vez); solo se
+   anima su opacidad, que es una propiedad de composicion. */
+.load-mask-glow {
+  position: absolute;
+  inset: -9%;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 52%,
+    rgba(230, 0, 18, 0.55) 0%,
+    rgba(230, 0, 18, 0.22) 38%,
+    transparent 68%
+  );
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  will-change: opacity;
 }
 
-/* FASE 1 — AUSENCIA: barrido vertical unico de una linea fina. */
-@keyframes scan-v {
-  0% {
-    left: -5%;
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.45;
-  }
-  85% {
-    opacity: 0.45;
-  }
-  100% {
-    left: 105%;
-    opacity: 0;
-  }
+/* TRAZO — silueta de tinta: el PNG recortado por su propio alfa y
+   tenido de rojo. Va ligeramente crecida (1.02) para que el rojo asome
+   como contorno alrededor del relleno: lectura de tinta + linea. */
+.load-mask-ink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: var(--color-accent);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transform: scale(1.02);
+  will-change: clip-path;
 }
 
-.load-scan-v {
-  animation: scan-v 1.6s ease-in-out 0.25s both;
+/* RELLENO — la imagen real, 13 uds. por detras del trazo. */
+.load-mask-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  will-change: clip-path;
 }
 
-/* FASE 3 — IMPACTO: diamantes que saltan desde las esquinas del antifaz
-   y se desvanecen (una vez). La direccion la fija --dx/--dy por esquina. */
-@keyframes impact-burst {
-  0% {
-    opacity: 0.9;
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.4);
-  }
+.load-mask-fill img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
 }
 
+/* Trama de semitono que entinta el relleno mientras se dibuja. */
+.load-mask-halftone {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  mix-blend-mode: multiply;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Copias de glitch (cian / papel) recortadas por el mismo alfa. */
+.load-mask-ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  will-change: transform, opacity;
+}
+
+.load-mask-ghost--cyan {
+  background-color: #00e5ff;
+}
+
+.load-mask-ghost--paper {
+  background-color: var(--color-paper);
+}
+
+/* Pluma: punta luminosa que dibuja el contorno. La pista ocupa todo el
+   marco y se traslada en % (asi el barrido no toca layout). */
+.load-pen-track {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.load-pen {
+  position: absolute;
+  top: -4%;
+  left: 0;
+  width: 2px;
+  height: 108%;
+  transform: skewX(-19deg);
+  transform-origin: top left;
+  background: linear-gradient(
+    to bottom,
+    var(--color-paper) 0%,
+    rgba(245, 245, 240, 0.65) 18%,
+    var(--color-accent) 55%,
+    rgba(230, 0, 18, 0.35) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(230, 0, 18, 0.95),
+    0 0 22px rgba(230, 0, 18, 0.55),
+    0 0 48px rgba(230, 0, 18, 0.28);
+}
+
+/* Punta con forma de diamante P5. */
+.load-pen::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: var(--color-paper);
+  transform: translateX(-50%) rotate(45deg);
+  box-shadow: 0 0 10px rgba(230, 0, 18, 0.9);
+}
+
+/* Diamantes del impacto. `rotate` es la propiedad independiente: no la
+   pisa el transform que GSAP escribe para x / y / scale. */
 .load-impact-diamond {
-  animation: impact-burst 0.5s ease-out both;
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  rotate: 45deg;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px rgba(230, 0, 18, 0.8);
+  will-change: transform, opacity;
 }
 
-/* SALIDA — barrido horizontal rojo que cruza la pantalla justo antes de
-   levantar la escena hacia la HOME. */
-@keyframes exit-scan {
-  0% {
-    top: -3%;
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.85;
-  }
-  100% {
-    top: 103%;
-    opacity: 0;
-  }
+/* Barras de glitch: recortes horizontales que parpadean 4 frames. */
+.load-glitch-bar {
+  position: absolute;
+  top: 0;
+  left: -4%;
+  width: 108%;
+  height: 2.2%;
+  opacity: 0;
+  background: var(--color-accent);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
 }
 
-.load-exit-scan {
-  animation: exit-scan 0.55s ease-out 0.05s both;
+.load-glitch-bar:nth-child(2) {
+  height: 1.1%;
+  background: var(--color-paper);
+}
+
+.load-glitch-bar:nth-child(3) {
+  height: 3.4%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent) 22%,
+    var(--color-accent) 78%,
+    transparent 100%
+  );
+}
+
+/* Destello del impacto. */
+.load-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 46%,
+    rgba(245, 245, 240, 0.9) 0%,
+    rgba(230, 0, 18, 0.35) 32%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+  will-change: opacity;
+}
+
+/* Relleno de la barra de progreso (scaleX, no width). */
+.load-bar-fill {
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* --- Salida: cuchilla diagonal ------------------------------ */
+.load-blade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34vw;
+  height: 100%;
+  transform-origin: top left;
+  will-change: transform, opacity;
+}
+
+.load-blade__body {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 0, 18, 0) 0%,
+    rgba(230, 0, 18, 0.55) 28%,
+    var(--color-accent) 62%,
+    #ff1a2e 92%,
+    var(--color-paper) 100%
+  );
+  box-shadow: 0 0 60px rgba(230, 0, 18, 0.55);
+}
+
+.load-blade__edge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--color-paper);
+  box-shadow:
+    0 0 12px 2px rgba(245, 245, 240, 0.9),
+    0 0 40px 10px rgba(230, 0, 18, 0.65);
+}
+
+/* Eco rayado detras de la cuchilla (sensacion de velocidad). */
+.load-blade__trail {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 26vw;
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(230, 0, 18, 0.5) 0 10px,
+    transparent 10px 26px
+  );
+  transform: translateX(100%);
+  opacity: 0.35;
+}
+
+/* --- Saltar ------------------------------------------------ */
+.load-skip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 10px 24px 10px 18px;
+  border: 0;
+  background: rgba(10, 10, 10, 0.72);
+  color: var(--color-paper);
+  text-align: left;
+  cursor: pointer;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 50%,
+    calc(100% - 12px) 100%,
+    0 100%
+  );
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+/* Filo rojo a la izquierda (el clip-path recorta el inset-shadow). */
+.load-skip::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--color-accent);
+}
+
+.load-skip:hover,
+.load-skip:focus-visible {
+  background: var(--color-accent);
+}
+
+.load-skip:focus-visible .load-skip__label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.load-skip__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.load-skip__hint {
+  font-family: var(--font-digital);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.55;
 }
 
 /* aRBOL DE HABILIDADES — entrada del contenido del panel de detalle al
@@ -2160,8 +2389,10 @@ html.lenis body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
