@@ -1009,71 +1009,8 @@ html.lenis body {
   --text-label--line-height: 1.2;
 
   /* --- Animaciones del sistema de juego --- */
-
-  /* --- Cochecito de "Permiso de conducir": cruza la pantalla ---
-     El coche entra por la izquierda, cruza toda la pantalla y sale por la
-     derecha en bucle. Suspension sutil, giro de ruedas y estela de velocidad.
-     Todo en CSS puro. Reduced-motion: coche estatico y visible. */
-
-  /* Cruce: de offscreen izquierda a offscreen derecha */
-  --animate-car-cross: car-cross 3.5s linear infinite;
-
-  @keyframes car-cross {
-    from {
-      transform: translateX(-280px);
-    }
-    to {
-      transform: translateX(100vw);
-    }
-  }
-
-  /* Suspension: micro-rebote vertical sincronizado con el tilt */
-  --animate-car-bounce: car-bounce 0.35s ease-in-out infinite;
-
-  @keyframes car-bounce {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-2px);
-    }
-  }
-
-  /* Tilt: inclinacion sutil del cuerpo del coche */
-  --animate-car-tilt: car-tilt 0.35s ease-in-out infinite;
-
-  @keyframes car-tilt {
-    0%,
-    100% {
-      transform: rotate(0deg);
-    }
-    50% {
-      transform: rotate(-1.5deg);
-    }
-  }
-
-  /* Marcas de carretera: guiones que se desplazan en sentido contrario */
-  --animate-car-road-markings: car-road-markings 2s linear infinite;
-
-  @keyframes car-road-markings {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: -28px 0;
-    }
-  }
-
-  /* Estela: deriva horizontal sutil de las lineas de velocidad */
-  @keyframes car-trail-drift {
-    from {
-      transform: skewX(-18deg) translateX(0);
-    }
-    to {
-      transform: skewX(-18deg) translateX(6px);
-    }
-  }
+  /* La escena del coche de "Permiso de conducir" se define mas abajo, junto
+     a los estilos de Social Stats (clases .car-*). */
 }
 
 /* --- Base --- */
@@ -2380,6 +2317,216 @@ html.lenis body {
 @media (max-width: 1023px) {
   .section-title__h1--compact {
     font-size: clamp(1.7rem, 9vw, 3rem);
+  }
+}
+
+/* --- "Permiso de conducir": escena de conduccion ---
+   Coupe en vista lateral anclado a la derecha, sobre una calzada con dos
+   filas de marcas a distinta velocidad (parallax). Las estelas salen del
+   lateral trasero y el coche solo rebota 1-2 px sobre la suspension.
+   La altura del coche manda en la composicion: la calzada y la escena se
+   calculan a partir de ella para que nada se salga por arriba o por abajo.
+   Todo se anima con transform (sin repintar la calzada). */
+
+.car-scene {
+  --car-height: clamp(6rem, 13vw, 10.5rem);
+  --car-road-height: clamp(2.25rem, 3.4vw, 3.5rem);
+  position: relative;
+  height: calc(var(--car-height) + var(--car-road-height) + 0.5rem);
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Calzada: banda oscura con filo rojo, guias a dos velocidades. */
+.car-road {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--car-road-height);
+  background: linear-gradient(180deg, #191919 0%, #0e0e0e 55%, #070707 100%);
+  border-top: 2px solid var(--color-accent);
+  box-shadow: 0 -20px 42px -32px rgba(230, 0, 18, 0.85);
+}
+
+.car-road__lane {
+  position: absolute;
+  left: 0;
+  width: calc(100% + 48px);
+  height: 2px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-paper) 26%, transparent) 0 18px,
+    transparent 18px 48px
+  );
+  background-size: 48px 100%;
+  animation: car-road-scroll 0.52s linear infinite;
+  will-change: transform;
+}
+
+.car-road__lane--far {
+  top: 32%;
+  height: 1.5px;
+  opacity: 0.4;
+  animation-duration: 0.78s;
+}
+
+.car-road__lane--near {
+  bottom: 22%;
+  height: 2.5px;
+  opacity: 0.75;
+}
+
+@keyframes car-road-scroll {
+  to {
+    transform: translateX(-48px);
+  }
+}
+
+/* Grupo coche + estelas. La base de las ruedas queda a ras del asfalto. */
+.car-rig {
+  position: absolute;
+  right: clamp(0.5rem, 5vw, 4rem);
+  bottom: calc(var(--car-road-height) - 2px);
+  display: flex;
+  height: var(--car-height);
+  align-items: flex-end;
+  gap: clamp(0.25rem, 1vw, 1.25rem);
+  pointer-events: none;
+}
+
+.car-bob {
+  display: block;
+  height: 100%;
+  transform-origin: 50% 100%;
+  animation: car-bob 2.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.car-svg {
+  display: block;
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.55));
+}
+
+@keyframes car-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  28% {
+    transform: translateY(-1.5px) rotate(-0.16deg);
+  }
+  55% {
+    transform: translateY(0.5px) rotate(0deg);
+  }
+  78% {
+    transform: translateY(-1px) rotate(0.12deg);
+  }
+}
+
+/* Ruedas: giro horario sobre su propio centro. */
+.car-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: car-wheel-spin 1.15s linear infinite;
+  will-change: transform;
+}
+
+@keyframes car-wheel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estelas: cuatro trazos escalonados que salen del lateral trasero. */
+.car-speed {
+  display: flex;
+  height: 100%;
+  width: clamp(2.5rem, 13vw, 13rem);
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(4px, 0.5vw, 7px);
+  margin-right: clamp(-2rem, -2vw, -0.75rem);
+}
+
+.car-speed > span {
+  display: block;
+  height: 2px;
+  border-radius: 999px;
+  transform-origin: right center;
+  animation: car-streak 1.2s linear infinite;
+}
+
+.car-speed > span:nth-child(1) {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-accent));
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(230, 0, 18, 0.45);
+  animation-duration: 1.05s;
+}
+
+.car-speed > span:nth-child(2) {
+  width: 72%;
+  background: linear-gradient(90deg, transparent, var(--color-paper));
+  opacity: 0.45;
+  animation-duration: 1.35s;
+  animation-delay: 0.18s;
+}
+
+.car-speed > span:nth-child(3) {
+  width: 48%;
+  background: linear-gradient(90deg, transparent, var(--color-accent));
+  opacity: 0.75;
+  animation-duration: 0.95s;
+  animation-delay: 0.42s;
+}
+
+.car-speed > span:nth-child(4) {
+  width: 28%;
+  background: linear-gradient(90deg, transparent, var(--color-paper));
+  opacity: 0.3;
+  animation-duration: 1.5s;
+  animation-delay: 0.6s;
+}
+
+@keyframes car-streak {
+  0% {
+    opacity: 0;
+    transform: translateX(42%) skewX(-24deg) scaleX(0.7);
+  }
+  14% {
+    opacity: 0.85;
+  }
+  72% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-55%) skewX(-24deg) scaleX(1);
+  }
+}
+
+/* Reduced motion: coche visible y quieto, sin estelas ni marcas en marcha. */
+.car-scene[data-static="true"] .car-speed {
+  display: none;
+}
+
+.car-scene[data-static="true"] .car-bob,
+.car-scene[data-static="true"] .car-wheel,
+.car-scene[data-static="true"] .car-road__lane {
+  animation: none;
+}
+
+@media (max-width: 767px) {
+  .car-rig {
+    right: 0.75rem;
+  }
+
+  .car-speed {
+    width: clamp(2.25rem, 11vw, 4rem);
   }
 }
 

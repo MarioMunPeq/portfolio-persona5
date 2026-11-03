@@ -1,4 +1,3 @@
-import { useReducedMotion } from "motion/react";
 import { Reveal } from "../components/primitives/Reveal";
 import { Screen } from "../components/transition/Screen";
 import { DiamondMarker } from "../components/shared/DiamondMarker";
@@ -7,6 +6,7 @@ import { Tag } from "../components/ui/Tag";
 import { StatTag } from "../components/ui/StatTag";
 import { SocialStar } from "../components/social-star/SocialStar";
 import { SkillMenuSection } from "../components/skill-menu/SkillMenuSection";
+import { DrivingCar } from "../components/about/DrivingCar";
 import { profile } from "../data/profile";
 
 // Nombre en tres bloques (mismo tratamiento tipografico que el hero).
@@ -32,128 +32,6 @@ const STATS = [
   { label: "CURIOSIDAD", value: 5, descriptor: "INVESTIGACIoN" },
   { label: "RESOLUCIoN", value: 4, descriptor: "LoGICA" },
 ] as const;
-
-// Detalle animado junto al dato "Permiso de conducir": motion graphic corto al
-// estilo de una tarjeta de menu de Persona 5. El coche entra con un "snap" y
-// ejecuta una coreografia en bucle de 4.0 s: IDLE (reposo largo 36%) →
-// anticipacion (compresion + retroceso) → ACELERACIoN explosiva (estela roja
-// diagonal, marcas de velocidad, particulas) → SALTO (arco airborne) →
-// CONGELACIoN AeREA (pausa visual breve) → IMPACTO duro (squash + fragmentos
-// + lineas + sombra aplastada) → RECOUPERACIoN con rebote → retorno al idle.
-// Al hover reacciona con un destello de estela ("rev"). Las ruedas llevan
-// muescas y giran solo durante las fases de movimiento. Con reduced-motion
-// las capas de efectos no se dibujan y el coche queda estatico y perfectamente
-// visible.
-function DrivingCar({ className = "" }: { className?: string }) {
-  const reduceMotion = useReducedMotion();
-  const fx = reduceMotion ? "hidden" : "block";
-
-  return (
-    <span
-      aria-hidden="true"
-      className={`relative block h-32 w-full overflow-hidden ${className}`}
-    >
-      {/* Carretera: linea roja fija */}
-      <span className="absolute bottom-3 left-0 h-[2px] w-full bg-accent/40" />
-
-      {/* Marcas de carretera: guiones que se mueven en direccion opuesta */}
-      <span
-        className={`absolute bottom-1 left-0 h-[6px] w-full ${fx}`}
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, var(--color-paper) 0, var(--color-paper) 12px, transparent 12px, transparent 28px)",
-          backgroundSize: "28px 6px",
-          opacity: 0.15,
-          animation: reduceMotion ? "none" : "var(--animate-car-road-markings)",
-        }}
-      />
-
-      {/* Grupo del coche — cruza la pantalla de izquierda a derecha */}
-      <span
-        className={`absolute bottom-3 left-0 ${
-          reduceMotion ? "" : "animate-car-cross"
-        }`}
-      >
-        {/* Suspension: micro-rebote vertical */}
-        <span className={`block ${reduceMotion ? "" : "animate-car-bounce"}`}>
-          {/* Tilt + estela + SVG */}
-          <span
-            className={`flex items-end ${
-              reduceMotion ? "" : "animate-car-tilt"
-            }`}
-          >
-            {/* Estela de velocidad: 4 lineas graficas escalonadas */}
-            <span
-              className={`relative mr-4 flex flex-col items-end justify-center gap-[5px] ${fx}`}
-            >
-              {/* Linea 1: larga, opaca */}
-              <span
-                className="block h-[2px] w-28 bg-accent/60"
-                style={{
-                  transform: "skewX(-18deg)",
-                  animation: reduceMotion
-                    ? "none"
-                    : "car-trail-drift 2.8s ease-in-out infinite alternate",
-                }}
-              />
-              {/* Linea 2: media, semi-opaca */}
-              <span
-                className="block h-[1.5px] w-20 bg-paper/30"
-                style={{
-                  transform: "skewX(-22deg)",
-                  animation: reduceMotion
-                    ? "none"
-                    : "car-trail-drift 3.2s ease-in-out 0.4s infinite alternate-reverse",
-                }}
-              />
-              {/* Linea 3: corta, tenue */}
-              <span
-                className="block h-[1.5px] w-14 bg-accent/35"
-                style={{
-                  transform: "skewX(-16deg)",
-                  animation: reduceMotion
-                    ? "none"
-                    : "car-trail-drift 2.5s ease-in-out 0.8s infinite alternate",
-                }}
-              />
-              {/* Linea 4: muy corta, fantasma */}
-              <span
-                className="block h-[1px] w-8 bg-paper/20"
-                style={{
-                  transform: "skewX(-24deg)",
-                  animation: reduceMotion
-                    ? "none"
-                    : "car-trail-drift 3.6s ease-in-out 0.2s infinite alternate-reverse",
-                }}
-              />
-            </span>
-
-            {/* Coche SVG: ilustracion vectorial simple */}
-            <svg
-              viewBox="0 0 200 70"
-              preserveAspectRatio="xMidYMid meet"
-              className="block h-28 w-auto"
-            >
-              {/* Carroceria */}
-              <path
-                d="M18,50 L12,40 C12,36 16,32 22,30 L55,15 C58,13 62,12 66,12 L134,12 C138,12 142,13 145,15 L178,30 C184,32 188,36 188,40 L192,50 Z"
-                fill="#F2F2F0"
-              />
-              {/* Ventana trasera */}
-              <path d="M60,15 L94,15 L94,30 L54,30 Z" fill="#111111" />
-              {/* Ventana delantera */}
-              <path d="M100,15 L140,15 L148,30 L100,30 Z" fill="#111111" />
-              {/* Rueda trasera */}
-              <circle cx="58" cy="52" r="12" fill="#111111" />
-              {/* Rueda delantera */}
-              <circle cx="152" cy="52" r="12" fill="#111111" />
-            </svg>
-          </span>
-        </span>
-      </span>
-    </span>
-  );
-}
 
 // Posiciones de las etiquetas y sus inclinaciones suaves (casi horizontales).
 // Las coordenadas horizontales/verticales se resuelven por CSS (clases
@@ -216,7 +94,11 @@ function PortraitSlot() {
 
 function StatStar() {
   return (
-    <div className="relative w-full overflow-hidden pt-4 pb-4">
+    /* `lg:pt-8 lg:-mt-4` amplía la caja de recorte 16 px hacia arriba y
+       compensa con margen negativo: la etiqueta superior (centrada en
+       top: 0% y con media altura fuera del cuadrado) deja de cortarse
+       sin mover la estrella ni el resto de etiquetas. */
+    <div className="relative w-full overflow-hidden pt-4 pb-4 lg:-mt-4 lg:pt-8">
       <div className="relative aspect-square w-full max-w-[280px] mx-auto lg:max-w-[34rem] lg:ml-auto lg:overflow-visible">
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
@@ -395,7 +277,7 @@ export function About() {
           <SkillMenuSection skills={about.skills} />
         </div>
 
-        {/* ===== Permiso de conducir — full width, cruza el layout ===== */}
+        {/* ===== Permiso de conducir — escena de conduccion a lo ancho ===== */}
         <Reveal delay={0.2}>
           <div className="relative mt-16">
             <p className="flex items-center gap-2 pl-6 text-caption uppercase tracking-[0.2em] text-paper/50 md:pl-12">
