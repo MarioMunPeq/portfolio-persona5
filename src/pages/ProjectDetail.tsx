@@ -7,6 +7,10 @@ import { PreviewBox } from "../components/ui/PreviewBox";
 import { Lightbox } from "../components/ui/Lightbox";
 import { projects } from "../data/projects";
 import type { ProjectScreenshot } from "../data/projects";
+import { withProjectMedia } from "../lib/project-media";
+
+/** Igual que en el inventario: las galerias con carpeta en src/assets mandan. */
+const PROJECTS = withProjectMedia(projects);
 
 /* ── Font Awesome icons ── */
 import {
@@ -58,6 +62,12 @@ import {
   faWandMagicSparkles,
   faWater,
   faChartPie,
+  faWindowMaximize,
+  faStore,
+  faUserGroup,
+  faShapes,
+  faBroadcastTower,
+  faPowerOff,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* ── Clip-paths reused from the site's visual system ── */
@@ -114,7 +124,7 @@ const TECH_META: Record<string, TechMeta> = {
   Vite: { icon: faBolt, role: "HERRAMIENTA" },
   "Three.js": { icon: faCube, role: "HERRAMIENTA" },
   "React Three Fiber": { icon: faCubes, role: "HERRAMIENTA" },
-  "GSAP": { icon: faBolt, role: "HERRAMIENTA" },
+  GSAP: { icon: faBolt, role: "HERRAMIENTA" },
   "d3-force": { icon: faShareNodes, role: "HERRAMIENTA" },
   Python: { icon: faPython, role: "LENGUAJE" },
   "scikit-learn": { icon: faBrain, role: "AI/ML" },
@@ -144,18 +154,19 @@ const TECH_META: Record<string, TechMeta> = {
   Retrofit: { icon: faServer, role: "BACKEND" },
   Gson: { icon: faCode, role: "HERRAMIENTA" },
   OkHttp: { icon: faServer, role: "BACKEND" },
-  "MPAndroidChart": { icon: faChartLine, role: "HERRAMIENTA" },
+  MPAndroidChart: { icon: faChartLine, role: "HERRAMIENTA" },
   "Bluetooth LE": { icon: faBluetooth, role: "HERRAMIENTA" },
   Gradle: { icon: faGears, role: "HERRAMIENTA" },
-  "jBCrypt": { icon: faShieldHalved, role: "HERRAMIENTA" },
+  jBCrypt: { icon: faShieldHalved, role: "HERRAMIENTA" },
   "Jupyter Notebook": { icon: faTerminal, role: "HERRAMIENTA" },
-  "pandas": { icon: faTableColumns, role: "HERRAMIENTA" },
-  "NumPy": { icon: faTableColumns, role: "HERRAMIENTA" },
-  "imblearn": { icon: faBrain, role: "AI/ML" },
-  "matplotlib": { icon: faChartLine, role: "HERRAMIENTA" },
-  "seaborn": { icon: faChartLine, role: "HERRAMIENTA" },
+  pandas: { icon: faTableColumns, role: "HERRAMIENTA" },
+  NumPy: { icon: faTableColumns, role: "HERRAMIENTA" },
+  imblearn: { icon: faBrain, role: "AI/ML" },
+  matplotlib: { icon: faChartLine, role: "HERRAMIENTA" },
+  seaborn: { icon: faChartLine, role: "HERRAMIENTA" },
   "Riot Games API": { icon: faGamepad, role: "BACKEND" },
-  "requests": { icon: faServer, role: "HERRAMIENTA" },
+  requests: { icon: faServer, role: "HERRAMIENTA" },
+  "Mapbox GL": { icon: faEarthAmericas, role: "HERRAMIENTA" },
 };
 
 function getTechMeta(tech: string): TechMeta {
@@ -209,6 +220,20 @@ const FEATURE_ICONS: Record<string, typeof faCode> = {
   "Ars Arcanum: sistemas de magia": faWandMagicSparkles,
   "Shadesmar: oceano de almas": faWater,
   "Visor y estadisticas": faChartPie,
+  "Shell calcado del cliente de escritorio": faWindowMaximize,
+  "Pagina de tienda por proyecto": faStore,
+  "Panel de amigos como overlay": faUserGroup,
+  "Buscador con filtro": faSearch,
+  "Datos tipados y extensibles": faDatabase,
+  "Iconografia SVG en linea": faShapes,
+  "Modulo STAT": faUser,
+  "Modulo MISIONES": faBookOpen,
+  "Modulo DATA": faTerminal,
+  "Modulo MAP": faEarthAmericas,
+  "Modulo RADIO": faBroadcastTower,
+  "Modulo HACK": faPuzzlePiece,
+  "Carcasa y encendido reales": faPowerOff,
+  "Secuencia de arranque": faTerminal,
 };
 
 /* ── Section header — condensed/stencil style ── */
@@ -494,7 +519,7 @@ function PrevNextNav({
    ════════════════════════════════════════════════════════════════ */
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const project = projects.find((item) => item.slug === slug);
+  const project = PROJECTS.find((item) => item.slug === slug);
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(
     null,
   );
@@ -505,10 +530,10 @@ export function ProjectDetail() {
 
   const sectionLabel = "INVENTARIO";
 
-  const currentIndex = projects.findIndex((p) => p.slug === slug);
-  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
+  const currentIndex = PROJECTS.findIndex((p) => p.slug === slug);
+  const prevProject = currentIndex > 0 ? PROJECTS[currentIndex - 1] : null;
   const nextProject =
-    currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+    currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null;
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">

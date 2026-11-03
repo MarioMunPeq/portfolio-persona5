@@ -5,6 +5,14 @@ import { ProjectInventory } from "../components/projects/ProjectInventory";
 import { SectionTitle } from "../components/ui/SectionTitle";
 import { projects } from "../data/projects";
 import type { Project } from "../data/projects";
+import { withProjectMedia } from "../lib/project-media";
+
+/**
+ * Los proyectos con capturas en `src/assets/projects/<slug>/` resuelven su
+ * galeria desde el sistema de archivos; el resto conserva las listas escritas
+ * a mano en `data/projects.ts`.
+ */
+const PROJECTS = withProjectMedia(projects);
 
 /**
  * Capa grafica de fondo del inventario: estrellas de contorno por toda la
@@ -64,7 +72,7 @@ function ProjectsGraphicLayer() {
  * o su boton "ACCEDER" navega a la ficha.
  */
 export function Projects() {
-  const [selected, setSelected] = useState<Project>(projects[0]);
+  const [selected, setSelected] = useState<Project>(PROJECTS[0]);
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
@@ -82,7 +90,7 @@ export function Projects() {
           <div className="grid flex-1 items-start gap-y-8 overflow-hidden py-6 sm:py-8 lg:grid-cols-[1.06fr_1fr] lg:items-center lg:gap-x-10 lg:gap-y-0 lg:overflow-visible xl:gap-x-16 xl:py-10">
             <ProjectPreview project={selected} />
             <ProjectInventory
-              projects={projects}
+              projects={PROJECTS}
               selected={selected}
               onSelect={setSelected}
             />

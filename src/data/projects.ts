@@ -296,7 +296,8 @@ export const projects: Project[] = [
       "Un radar de noticias de videojuegos que filtra el ruido, agrupa las historias duplicadas y usa IA para resumir y priorizar solo lo que importa, publicado como web estática sin infraestructura de pago.",
     description:
       "Un digest de noticias de videojuegos automatizado y sin infraestructura, construido como proyecto de portafolio alrededor de una pregunta: «¿Qué ha pasado en los juegos que de verdad me interesan?». Recoge continuamente noticias de publicaciones especializadas, del feed oficial de Steam y de la comunidad de Reddit; las filtra contra una lista curada de juegos seguidos; agrupa los artículos relacionados en historias; enriquece las supervivientes con IA —resumen, relevancia del 1 al 5 y categoría— y publica el resultado como un frontend vanilla alojado en GitHub Pages. El proyecto evita deliberadamente un backend, una base de datos y cualquier infraestructura de pago: el repositorio actúa como almacén de datos, GitHub Actions como programador y GitHub Pages como servidor estático.",
-    tagline: "Radar de noticias de videojuegos · Sin infraestructura · Actualizado cada hora",
+    tagline:
+      "Radar de noticias de videojuegos · Sin infraestructura · Actualizado cada hora",
     stack: [
       "Python",
       "JavaScript",
@@ -1077,6 +1078,314 @@ export const projects: Project[] = [
           label: "Orden de los datos Bluetooth",
           detail:
             "No se conocia el orden en que se enviaban los datos de medicion, asi que hubo que ordenarlos manualmente y conservar el mas reciente.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "repository-library",
+    name: "Repository Library",
+    summary:
+      "Un hub con la distribucion del cliente de escritorio de Steam que reune varios portfolios tematicos de videojuegos y los abre como si fueran productos de una tienda.",
+    description:
+      "Un hub que reproduce la distribucion del cliente de escritorio de Steam —no la de su version web— para reunir y dar acceso a distintos portfolios personales tematicos. La interfaz replica el shell del cliente real: la barra de menus superior de 26px, la barra de navegacion principal de 50px con las pestanas TIENDA / BIBLIOTECA / COMUNIDAD, la sidebar fija de 340px con la lista de proyectos y su buscador, el area de contenido principal y la barra inferior que abre el panel de amigos como overlay. Cada proyecto se presenta como una pagina de tienda completa, con banner, boton JUGAR, fila de estadisticas, pestanas, capturas y feed de actividad. Los datos estan tipados en un unico archivo, de modo que anadir un portfolio nuevo es escribir un objeto, no tocar la interfaz. Todos los iconos son SVG en linea, sin librerias externas.",
+    tagline: "Hub de portfolios · Estetica Steam · React 19 · Vite 8",
+    version: "1.0.0",
+    stack: ["TypeScript", "React", "Vite", "HTML/CSS", "GitHub Pages"],
+    links: {
+      demo: "https://mariomunpeq.github.io/Repository-Library/",
+      github: "https://github.com/MarioMunPeq/Repository-Library",
+    },
+    images: [
+      {
+        src: "",
+        alt: "Repository Library con el shell del cliente de Steam",
+      },
+    ],
+    screenshots: null,
+    features: [
+      {
+        name: "Shell calcado del cliente de escritorio",
+        description:
+          "Barra de menus de 26px, barra de navegacion de 50px con controles de ventana reales, sidebar fija de 340px y barra inferior de 40px, con las medidas exactas del cliente de Steam.",
+      },
+      {
+        name: "Pagina de tienda por proyecto",
+        description:
+          "El componente ProjectStorePage monta en el area de contenido el banner, el boton JUGAR, la fila de estadisticas, las pestanas, las capturas y la actividad, construido por separado del shell.",
+      },
+      {
+        name: "Panel de amigos como overlay",
+        description:
+          "El boton de la barra inferior abre y cierra un FriendsPanel fijo en la esquina inferior derecha, superpuesto al contenido sin desmontar la pagina.",
+      },
+      {
+        name: "Buscador con filtro",
+        description:
+          "La sidebar incluye un buscador con lupa que filtra la lista de proyectos en vivo, manteniendo la seleccion y el estado de la fila activa.",
+      },
+      {
+        name: "Datos tipados y extensibles",
+        description:
+          "Los proyectos viven en un unico archivo tipado: anadir un portfolio nuevo es escribir un objeto nuevo, sin modificar componentes.",
+      },
+      {
+        name: "Iconografia SVG en linea",
+        description:
+          "Todos los iconos de la interfaz estan dibujados como SVG en linea, sin ninguna libreria de iconos externa.",
+      },
+    ],
+    conceptBlock: {
+      title: "¿Por que replicar el cliente de escritorio?",
+      paragraphs: [
+        "La version web de Steam esta pensada para el navegador. Esta replica la de escritorio, con sus barras de 26 y 50 pixeles, su sidebar fija y su barra inferior, porque es la distribucion que la gente asocia con una biblioteca de juegos.",
+        "Adoptar esa distribucion convierte la pagina en algo reconocible sin explicar nada: cada proyecto se lee como un producto, con su banner, su boton de jugar y sus estadisticas. El trabajo entonces no esta en inventar una interfaz, sino en construir las piezas de la interfaz correcta y mantenerlas fielmente medidas.",
+      ],
+      highlights: [
+        "Distribucion de escritorio",
+        "Medidas exactas",
+        "Datos tipados",
+        "SVG en linea",
+      ],
+    },
+    designSystem: {
+      title: "Sistema visual",
+      description:
+        "Tokens de color, medidas del shell y estados de hover replicados del cliente original, con tipografia sans-serif en toda la interfaz.",
+      points: [
+        "Tipografia Motiva Sans con fallback a Arial",
+        "Barras de 26px, 50px y 40px",
+        "Sidebar fija de 340px",
+        "Hover de controles #2a3f52",
+        "Fila seleccionada #3E4F69",
+        "Borde inferior azul en la pestana activa",
+        "Cerrar de ventana en #e81123",
+        "Iconos SVG en linea",
+      ],
+    },
+    architecture: {
+      title: "Arquitectura",
+      description:
+        "Un shell fijo que compone el area de contenido con la pagina de tienda del proyecto seleccionado, y un archivo de datos tipado como unica fuente.",
+      layers: [
+        {
+          number: "01",
+          title: "Shell de la interfaz",
+          description:
+            "MenuBar, NavBar, Sidebar, Footer y el contenedor del area de contenido, con las medidas y los estados de hover del cliente original.",
+        },
+        {
+          number: "02",
+          title: "Pagina de tienda",
+          description:
+            "ProjectStorePage y sus piezas (ProjectHeader, ProjectStats, ProjectTabs, ScreenshotsRow, ActivityFeed) montan el proyecto activo en el area de contenido.",
+        },
+        {
+          number: "03",
+          title: "Capa de datos",
+          description:
+            "projects.tsx con los portfolios tipados como fuente unica, ampliable escribiendo un objeto nuevo en lugar de editar componentes.",
+        },
+      ],
+    },
+    closingLine:
+      "Una biblioteca que se abre como un cliente de escritorio, con un producto por proyecto.",
+    ctaLabel: "Abrir Repository Library",
+    ctaUrl: "https://mariomunpeq.github.io/Repository-Library/",
+    role: {
+      title: "Mi rol / Aportacion",
+      items: [
+        "Diseno e implementacion completa del shell replicando las medidas y los estados del cliente de escritorio de Steam.",
+        "Construccion del componente ProjectStorePage y de sus piezas: banner, boton JUGAR, estadisticas, pestanas, capturas y actividad.",
+        "Panel de amigos como overlay fijo, abierto y cerrado desde la barra inferior.",
+        "Buscador con filtro en la sidebar, con estado de seleccion sincronizado con el contenido.",
+        "Modelado de los datos de proyectos en TypeScript y del set de iconos SVG en linea.",
+      ],
+    },
+    challenges: {
+      title: "Retos tecnicos",
+      items: [
+        {
+          label: "Fidelidad de las medidas",
+          detail:
+            "Cada barra, la sidebar y el area de contenido tienen medidas concretas del cliente original, y cualquier desvio se nota en pantalla.",
+        },
+        {
+          label: "Overlay sin desmontar",
+          detail:
+            "El panel de amigos se superpone en la esquina inferior derecha sin romper el scroll ni el estado del contenido que hay debajo.",
+        },
+        {
+          label: "Sin librerias de iconos",
+          detail:
+            "Replicar los iconos del cliente con SVG en linea en lugar de tirar de una libreria externa, manteniendolos legibles a 16 y 24 pixeles.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "vault-archive",
+    name: "Vault Archive",
+    summary:
+      "Un portfolio construido dentro de un Pip-Boy 3000 replicado carcasa por carcasa, con seis modulos que funcionan en lugar de un filtro verde sobre una pagina web.",
+    description:
+      "Un portfolio que no es una web con un filtro verde, sino un Pip-Boy 3000: hay carcasa, chapa, tornillos, dial, rejilla, un tubo de rayos catodicos con su mascara y una secuencia de arranque. Dentro funcionan seis modulos reales. STAT es la hoja de personaje, con S.P.E.C.I.A.L. interactivo, perks y estado de condiciones. MISIONES es un diario al estilo F3 con lista a la izquierda, detalle a la derecha y objetivos con checklist, enlazado a repos y demos. DATA es la terminal de la boveda, con identidad, formacion, experiencia y contacto, con efecto de maquina de escribir. MAP es un mapa de Valladolid en Mapbox GL con un estilo propio monocromo verde, los sitios donde he estudiado y trabajado, indicadores de lo que queda fuera de pantalla y lecturas de coordenadas. RADIO es una radio con dial, espectro de barras y dos emisoras con musica real que sigue sonando al cambiar de modulo. HACK es el minijuego Termlink, donde se eligen palabras del volcado de memoria y los bloqueos determinan los intentos. Los modulos se cambian con las teclas 1 a 6, con las flechas de la barra de modulos o con el boton de encendido de la carcasa, que apaga y enciende el tubo de verdad, y el estado del operador —HP, NIVEL, AP— permanece visible abajo.",
+    tagline: "Portfolio Pip-Boy 3000 · Seis modulos · Fallout 3",
+    version: "1.0.0",
+    stack: ["TypeScript", "React", "Vite", "Mapbox GL", "HTML/CSS"],
+    links: {
+      demo: "https://mariomunpeq.github.io/Vault-Archive/",
+      github: "https://github.com/MarioMunPeq/Vault-Archive",
+    },
+    images: [
+      {
+        src: "",
+        alt: "Vault Archive con el Pip-Boy 3000 y la barra de modulos",
+      },
+    ],
+    screenshots: null,
+    features: [
+      {
+        name: "Modulo STAT",
+        description:
+          "Hoja de personaje con S.P.E.C.I.A.L. interactivo —clic en un stat para ver su lectura—, perks y estado de condiciones.",
+      },
+      {
+        name: "Modulo MISIONES",
+        description:
+          "Diario al estilo F3: lista a la izquierda, detalle a la derecha, objetivos con checklist y enlaces al repositorio y a la demo de cada proyecto.",
+      },
+      {
+        name: "Modulo DATA",
+        description:
+          "Terminal de la boveda con los registros de identidad, formacion, experiencia y contacto, con efecto de maquina de escribir.",
+      },
+      {
+        name: "Modulo MAP",
+        description:
+          "Mapa de Valladolid sobre Mapbox GL con estilo propio monocromo verde, los sitios donde he estudiado y trabajado, indicadores de lo que queda fuera de pantalla y lecturas de coordenadas.",
+      },
+      {
+        name: "Modulo RADIO",
+        description:
+          "Radio con dial, espectro de barras y medidor de senal, con dos emisoras de musica real que siguen sonando al cambiar de modulo.",
+      },
+      {
+        name: "Modulo HACK",
+        description:
+          "Minijuego Termlink: se eligen palabras del volcado de memoria y los bloqueos de codigo determinan si una palabra se borra o se consumen intentos.",
+      },
+      {
+        name: "Carcasa y encendido reales",
+        description:
+          "La carcasa esta construida con chapa, tornillos, dial, rejilla y botones; el boton de encendido apaga y enciende el tubo de verdad.",
+      },
+      {
+        name: "Secuencia de arranque",
+        description:
+          "Arranque con sprite y log POST, con las teclas 1 a 6 y las flechas de la barra de modulos como metodos de navegacion.",
+      },
+    ],
+    conceptBlock: {
+      title: "¿Por que un Pip-Boy y no un filtro verde?",
+      paragraphs: [
+        "Un filtro verde sobre una pagina web es un disfraz: la estructura de debajo sigue siendo una pagina web. Aqui la estructura de debajo es la de un Pip-Boy 3000, y los seis modulos que contiene funcionan de verdad.",
+        "La consecuencia practica es que el dispositivo no es decoracion, es la interfaz. La carcasa decide donde caben los modulos, el tubo de rayos catodicos impone el fosforo, el dial y la rejilla ocupan el sitio que ocupan en el aparato, y el estado del operador es siempre visible porque en el aparato tambien lo es. La estetica no se aplica encima de la aplicacion: la aplicacion se construye dentro del aparato.",
+      ],
+      highlights: [
+        "Dispositivo como interfaz",
+        "Seis modulos funcionales",
+        "Fosforo monocromo",
+        "Navegacion por teclado",
+      ],
+    },
+    designSystem: {
+      title: "Interfaz",
+      description:
+        "Fosforo verde sobre negro en toda la interfaz, con el tubo de rayos catodicos como contenedor de todo el contenido y la carcasa como marco.",
+      points: [
+        "Fondo #070b05 con texto #9ece6a",
+        "Envoltorio del tubo CRT con mascara y scanlines",
+        "Carcasa de chapa con tornillos, dial y rejilla",
+        "Barra de modulos y subpestanas",
+        "Barra persistente de HP / NIVEL / AP",
+        "Secuencia de arranque con sprite y log",
+        "Efecto de maquina de escribir en DATA",
+      ],
+    },
+    architecture: {
+      title: "Arquitectura",
+      description:
+        "El dispositivo se compone por partes (carcasa, tubo, barra de estado, barra de modulos) y dentro del tubo cada modulo es una pestana independiente con su propio estado.",
+      layers: [
+        {
+          number: "01",
+          title: "Dispositivo",
+          description:
+            "Device/, con la carcasa fisica —chapa, tornillos, dial, rejilla y botones—, y Screen/, con el envoltorio del tubo de rayos catodicos que aloja el modulo activo.",
+        },
+        {
+          number: "02",
+          title: "Navegacion",
+          description:
+            "TabNav/ con la barra de modulos y las subpestanas, navegable con las teclas 1 a 6 y con las flechas, y StatusBar/ con el estado del operador siempre visible.",
+        },
+        {
+          number: "03",
+          title: "Modulos",
+          description:
+            "Un directorio por modulo, cada uno con su contenido y su estado propio: STAT, MISIONES, DATA, MAP, RADIO y HACK.",
+        },
+        {
+          number: "04",
+          title: "Arranque",
+          description:
+            "BootSequence/ con la secuencia de arranque, el sprite y el log POST, previa a la entrada en cualquier modulo.",
+        },
+      ],
+    },
+    closingLine:
+      "Seis modulos, una carcasa y un tubo de rayos catodicos: el portfolio es el dispositivo, no la pagina que lo contiene.",
+    ctaLabel: "Abrir Vault Archive",
+    ctaUrl: "https://mariomunpeq.github.io/Vault-Archive/",
+    role: {
+      title: "Mi rol / Aportacion",
+      items: [
+        "Diseno e implementacion completa del portfolio dentro del Pip-Boy 3000, desde la carcasa hasta el tubo de rayos catodicos.",
+        "Desarrollo de los seis modulos: STAT, MISIONES, DATA, MAP, RADIO y HACK, cada uno con su propio estado y su navegacion por teclado.",
+        "Estilo de mapa propio en Mapbox Studio monocromo verde para que el mapa encaje con el fosforo de la interfaz, con sus capas y grosores ajustados.",
+        "Indicadores de los puntos que quedan fuera de pantalla y lecturas de coordenadas en el modulo MAP, con degradacion limpia cuando faltan las variables de entorno.",
+        "Radio con dial, espectro de barras y dos emisoras de musica real que persisten al cambiar de modulo.",
+        "Secuencia de arranque con sprite y log, y barra de estado persistente de HP, NIVEL y AP.",
+      ],
+    },
+    challenges: {
+      title: "Retos tecnicos",
+      items: [
+        {
+          label: "Que el mapa pertenezca al dispositivo",
+          detail:
+            "Hacer que un mapa de Mapbox GL se lea como parte del fosforo: estilo monocromo verde definido capa por capa en Mapbox Studio, en lugar de un mapa de colores encima de la interfaz.",
+        },
+        {
+          label: "El mapa sin credenciales",
+          detail:
+            "Sin token ni estilo el modulo MAP no puede romperse: degrada a un mensaje de senal GPS no disponible en lugar de dejar la pantalla en blanco.",
+        },
+        {
+          label: "Radio persistente",
+          detail:
+            "Que la musica siga sonando al cambiar de modulo exige sacar el estado del reproductor fuera del arbol del modulo, para que desmontarlo no lo corte.",
+        },
+        {
+          label: "Termlink con reglas propias",
+          detail:
+            "El minijuego HACK tiene que interpretar los bloqueos del volcado de memoria —borrar una palabra o devolver intentos— y que el resultado se sienta coherente en cada ronda.",
+        },
+        {
+          label: "Atraccion de la atencion",
+          detail:
+            "Los terminos de uso de Mapbox obligan a mostrar logotipo y atribucion, que hay que recolorear al fosforo y reagrupar en la esquina para que no choquen con el panel de ubicacion.",
         },
       ],
     },
