@@ -5,12 +5,13 @@ import { transitionBus } from "../transition/transition-bus";
 
 export type HeroIcon = "triangle" | "square" | "circle" | "cross" | "asterisk";
 
-const ICONS: Record<HeroIcon, { glyph: string; colorClass: string }> = {
-  triangle: { glyph: "△", colorClass: "text-face-tri" },
-  square: { glyph: "□", colorClass: "text-face-sq" },
-  circle: { glyph: "○", colorClass: "text-face-cir" },
-  cross: { glyph: "✕", colorClass: "text-face-cross" },
-  asterisk: { glyph: "※", colorClass: "text-face-ast" },
+// Configuración de cada icono: ruta de imagen individual
+const ICON_IMAGES: Record<HeroIcon, string> = {
+  triangle: "/images/ui/Button_Triangle.png",
+  square: "/images/ui/Button_Square.png",
+  circle: "/images/ui/Button_Circle.png",
+  cross: "/images/ui/Button_X.png",
+  asterisk: "/images/ui/Button_X.png",
 };
 
 interface CommandNavItemProps {
@@ -46,7 +47,8 @@ export function CommandNavItem({
   offsetX = 0,
   widthPx = 380,
 }: CommandNavItemProps) {
-  const { glyph, colorClass } = ICONS[icon];
+  
+
   const navigate = useNavigate();
   const navigating = useRef(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -91,8 +93,18 @@ export function CommandNavItem({
         <span aria-hidden="true" className="hero-cmd-track" />
         <span
           aria-hidden="true"
-          className={`hero-btn-icon flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[17px] font-bold [transform:skewX(11deg)] ${colorClass} transition-transform [&]:hover:[transform:skewX(11deg)] [&]:focus-visible:[transform:skewX(11deg)] [&]:hover:rotate-2 [&]:focus-visible:rotate-2 [&]:hover:scale-105 [&]:focus-visible:scale-105`}>
-          {glyph}
+          className={`hero-btn-icon flex h-[30px] w-[30px] shrink-0 items-center justify-center [transform:skewX(11deg)]`}>
+          {/* Icono mostrado via background-image individual */}
+          <span
+            className="absolute inset-0 w-full h-full"
+            style={{
+              backgroundImage: `url(${ICON_IMAGES[icon]})`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+            aria-hidden="true"
+          />
         </span>
         <span className="min-w-0 flex-1 overflow-hidden whitespace-nowrap [transform:skewX(11deg)] font-p5-menu text-[22px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[28px] lg:text-[30px] xl:text-[36px]">
           {label}

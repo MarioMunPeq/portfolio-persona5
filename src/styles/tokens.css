@@ -292,6 +292,43 @@
   transition-duration: 0.05s;
 }
 
+/* Sprite icono del botón - usa Buttons Icons.png */
+.sprite-btn {
+  background-image: url("/images/ui/Buttons Icons.png");
+  background-repeat: no-repeat;
+  background-size: 461px 150px;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+
+/* Posiciones X de cada icono (92px de ancho cada uno) */
+.sprite-btn-tri { background-position: -0px 0; }
+.sprite-btn-sq { background-position: -92px 0; }
+.sprite-btn-cir { background-position: -184px 0; }
+.sprite-btn-cross { background-position: -276px 0; }
+.sprite-btn-ast { background-position: -368px 0; }
+
+/* Icono sprite - usa el sheet de Buttons Icons.png */
+.sprite-icon {
+  background-image: url("/images/ui/Buttons Icons.png");
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  width: 30px;
+  height: 30px;
+}
+
+.sprite-icon > span {
+  opacity: 0;
+}
+
+/* Posiciones de cada icono en el sprite (92px cada uno) */
+.sprite-icon.triangle { background-position: -0px 0; }
+.sprite-icon.square { background-position: -92px 0; }
+.sprite-icon.circle { background-position: -184px 0; }
+.sprite-icon.cross { background-position: -276px 0; }
+.sprite-icon.asterisk { background-position: -368px 0; }
+
 /* ============================================================
    Red slash — linea diagonal roja que cruza el boton en hover
    ============================================================ */
