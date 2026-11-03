@@ -1013,11 +1013,52 @@ html.lenis body {
      a los estilos de Social Stats (clases .car-*). */
 }
 
-/* --- Base --- */
+/* --- Scrollbar Personalizada Persona 5 --- */
+/* Dark track, red thumb with diagonal cut, no layout jumps */
+
+/* Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-hero);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-paper);
+  border-radius: 0;
+  /* Diagonal cut Persona 5: corta la esquina inferior-izquierda en ángulo */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--color-accent), white 40%);
+  width: 12px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);
+  border: 2px solid var(--color-paper);
+  box-shadow: 0 0 6px rgba(230, 0, 18, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-bg-hero);
+}
+
+/* ============================================================
+   Base --- */
 @layer base {
   html {
     background-color: var(--color-bg-hero);
-    scrollbar-gutter: stable;
+    scrollbar-gutter: stable bothendss;
     box-sizing: border-box;
   }
 
