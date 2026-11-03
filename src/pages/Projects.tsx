@@ -47,7 +47,7 @@ function ProjectsGraphicLayer() {
       />
 
       <span
-        className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
+        className="absolute right-[-3rem] top-[15%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
         style={{ fontSize: "clamp(6rem, 13vw, 12rem)" }}
       >
         Inventario
@@ -80,7 +80,7 @@ export function Projects() {
         <ProjectsGraphicLayer />
 
         <div
-          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-4"
+          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-4 items-center"
           style={{
             height: "calc(100vh - 260px)",
           }}
