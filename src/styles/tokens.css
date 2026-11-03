@@ -1018,6 +1018,7 @@ html.lenis body {
   html {
     background-color: var(--color-bg-hero);
     scrollbar-gutter: stable;
+    box-sizing: border-box;
   }
 
   body {
@@ -1027,6 +1028,7 @@ html.lenis body {
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    box-sizing: border-box;
   }
 
   ::selection {
@@ -2386,7 +2388,7 @@ html.lenis body {
 /* Grupo coche + estelas. La base de las ruedas queda a ras del asfalto. */
 .car-rig {
   position: absolute;
-  right: clamp(0.5rem, 5vw, 4rem);
+  left: clamp(0.5rem, 5vw, 4rem);
   bottom: calc(var(--car-road-height) - 2px);
   display: flex;
   height: var(--car-height);
@@ -2523,7 +2525,7 @@ html.lenis body {
 
 @media (max-width: 767px) {
   .car-rig {
-    right: 0.75rem;
+    left: 0.75rem;
   }
 
   .car-speed {

@@ -75,26 +75,31 @@ export function Projects() {
   const [selected, setSelected] = useState<Project>(PROJECTS[0]);
 
   return (
-    <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative min-h-dvh overflow-x-hidden">
+    <Screen className="bg-bg-hero text-paper">
+      <section className="relative overflow-x-hidden min-h-screen">
         <ProjectsGraphicLayer />
 
-        <div className="relative z-10 flex min-h-dvh flex-col px-4 pb-24 pt-20 sm:px-6 md:px-10 lg:px-14">
-          <SectionTitle
-            label="Inventario de proyectos"
-            title="INVENTARIO"
-            persona
-            compact
-          />
-
-          <div className="grid flex-1 items-start gap-y-8 overflow-hidden py-6 sm:py-8 lg:grid-cols-[1.06fr_1fr] lg:items-center lg:gap-x-10 lg:gap-y-0 lg:overflow-visible xl:gap-x-16 xl:py-10">
-            <ProjectPreview project={selected} />
-            <ProjectInventory
-              projects={PROJECTS}
-              selected={selected}
-              onSelect={setSelected}
+        <div
+          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-4"
+          style={{
+            height: "calc(100vh - 260px)",
+          }}
+        >
+          <div className="flex flex-col gap-4">
+            <SectionTitle
+              label="Inventario de proyectos"
+              title="INVENTARIO"
+              persona
+              compact
             />
+            <ProjectPreview project={selected} />
           </div>
+
+          <ProjectInventory
+            projects={PROJECTS}
+            selected={selected}
+            onSelect={setSelected}
+          />
         </div>
       </section>
     </Screen>
