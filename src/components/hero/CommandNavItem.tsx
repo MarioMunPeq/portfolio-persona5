@@ -26,8 +26,11 @@ interface CommandNavItemProps {
 
 /**
  * Item de navegación del menú principal — placa angular con icono de
- * mando (△ □ ○ ✕), label y subtítulo. Cada item recibe rotación y
- * offset individuales para composición caótica tipo Persona 5.
+ * mando (△ □ ○ ✕), label y subtítulo. Composición tipo Persona 5 con
+ * ancho variable por item: INVENTARIO y HABILIDADES tienen más ancho
+ * por ser palabras más largas, mientras que PERFIL y PROGRESO son más
+ * estrechos. Hover feedback refinido: desplazamiento controlado, cambio
+ * de profundidad mínimo y reacción sutil del icono.
  *
  * Navigation triggers the transition video FIRST, then navigates once
  * the screen is visually covered. This prevents the destination from
@@ -60,6 +63,14 @@ export function CommandNavItem({
     navigate(path);
   };
 
+  // Determinar ancho base: los items de largo ancho (inventario, habilidades)
+  // usan el widthPx especificado; los más estrechos pueden reducirse un
+  // poco manteniendo un mínimo legible.
+  const baseWidth = widthPx;
+  const minWidth = 400;
+  const maxWidth = 550;
+  const clampedWidth = Math.max(minWidth, Math.min(maxWidth, baseWidth));
+
   return (
     <li
       className="hero-command-item"
@@ -67,7 +78,7 @@ export function CommandNavItem({
         {
           "--off": `${offsetX}px`,
           "--rot": `${rotation}deg`,
-          width: `min(${widthPx}px, 100%)`,
+          width: `${clampedWidth}px`,
         } as React.CSSProperties
       }
     >
@@ -80,8 +91,7 @@ export function CommandNavItem({
         <span aria-hidden="true" className="hero-cmd-track" />
         <span
           aria-hidden="true"
-          className={`hero-btn-icon flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[17px] font-bold [transform:skewX(11deg)] ${colorClass}`}
-        >
+          className={`hero-btn-icon flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[17px] font-bold [transform:skewX(11deg)] ${colorClass} transition-transform [&]:hover:[transform:skewX(11deg)] [&]:focus-visible:[transform:skewX(11deg)] [&]:hover:rotate-2 [&]:focus-visible:rotate-2 [&]:hover:scale-105 [&]:focus-visible:scale-105`}>
           {glyph}
         </span>
         <span className="min-w-0 flex-1 overflow-hidden whitespace-nowrap [transform:skewX(11deg)] font-p5-menu text-[22px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[28px] lg:text-[30px] xl:text-[36px]">

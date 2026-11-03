@@ -6,10 +6,10 @@ import { HERO_COMMANDS } from "../components/hero/hero-commands";
 import { useBooted } from "../lib/boot";
 
 const MENU_CHAOS = [
-  { rotation: -2, offsetX: 10, widthPx: 420 },
-  { rotation: 1.5, offsetX: -5, widthPx: 470 },
-  { rotation: -1, offsetX: 16, widthPx: 435 },
-  { rotation: 2, offsetX: 2, widthPx: 480 },
+  { rotation: -2, offsetX: 10, widthPx: 400 },
+  { rotation: 1.5, offsetX: -5, widthPx: 480 },
+  { rotation: -1, offsetX: 16, widthPx: 440 },
+  { rotation: 2, offsetX: 2, widthPx: 500 },
 ];
 
 /**
@@ -68,7 +68,7 @@ export function Home() {
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{
             background:
-              "linear-gradient(90deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.45) 40%, rgba(10,10,10,0.15) 70%, transparent 100%)",
+              "linear-gradient(180deg, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0.35) 30%, rgba(10,10,10,0.1) 55%, transparent 100%)",
           }}
         />
 
@@ -78,7 +78,7 @@ export function Home() {
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{
             background:
-              "radial-gradient(ellipse at 60% 50%, transparent 30%, rgba(10,10,10,0.5) 100%)",
+              "radial-gradient(ellipse at 70% 40%, transparent 40%, rgba(10,10,10,0.3) 80%, rgba(10,10,10,0.45) 100%)",
           }}
         />
 

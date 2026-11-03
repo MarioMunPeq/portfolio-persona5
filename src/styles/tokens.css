@@ -165,10 +165,10 @@
   transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover del li: snap agresivo en la direccion chaos */
+/* Hover del li: desplazamiento sutil hacia la izquierda, sin rotacion
+   agresiva del item para evitar movimiento repentino o inestable. */
 .hero-command-item:has(.metro-menu-btn:hover) {
-  transform: translateX(calc(var(--off, 0px) - 8px))
-    rotate(calc(var(--rot, 0deg) * 1.5));
+  transform: translateX(calc(var(--off, 0px) - 4px));
 }
 
 /* === Menu stamp-in entrance — BAM BAM BAM BAM === */
@@ -262,7 +262,8 @@
 
 .hero-cmd:hover,
 .hero-cmd:focus-visible {
-  transform: skewX(-11deg) translateX(-8px) scale(1.02);
+  transform: skewX(-11deg) translateX(-4px) scale(1.01);
+  transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero-cmd:hover .hero-cmd-track,
@@ -271,21 +272,21 @@
   background-color: var(--color-accent);
 }
 
-/* Icono: rotacion independiente rapida */
+/* Icono: reaccion sutil en hover - rotacion leve y escala menor */
 .hero-cmd:hover .hero-btn-icon,
 .hero-cmd:focus-visible .hero-btn-icon {
   border-color: currentColor;
-  transform: skewX(11deg) rotate(-6deg) scale(1.1);
+  transform: skewX(11deg) rotate(-3deg) scale(1.05);
   transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Label: pequeno desplazamiento horizontal independiente */
+/* Label: desplazamiento horizontal muy contenido en hover */
 .hero-cmd:hover > span:nth-child(3) {
-  transform: skewX(11deg) translateX(4px);
+  transform: skewX(11deg) translateX(2px);
   transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Click: snap contundente */
+/* Click: snap contundente pero controlado */
 .metro-menu-btn:active {
   transform: skewX(-11deg) translateX(-2px) scale(0.98) !important;
   transition-duration: 0.05s;
