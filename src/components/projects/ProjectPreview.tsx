@@ -74,7 +74,9 @@ export function ProjectPreview({ project }: { project: Project }) {
           >
             {project.name}
           </h2>
-          <p className="mt-2 max-w-md text-caption leading-relaxed text-paper/70">
+          {/* Reserva 4 lineas (13px × 1.625) para que el bloque no cambie de
+              alto al alternar proyectos con resumenes de 3 o 4 lineas. */}
+          <p className="mt-2 min-h-[5.3rem] max-w-md text-caption leading-relaxed text-paper/70">
             {project.summary}
           </p>
         </div>

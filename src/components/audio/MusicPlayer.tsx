@@ -169,7 +169,7 @@ export function MusicPlayer() {
   const volFillRef = useRef<HTMLDivElement>(null);
 
   /* Reactive state */
-  const [trackIndex, setTrackIndex] = useState(3);
+  const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [muted, setMuted] = useState(false);
@@ -181,7 +181,7 @@ export function MusicPlayer() {
   const isPlayingRef = useRef(false);
   const volumeRef = useRef(DEFAULT_VOLUME);
   const mutedRef = useRef(false);
-  const trackIndexRef = useRef(3);
+  const trackIndexRef = useRef(0);
 
   /* Cleanup ref for pending canplay listener */
   const canplayCleanupRef = useRef<(() => void) | null>(null);
@@ -335,7 +335,7 @@ export function MusicPlayer() {
     const onInteract = async () => {
       document.removeEventListener("pointerdown", onInteract);
       document.removeEventListener("keydown", onInteract);
-      await loadAndPlay(3, true);
+      await loadAndPlay(0, true);
     };
     document.addEventListener("pointerdown", onInteract);
     document.addEventListener("keydown", onInteract);

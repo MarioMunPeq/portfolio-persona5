@@ -4,6 +4,7 @@ export interface Track {
 }
 
 export const TRACKS: Track[] = [
+  { title: "No More What Ifs", file: "No More What Ifs.mp3" },
   { title: "Beneath the Mask", file: "Beneath the Mask.mp3" },
   { title: "Phantom", file: "Phantom.mp3" },
   { title: "Tokyo Daylight", file: "Tokyo Daylight.mp3" },

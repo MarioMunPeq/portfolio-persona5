@@ -1017,6 +1017,7 @@ html.lenis body {
 @layer base {
   html {
     background-color: var(--color-bg-hero);
+    scrollbar-gutter: stable;
   }
 
   body {

@@ -57,7 +57,7 @@ export const experience: ExperienceEntry[] = [
     id: "diputacion",
     company: "Diputacion de Valladolid",
     role: "Desarrollador web",
-    period: "Feb 2026 — Actualidad",
+    period: "Feb 2026 — Sep 2026",
     summary: "Desarrollo web Liferay, Odoo y soporte tecnico.",
     highlights: [
       "Desarrollo web con Liferay",
