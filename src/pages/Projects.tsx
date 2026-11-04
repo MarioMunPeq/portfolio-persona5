@@ -80,7 +80,7 @@ export function Projects() {
         <ProjectsGraphicLayer />
 
         <div
-          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-4 items-center"
+          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pt-6 pt-[clamp(1.5rem,5vw,3rem)]"
           style={{
             height: "calc(100vh - 260px)",
           }}
