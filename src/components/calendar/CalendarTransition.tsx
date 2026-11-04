@@ -89,27 +89,22 @@ const CARD_POSITIONS: Record<string, { x: number; y: number; scale: number }[]> 
   ],
 };
 
-/**
- * Índice de la fecha que empieza en el centro (ayer = hoy-1).
- */
-const INITIAL_CENTER_INDEX = 1;
-
-/**
- * Desplazamiento horizontal inicial (puntos porcentuales del viewport).
- * Antes del desplazamiento final, cada fecha comienza 22 puntos a la
- * derecha de su posición final, de modo que hoy queda a la derecha de
- * ayer y ayer cae en el centro. Tras el shift, hoy queda en el centro.
- */
-const INITIAL_SHIFT_PCT = 22;
-
 /** Instantes clave de la timeline (segundos). */
 const T = {
   bgStart: 0,
   datesStart: 0.55,
-  shiftStart: 2.6,
-  holdStart: 5.0,
-  boot: 5.6,
 };
+
+/** Duración de la pausa (segundos) entre que la última fecha termina de
+ * asentarse y que comienza el desplazamiento horizontal del calendario.
+ */
+const PAUSE_BEFORE_SHIFT_S = 1.0;
+
+/**
+ * Tiempo de espera tras el desplazamiento antes de marcar el arranque como
+ * completado y revelar el home.
+ */
+const HOLD_AFTER_SHIFT_S = 0.5;
 
 /** Tiempo máximo antes de forzar la salida aunque algo falle. */
 const SAFETY_MS = 10000;
@@ -153,6 +148,8 @@ export function CalendarTransition() {
   const safetyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** Indica si la secuencia ya terminó (idempotencia). */
   const finishedRef = useRef(false);
+  /** Evita que la timeline GSAP se cree más de una vez (StrictMode, re-renders, etc.). */
+  const timelineCreatedRef = useRef(false);
 
   /** Resolución del breakpoint activo para elegir posiciones y tamaños. */
   const breakpoint = useMemo<Breakpoint>(() => {
@@ -243,12 +240,14 @@ export function CalendarTransition() {
       !isPositioned ||
       !bgRef.current ||
       !containerRef.current ||
-      visualRefs.current.some((ref) => ref === null)
+      visualRefs.current.some((ref) => ref === null) ||
+      timelineCreatedRef.current
     ) {
       return;
     }
 
     isMountedRef.current = true;
+    timelineCreatedRef.current = true;
 
     // Temporizador de seguridad: nunca dejar la app bloqueada en el intro.
     safetyRef.current = setTimeout(() => {
@@ -258,12 +257,9 @@ export function CalendarTransition() {
     }, SAFETY_MS);
 
     const positions = CARD_POSITIONS[breakpoint];
-    const vw = window.innerWidth;
-    const px = (pct: number) => vw * (pct / 100);
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-      tlRef.current = tl;
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    tlRef.current = tl;
 
       // ---------- ACT 1 — LA CIUDAD ----------
       tl.fromTo(
@@ -285,29 +281,32 @@ export function CalendarTransition() {
         T.bgStart + 0.4
       );
 
-      // ---------- ACT 2 & 3 — LAS FECHAS CAEN CON PESO FÍSICO ----------
-      // Ayer (índice 1) cae primero al centro. Las demás siguen escalonado.
-      visualRefs.current.forEach((ref, i) => {
+      // ---------- ACT 2 — HOY CAE PRIMERO ----------
+      // Hoy (índice 2) es la primera fecha en caer y aterrizar en el centro,
+      // con su caída completa (impacto, rebote y asentamiento) antes de que
+      // ninguna otra fecha empiece a moverse.
+      // ---------- ACT 2 — LAS FECHAS QUE NO SON HOY CAEN PRIMERO ----------
+      // Los seis índices que no son hoy caen todos a la vez, sin
+      // desplazamiento lateral, directamente a su posición final.
+      const fallDuration = 0.4;
+      const otherIndices = [0, 1, 3, 4, 5, 6];
+      otherIndices.forEach((i) => {
+        const ref = visualRefs.current[i];
         if (!ref) return;
-        const isFirst = i === INITIAL_CENTER_INDEX;
-        const fallDuration = isFirst ? 1.15 : 0.95;
-        const start = T.datesStart + (isFirst ? 0 : i * 0.12);
         const pos = positions[i];
 
         // Fase 1: caída acelerada desde arriba (gravedad real).
-        // Cada fecha cae en su posición inicial (ancla + desplazamiento
-        // horizontal de 22% del viewport) y baja desde fuera de pantalla.
         tl.fromTo(
           ref,
           {
-            x: px(INITIAL_SHIFT_PCT),
+            x: 0,
             y: -750,
             scale: 0.15,
-            rotation: isFirst ? -14 : -7,
+            rotation: -7,
             autoAlpha: 0,
           },
           {
-            x: px(INITIAL_SHIFT_PCT),
+            x: 0,
             y: 0,
             scale: pos.scale,
             rotation: 0,
@@ -316,32 +315,32 @@ export function CalendarTransition() {
             ease: "power4.in",
             clearProps: "rotation",
           },
-          start
+          T.datesStart
         );
 
         // Fase 2: impacto — compresión vertical + expansión horizontal
         tl.to(
           ref,
           { scaleY: 0.75, scaleX: 1.2, duration: 0.09, ease: "power2.in" },
-          start + fallDuration
+          T.datesStart + fallDuration
         );
 
         // Fase 3: rebote — expansión vertical + compresión horizontal
         tl.to(
           ref,
           { scaleY: 1.08, scaleX: 0.92, duration: 0.14, ease: "power2.out" },
-          start + fallDuration + 0.09
+          T.datesStart + fallDuration + 0.09
         );
 
         // Fase 4: asentamiento final
         tl.to(
           ref,
           { scaleY: pos.scale, scaleX: pos.scale, duration: 0.16, ease: "power2.out" },
-          start + fallDuration + 0.09 + 0.14
+          T.datesStart + fallDuration + 0.09 + 0.14
         );
       });
 
-      // Sacudida de pantalla sincronizada con el primer impacto (ayer)
+      // Sacudida de pantalla sincronizada con el impacto de las fechas
       tl.to(
         containerRef.current,
         {
@@ -352,14 +351,84 @@ export function CalendarTransition() {
           yoyo: true,
           ease: "none",
         },
-        T.datesStart + 1.15
+        T.datesStart + fallDuration
       );
+
+      // Marca: las fechas que no son hoy han terminado de asentarse
+      tl.add("otherDatesLanded");
+
+      // ---------- ACT 3 — HOY CAE ÚLTIMO ----------
+      // Hoy cae después de que las otras seis fechas hayan aterrizado,
+      // directamente en el centro (x: 0 respecto al ancla).
+      const hoyIndex = 2;
+      const hoyRef = visualRefs.current[hoyIndex];
+      const hoyFallDuration = 0.3;
+      const hoyPos = positions[hoyIndex];
+
+      if (hoyRef) {
+        // Fase 1: caída acelerada desde arriba (gravedad real).
+        tl.fromTo(
+          hoyRef,
+          {
+            x: 0,
+            y: -750,
+            scale: 0.15,
+            rotation: -14,
+            autoAlpha: 0,
+          },
+          {
+            x: 0,
+            y: 0,
+            scale: hoyPos.scale,
+            rotation: 0,
+            autoAlpha: 1,
+            duration: hoyFallDuration,
+            ease: "power4.in",
+            clearProps: "rotation",
+          },
+          T.datesStart + fallDuration + 0.09 + 0.14 + 0.16
+        );
+
+        // Fase 2: impacto — compresión vertical + expansión horizontal
+        tl.to(
+          hoyRef,
+          { scaleY: 0.75, scaleX: 1.2, duration: 0.09, ease: "power2.in" },
+          T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration
+        );
+
+        // Fase 3: rebote — expansión vertical + compresión horizontal
+        tl.to(
+          hoyRef,
+          { scaleY: 1.08, scaleX: 0.92, duration: 0.14, ease: "power2.out" },
+          T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration + 0.09
+        );
+
+        // Fase 4: asentamiento final
+        tl.to(
+          hoyRef,
+          { scaleY: hoyPos.scale, scaleX: hoyPos.scale, duration: 0.16, ease: "power2.out" },
+          T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration + 0.09 + 0.14
+        );
+      }
+
+      // Marca: hoy ha terminado de aterrizar y asentarse
+      tl.add("hoyLanded");
+
+      // Marca: todas las fechas han aterrizado y se han asentado.
+      // El desplazamiento y la pausa se posicionan respecto a este instante
+      // real, no a un timestamp hardcodeado.
+      tl.add("allDatesLanded");
+
+      // ---------- PAUSA DE 1 SEGUNDO ----------
+      // El calendario permanece completamente quieto durante exactamente
+      // PAUSE_BEFORE_SHIFT_S segundos tras el último aterrizaje.
+      tl.add("calendarShift", "+=" + PAUSE_BEFORE_SHIFT_S);
 
       // ---------- ACT 4 — EL CALENDARIO SE DESPLAZA HACIA LA IZQUIERDA ----------
       // Todas las fechas se mueven hacia la izquierda como un grupo unificado
-      // (sin animación independiente ni stagger). Hoy pasa de 72% a 50%
-      // (centro) y ayer de 50% a 28%; se preservan espaciamiento, tamaños
-      // y posiciones verticales.
+      // (sin animación independiente ni stagger). Cada visual vuelve a x: 0,
+      // es decir, a su ancla final. Hoy pasa de 72% a 50% (centro) y ayer
+      // de 50% a 28%; se preservan espaciamiento, tamaños y verticales.
       tl.to(
         visualRefs.current.filter((ref): ref is HTMLDivElement => ref !== null),
         {
@@ -367,12 +436,14 @@ export function CalendarTransition() {
           duration: 1.0,
           ease: "power2.inOut",
         },
-        T.shiftStart
+        "calendarShift"
       );
 
-      // ---------- ACT 6 — PAUSA Y TRANSICIÓN AL PORTFOLIO ----------
-      tl.to({}, { duration: 0.5, onComplete: finish }, T.holdStart);
-    }, rootRef);
+      // ---------- ACT 6 — TRANSICIÓN AL PORTFOLIO ----------
+      // Tras el desplazamiento (1.0 s), una breve retención antes de revelar
+      // el home. Se añade al final de la timeline, así empieza justo cuando
+      // termina el shift.
+      tl.to({}, { duration: HOLD_AFTER_SHIFT_S, onComplete: finish });
 
     return () => {
       isMountedRef.current = false;
@@ -381,9 +452,11 @@ export function CalendarTransition() {
         safetyRef.current = null;
       }
       tlRef.current = null;
-      ctx.revert();
+      // No reseteamos timelineCreatedRef ni hacemos ctx.revert() aquí:
+      // así la timeline GSAP solo existe una vez y no se deshace ante
+      // re-renders o StrictMode.
     };
-  }, [hidden, reduced, assets.ready, isPositioned, lockScroll, finish, breakpoint]);
+  }, [hidden, reduced, assets.ready, isPositioned, breakpoint]);
 
   if (hidden) return null;
 
