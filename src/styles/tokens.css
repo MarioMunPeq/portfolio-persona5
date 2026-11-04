@@ -2656,9 +2656,12 @@ html {
 }
 
 /* Envoltorio interior animado por GSAP. Su transform es independiente del
-   translate(-50%, -50%) del ancla (elemento distinto, no hay lucha). */
+   translate(-50%, -50%) del ancla (elemento distinto, no hay lucha).
+   Empieza oculto (opacity: 0) para que no haya destello al montar; GSAP
+   lo revela (autoAlpha: 0 → 1) durante la caída de cada fecha. */
 .calendar-visual {
   position: relative;
+  opacity: 0;
   will-change: transform;
 }
 
