@@ -2625,3 +2625,82 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* ================================================================
+   CALENDAR TRANSITION — Pantalla de introducción tipo Persona 5
+   ================================================================ */
+
+/* Envoltorio de cada tarjeta: posicionado absoluto mediante estilos en línea
+   (left/top) con translate(-50%, -50%) para centrar en el anclaje.
+   GSAP es el único propietario de x/y/scale/rotation sobre este elemento. */
+.calendar-card-wrapper {
+  position: absolute;
+  z-index: 10;
+  will-change: transform;
+}
+
+/* Lockup vertical: número arriba, PNG del weekday abajo.
+   Ambos comparten el mismo eje horizontal central y se mueven
+   como una sola unidad durante la caída. */
+.calendar-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Contorno negro fuerte (estilo cómic) */
+  filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.95));
+}
+
+/* Día numérico — arriba, visualmente dominante.
+   Fuente condensa, tamaño grande, contorno negro grueso.
+   El tamaño se aplica en línea desde CalendarCard (por índice). */
+.calendar-date-number {
+  margin-bottom: -10px; /* leve solapamiento con el PNG del weekday */
+  font-family: var(--font-anton);
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -0.03em;
+  text-shadow:
+    -3px -3px 0 #000000,
+    3px -3px 0 #000000,
+    -3px 3px 0 #000000,
+    3px 3px 0 #000000;
+}
+
+/* Día numérico — color según el día de la semana (definido en línea):
+   Mon–Fri: blanco | Sábado: azul | Domingo: rojo.
+   Nunca se colorea según isToday. */
+
+/* Imagen del día de la semana (PNG con tipografía original, no se toca) */
+.calendar-weekday-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Cuchillo: rotación gestionada por GSAP.
+   El PNG es horizontal (hoja a la izquierda, mango a la derecha). */
+.calendar-knife {
+  transform-origin: center;
+  width: 220px;
+  height: auto;
+  display: block;
+  will-change: transform;
+}
+
+/* Responsive: ajuste de fuente del número y tamaño del cuchillo por breakpoint.
+   Las posiciones left/top se aplican como estilos en línea en el componente. */
+@media (max-width: 1023px) {
+  .calendar-date-number { margin-bottom: -8px; }
+  .calendar-knife { width: 160px; }
+}
+
+@media (max-width: 639px) {
+  .calendar-date-number { margin-bottom: -6px; }
+  .calendar-knife { width: 120px; }
+}
+
+@media (max-width: 639px) and (orientation: landscape) {
+  .calendar-date-number { margin-bottom: -5px; }
+  .calendar-knife { width: 100px; }
+}

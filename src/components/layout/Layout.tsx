@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { TopBar } from "../ui/TopBar";
 import { BottomBar } from "../ui/BottomBar";
 import { Cursor } from "./Cursor";
-import { LoadScreen } from "../overlay/LoadScreen";
+import { CalendarTransition } from "../calendar/CalendarTransition";
 import { Grain } from "../primitives/Grain";
 
 interface LayoutProps {
@@ -26,7 +26,7 @@ export function Layout({ children }: LayoutProps) {
       >
         Saltar al contenido
       </a>
-      <LoadScreen />
+      <CalendarTransition />
       <TopBar static={pathname === "/"} />
       <BottomBar />
       <Grain />
