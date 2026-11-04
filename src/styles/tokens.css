@@ -2628,14 +2628,37 @@ html {
 
 /* ================================================================
    CALENDAR TRANSITION — Pantalla de introducción tipo Persona 5
+   ================================================================
+
+   ARQUITECTURA DE POSICIONAMIENTO (robusta, sin lucha de transform):
+   - .calendar-anchor   : ancla exterior. Define la posición FINAL de la
+     fecha en pantalla con left/top en % sobre el viewport y un
+     translate(-50%, -50%) en CSS que CENTRA la composición sobre el
+     punto (X%, Y%). GSAP NO toca este elemento ni su transform.
+   - .calendar-visual   : envoltorio interior. GSAP es el único propietario
+     de su transform (x/y/scale/rotation) para la caída y el desplazamiento
+     final. Vive dentro del ancla, por lo que sus traslaciones son relativas
+     al centro de la composición.
+   - .calendar-card     : lockup vertical (número arriba, PNG abajo) centrado
+     dentro del visual.
+
+   Así CSS define dónde queda cada fecha y GSAP solo anima el movimiento
+   dentro de esa caja. Nunca compiten por el mismo transform.
    ================================================================ */
 
-/* Envoltorio de cada tarjeta: posicionado absoluto mediante estilos en línea
-   (left/top) con translate(-50%, -50%) para centrar en el anclaje.
-   GSAP es el único propietario de x/y/scale/rotation sobre este elemento. */
-.calendar-card-wrapper {
+/* Ancla exterior: posición final de cada fecha, centrada en el punto %. */
+.calendar-anchor {
   position: absolute;
   z-index: 10;
+  /* Centra la composición sobre el punto (left, top). Porcentaje relativo
+     al propio tamaño del ancla, así funciona con cualquier ancho de fecha. */
+  transform: translate(-50%, -50%);
+}
+
+/* Envoltorio interior animado por GSAP. Su transform es independiente del
+   translate(-50%, -50%) del ancla (elemento distinto, no hay lucha). */
+.calendar-visual {
+  position: relative;
   will-change: transform;
 }
 

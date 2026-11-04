@@ -16,6 +16,7 @@
  */
 import type { CalendarDate } from "../../lib/calendar";
 import { calendarAsset } from "../../lib/calendar";
+import { useMediaQuery } from "../../lib/use-media-query";
 
 interface CalendarCardProps {
   date: CalendarDate;
@@ -57,8 +58,15 @@ const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
 };
 
 export function CalendarCard({ date, index }: CalendarCardProps) {
-  const width = CARD_WIDTH_BY_INDEX[index];
-  const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index];
+  // Las anchuras base están pensadas para escritorio (≥1024px). En
+  // tableta y móvil se reducen para que la composición quepa sin
+  // solaparse en pantallas estrechas. Escritorio se queda sin cambios.
+  const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
+  const isMobile = useMediaQuery("(max-width: 639px)");
+  const widthScale = isMobile ? 0.45 : isTablet ? 0.8 : 1;
+
+  const width = CARD_WIDTH_BY_INDEX[index] * widthScale;
+  const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index] * widthScale;
   const src = calendarAsset(date.weekdayFile);
   const numberColor = NUMBER_COLOR_BY_WEEKDAY[date.weekday];
 
