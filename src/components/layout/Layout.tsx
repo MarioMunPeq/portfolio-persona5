@@ -6,6 +6,9 @@ import { BottomBar } from "../ui/BottomBar";
 import { Cursor } from "./Cursor";
 import { CalendarTransition } from "../calendar/CalendarTransition";
 import { Grain } from "../primitives/Grain";
+import { useLenis } from "lenis/react";
+import { PageBackground } from "./PageBackground";
+import "./PageBackground.css";
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,6 +22,12 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
   const isMenu = pathname === "/";
+  const isDocumentScrollPage =
+    pathname === "/about" ||
+    pathname === "/projects" ||
+    pathname.startsWith("/proyectos/");
+  const backgroundVariant = pathname === "/about" ? "profile" : "projects";
+  const lenis = useLenis();
 
   /* Bloqueo de scroll solo en el menú principal: añade/quita is-main-menu
      en <body> según la ruta activa. */
@@ -33,8 +42,23 @@ export function Layout({ children }: LayoutProps) {
     };
   }, [isMenu]);
 
+  useEffect(() => {
+    if (isMenu) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+
+    return () => lenis?.start();
+  }, [isMenu, lenis]);
+
   return (
-    <div className="min-h-dvh bg-bg-hero text-paper">
+    <div
+      className={`min-h-dvh text-paper ${isDocumentScrollPage ? "bg-transparent" : "bg-bg-hero"}`}
+    >
+      {isDocumentScrollPage && (
+        <PageBackground variant={backgroundVariant} />
+      )}
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[130] focus:bg-accent focus:px-4 focus:py-2 focus:font-medium focus:uppercase focus:tracking-widest focus:text-paper"
@@ -46,7 +70,14 @@ export function Layout({ children }: LayoutProps) {
       <BottomBar />
       <Grain />
       <Cursor />
-      <main id="main" className={`h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"}`}>
+      <main
+        id="main"
+        className={
+          isDocumentScrollPage
+            ? "relative z-[1] min-h-dvh pt-20"
+            : `h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"}`
+        }
+      >
         {children}
       </main>
     </div>

@@ -37,9 +37,9 @@ export function ProjectInventory({
   return (
     <nav
       aria-label="Inventario de proyectos"
-      className="relative overflow-y-auto"
+      className="relative"
     >
-      <ol className="relative flex flex-col gap-2.5 overflow-y-auto overflow-x-hidden" onKeyDown={onKeyDown}>
+      <ol className="relative flex flex-col gap-2.5 overflow-x-hidden" onKeyDown={onKeyDown}>
         {projects.map((project, index) => (
           <NavRow
             key={project.slug}

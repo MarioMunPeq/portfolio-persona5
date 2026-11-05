@@ -2,6 +2,7 @@ import { useState, useLayoutEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { Routes, useLocation } from "react-router-dom";
+import { useLenis } from "lenis/react";
 import { useMediaQuery } from "../../lib/use-media-query";
 import { transitionBus } from "./transition-bus";
 
@@ -26,6 +27,7 @@ interface TransitionRoutesProps {
  */
 export function TransitionRoutes({ children }: TransitionRoutesProps) {
   const location = useLocation();
+  const lenis = useLenis();
   const [displayed, setDisplayed] = useState(location);
   const transitioning = useRef(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -33,8 +35,21 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
   useLayoutEffect(() => {
     if (location.key === displayed.key) return;
 
+    const resetScroll = () => {
+      if (lenis) {
+        lenis.start();
+        lenis.resize();
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+
     if (transitioning.current) {
-      setDisplayed(location);
+      flushSync(() => {
+        setDisplayed(location);
+      });
+      resetScroll();
       return;
     }
 
@@ -43,7 +58,7 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       flushSync(() => {
         setDisplayed(location);
       });
-      window.scrollTo(0, 0);
+      resetScroll();
       return;
     }
 
@@ -52,7 +67,7 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       flushSync(() => {
         setDisplayed(location);
       });
-      window.scrollTo(0, 0);
+      resetScroll();
 
       const video = document.getElementById(
         "transition-video",
@@ -76,8 +91,10 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
     const shouldPlayVideo = isFromHome && !isToHome;
 
     if (!shouldPlayVideo) {
-      setDisplayed(location);
-      window.scrollTo(0, 0);
+      flushSync(() => {
+        setDisplayed(location);
+      });
+      resetScroll();
       return;
     }
 
@@ -87,13 +104,13 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       flushSync(() => {
         setDisplayed(location);
       });
-      window.scrollTo(0, 0);
+      resetScroll();
 
       transitionBus.play(() => {
         transitioning.current = false;
       });
     });
-  }, [location, displayed]);
+  }, [isDesktop, lenis, location, displayed]);
 
   return <Routes location={displayed}>{children}</Routes>;
 }

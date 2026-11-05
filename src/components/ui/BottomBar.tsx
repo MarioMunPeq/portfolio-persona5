@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { profile } from "../../data/profile";
 import { MusicPlayer, type MusicPlayerHandle } from "../audio/MusicPlayer";
@@ -272,10 +272,28 @@ function TrackSelectorMenu({
 export function BottomBar() {
   const [selectorOpen, setSelectorOpen] = useState(false);
   const musicPlayerRef = useRef<MusicPlayerHandle | null>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const [trackIndex, setTrackIndex] = useState(0);
 
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+
+    const updateHeight = () => {
+      document.documentElement.style.setProperty(
+        "--bottombar-h",
+        `${bar.getBoundingClientRect().height}px`,
+      );
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="p5-bottombar">
+    <div ref={barRef} className="p5-bottombar">
       <div className="p5-bb-inner">
         {/* ── Izquierda: reproductor en placa inclinada ── */}
         <div

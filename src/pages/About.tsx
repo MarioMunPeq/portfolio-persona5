@@ -124,8 +124,8 @@ export function About() {
   const { about, hero } = profile;
 
   return (
-    <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative overflow-y-auto px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
+    <Screen className="min-h-dvh text-paper">
+      <section className="relative px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
         style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         {/* Palabra fantasma de marca */}
         <span
@@ -207,12 +207,6 @@ export function About() {
 
             {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
             <div className="relative">
-              {/* Panel de fondo de la composicion: color sólido oscuro que realza
-                las estadísticas sin patron de estrellas */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-8 bg-bg-hero opacity-80"
-              />
               <Reveal delay={0.1}>
                 <div className="relative">
                   <Tag

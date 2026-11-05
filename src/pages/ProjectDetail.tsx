@@ -536,7 +536,7 @@ export function ProjectDetail() {
     currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null;
 
   return (
-    <Screen className="min-h-dvh bg-bg-hero text-paper">
+    <Screen className="min-h-dvh text-paper">
       {/* ── Background decorative layers ── */}
       <div
         aria-hidden="true"

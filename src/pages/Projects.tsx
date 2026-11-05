@@ -57,16 +57,13 @@ export function Projects() {
   const [selected, setSelected] = useState<Project>(PROJECTS[0]);
 
   return (
-    <Screen className="bg-bg-hero text-paper">
+    <Screen className="text-paper">
       <section className="relative overflow-x-hidden min-h-screen"
         style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         <ProjectsGraphicLayer />
 
         <div
           className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pt-6 pt-[clamp(1.5rem,5vw,3rem)]"
-          style={{
-            height: "calc(100vh - 260px)",
-          }}
         >
           <div className="flex flex-col gap-4">
             <SectionTitle

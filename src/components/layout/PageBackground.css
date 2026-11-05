@@ -1,0 +1,51 @@
+.page-background {
+  --bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.55),
+    rgba(10, 10, 10, 0.35)
+  );
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.page-background--profile {
+  --bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.72),
+    rgba(10, 10, 10, 0.6)
+  );
+}
+
+.page-background--projects {
+  --bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.55),
+    rgba(10, 10, 10, 0.35)
+  );
+}
+
+.page-background__video,
+.page-background__poster,
+.page-background__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+}
+
+.page-background__video {
+  object-fit: cover;
+  object-position: center;
+}
+
+.page-background__poster {
+  background: url("/images/background/background_redstars.png") center / cover
+    no-repeat;
+}
+
+.page-background__overlay {
+  background: var(--bg-overlay);
+}
