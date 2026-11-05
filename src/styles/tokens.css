@@ -157,48 +157,18 @@
   }
 }
 
-/* Tarjeta de comando: placa angular sesgada con offset/rotacion por item.
-   Las variables --off/--rot se inyectan via inline style en el <li>;
-   la tarjeta (.hero-cmd) solo aplica el skew y la animacion de entrada. */
+/* La pose base se mantiene en --off/--rot; GSAP anima variables aparte. */
 .hero-command-item {
-  transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
-  transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Hover del li: desplazamiento sutil hacia la izquierda, sin rotacion
-   agresiva del item para evitar movimiento repentino o inestable. */
-.hero-command-item:has(.metro-menu-btn:hover) {
-  transform: translateX(calc(var(--off, 0px) - 4px));
-}
-
-/* === Menu stamp-in entrance — BAM BAM BAM BAM === */
-@keyframes menu-stamp-in {
-  0% {
-    opacity: 0;
-    transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg)) scale(1.35);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg)) scale(1);
-  }
-}
-
-.hero-commands--enter .hero-command-item {
-  opacity: 0;
-  animation: menu-stamp-in 0.17s cubic-bezier(0.12, 0.9, 0.3, 1) both;
-}
-
-.hero-commands--enter .hero-command-item:nth-child(1) {
-  animation-delay: 0ms;
-}
-.hero-commands--enter .hero-command-item:nth-child(2) {
-  animation-delay: 80ms;
-}
-.hero-commands--enter .hero-command-item:nth-child(3) {
-  animation-delay: 160ms;
-}
-.hero-commands--enter .hero-command-item:nth-child(4) {
-  animation-delay: 240ms;
+  transform:
+    translateX(
+      calc(
+        var(--off, 0px) + var(--menu-shift-x, 0px) + var(--menu-entry-x, 0px)
+      )
+    )
+    rotate(var(--menu-angle, var(--rot, 0deg)))
+    scale(var(--menu-scale, 1))
+    scale(var(--menu-entry-scale, 1));
+  transform-origin: left center;
 }
 
 .hero-cmd {
@@ -213,6 +183,60 @@
   transform: skewX(-11deg);
   transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
+}
+
+.hero-cmd {
+  transition:
+    background-color 0.18s;
+}
+
+.hero-command-item.is-selected .hero-cmd-track {
+  inset: 2px;
+  background-color: #fff;
+}
+
+.hero-command-item.is-selected .hero-command-label {
+  color: #111;
+  text-shadow: none;
+}
+
+.hero-command-item.is-selected .hero-sub {
+  color: rgb(17 17 17 / 70%);
+}
+
+.hero-command-arrow {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  z-index: 3;
+  color: #e8112d;
+  font-size: 19px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(-50%) skewX(11deg) translateX(-5px);
+  transition:
+    opacity 0.12s,
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hero-command-item.is-selected .hero-command-arrow {
+  opacity: 1;
+  transform: translateY(-50%) skewX(11deg) translateX(0);
+}
+
+.hero-command-flash {
+  position: absolute;
+  inset: 2px;
+  z-index: 2;
+  background: #fff;
+  clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.metro-menu-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 5px;
 }
 
 /* Subtitle dual-layer: default + hover crossfade */
@@ -250,46 +274,14 @@
   background-color: var(--color-bg-hero);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
   transition:
-    inset 0.08s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.08s;
+    inset 0.08s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* El contenido debe quedar por encima del track (ambos comparten caja). */
-.hero-cmd > :not(.hero-cmd-track) {
+.hero-cmd
+  > :not(.hero-cmd-track):not(.hero-command-arrow):not(.hero-command-flash) {
   position: relative;
   z-index: 1;
-}
-
-.hero-cmd:hover,
-.hero-cmd:focus-visible {
-  transform: skewX(-11deg) translateX(-4px) scale(1.01);
-  transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.hero-cmd:hover .hero-cmd-track,
-.hero-cmd:focus-visible .hero-cmd-track {
-  inset: 1px;
-  background-color: var(--color-accent);
-}
-
-/* Icono: reaccion sutil en hover - rotacion leve y escala menor */
-.hero-cmd:hover .hero-btn-icon,
-.hero-cmd:focus-visible .hero-btn-icon {
-  border-color: currentColor;
-  transform: skewX(11deg) rotate(-3deg) scale(1.05);
-  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Label: desplazamiento horizontal muy contenido en hover */
-.hero-cmd:hover > span:nth-child(3) {
-  transform: skewX(11deg) translateX(2px);
-  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Click: snap contundente pero controlado */
-.metro-menu-btn:active {
-  transform: skewX(-11deg) translateX(-2px) scale(0.98) !important;
-  transition-duration: 0.05s;
 }
 
 /* Sprite icono del botón - usa Buttons Icons.png */
@@ -329,48 +321,10 @@
 .sprite-icon.cross { background-position: -276px 0; }
 .sprite-icon.asterisk { background-position: -368px 0; }
 
-/* ============================================================
-   Red slash — linea diagonal roja que cruza el boton en hover
-   ============================================================ */
-.hero-cmd::after {
-  content: "";
-  position: absolute;
-  top: -20%;
-  left: -20%;
-  width: 3px;
-  height: 140%;
-  background: var(--color-accent);
-  transform: rotate(25deg);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.hero-cmd:hover::after,
-.hero-cmd:focus-visible::after {
-  animation: p5-slash 0.12s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes p5-slash {
-  0% {
-    left: -20%;
-    opacity: 1;
-  }
-  100% {
-    left: 130%;
-    opacity: 1;
-  }
-}
-
 /* ── Mobile hero commands — dedicated composition ≤639px ───────── */
 @media (max-width: 639px) {
   .hero-command-item {
     --off: 0px !important;
-    transform: rotate(var(--rot, 0deg));
-  }
-
-  .hero-command-item:has(.metro-menu-btn:hover) {
-    transform: rotate(calc(var(--rot, 0deg) * 1.5));
   }
 
   .hero-cmd {

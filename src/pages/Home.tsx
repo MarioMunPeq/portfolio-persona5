@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "motion/react";
+import { gsap } from "gsap";
 import { Screen } from "../components/transition/Screen";
 import { CommandNavItem } from "../components/hero/CommandNavItem";
 import { HERO_COMMANDS } from "../components/hero/hero-commands";
@@ -19,29 +20,136 @@ const MENU_CHAOS = [
  */
 export function Home() {
   const booted = useBooted();
-  const [entered, setEntered] = useState(false);
-  const navigate = useNavigate();
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const reducedMotion = useReducedMotion();
+  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
-    if (!booted || entered) return;
-    const t = window.setTimeout(() => setEntered(true), 400);
-    return () => window.clearTimeout(t);
-  }, [booted, entered]);
+    if (!booted) return;
+    const items = itemRefs.current.filter(
+      (item): item is HTMLLIElement => item !== null,
+    );
+    if (reducedMotion) {
+      gsap.set(items, {
+        opacity: 1,
+        "--menu-entry-x": "0px",
+        "--menu-entry-scale": 1,
+      });
+      return;
+    }
 
-  /* Keyboard shortcuts: 1-4 navigate to the corresponding section */
+    const timeline = gsap.timeline({ delay: 0.4 });
+    items.forEach((item, index) => {
+      const flash = item.querySelector<HTMLElement>(".hero-command-flash");
+      const at = index * 0.09;
+      timeline.fromTo(
+        item,
+        {
+          opacity: 0,
+          "--menu-entry-x": "-72px",
+          "--menu-entry-scale": 0.88,
+        },
+        {
+          opacity: 1,
+          "--menu-entry-x": "0px",
+          "--menu-entry-scale": 1,
+          duration: 0.42,
+          ease: "back.out(1.7)",
+        },
+        at,
+      );
+      if (flash) {
+        timeline
+          .fromTo(
+            flash,
+            { opacity: 0 },
+            { opacity: 0.9, duration: 0.04, ease: "none" },
+            at + 0.42,
+          )
+          .to(flash, { opacity: 0, duration: 0.04, ease: "none" });
+      }
+    });
+    return () => {
+      timeline.kill();
+    };
+  }, [booted, reducedMotion]);
+
+  useEffect(() => {
+    const items = itemRefs.current;
+    const tweens: gsap.core.Tween[] = [];
+    items.forEach((item, index) => {
+      if (!item) return;
+      const selected = selectedIndex === index;
+      const plate = item.querySelector<HTMLElement>(".hero-cmd");
+      tweens.push(
+        gsap.to(item, {
+          "--menu-shift-x": selected ? "14px" : "0px",
+          "--menu-angle": selected
+            ? "0deg"
+            : `${MENU_CHAOS[index]?.rotation ?? 0}deg`,
+          "--menu-scale": selected ? 1.06 : selectedIndex === null ? 1 : 0.97,
+          opacity: selectedIndex === null || selected ? 1 : 0.55,
+          duration: reducedMotion ? 0 : 0.18,
+          ease: "back.out(2)",
+          overwrite: "auto",
+        }),
+      );
+      if (plate) {
+        tweens.push(
+          gsap.to(plate, {
+            filter: selected
+              ? "drop-shadow(6px 6px 0px #e8112d)"
+              : "drop-shadow(0px 0px 0px transparent)",
+            duration: reducedMotion ? 0 : 0.18,
+            ease: "back.out(2)",
+            overwrite: "auto",
+          }),
+        );
+      }
+    });
+    return () => tweens.forEach((tween) => tween.kill());
+  }, [selectedIndex, reducedMotion]);
+
+  /* Keyboard shortcuts and selection navigation for the four menu entries. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      const target = e.target;
+      if (
+        target instanceof HTMLElement &&
+        ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (selectedIndex === null) return;
+        e.preventDefault();
+        const direction = e.key === "ArrowDown" ? 1 : -1;
+        const nextIndex =
+          (selectedIndex + direction + HERO_COMMANDS.length) %
+          HERO_COMMANDS.length;
+        setSelectedIndex(nextIndex);
+        buttonRefs.current[nextIndex]?.focus();
+        return;
+      }
+
+      if (e.key === "Enter") {
+        if (selectedIndex === null) return;
+        e.preventDefault();
+        buttonRefs.current[selectedIndex]?.click();
+        return;
+      }
+
       const idx = parseInt(e.key, 10);
       if (idx >= 1 && idx <= HERO_COMMANDS.length) {
         e.preventDefault();
-        navigate(HERO_COMMANDS[idx - 1].path);
+        buttonRefs.current[idx - 1]?.click();
       }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [navigate]);
+  }, [selectedIndex]);
 
   return (
     <Screen className="bg-ink text-paper">
@@ -94,12 +202,21 @@ export function Home() {
           className="absolute left-3 top-[45%] z-20 -translate-y-1/2 sm:left-[5%] sm:top-1/2 lg:left-[6%]"
         >
           <ol
-            className={`flex w-[min(88vw,480px)] flex-col gap-3 sm:gap-4${entered ? " hero-commands--enter" : ""}`}
+            className="flex w-[min(88vw,480px)] flex-col gap-3 sm:gap-4"
           >
             {HERO_COMMANDS.map((command, i) => (
               <CommandNavItem
                 key={command.id}
                 {...command}
+                index={i}
+                selected={selectedIndex === i}
+                onSelect={setSelectedIndex}
+                setButtonRef={(index, element) => {
+                  buttonRefs.current[index] = element;
+                  itemRefs.current[index] =
+                    element?.closest<HTMLLIElement>(".hero-command-item") ??
+                    null;
+                }}
                 rotation={MENU_CHAOS[i].rotation}
                 offsetX={MENU_CHAOS[i].offsetX}
                 widthPx={MENU_CHAOS[i].widthPx}
