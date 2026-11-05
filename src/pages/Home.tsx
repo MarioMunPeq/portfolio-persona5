@@ -173,8 +173,8 @@ export function Home() {
           aria-hidden="true"
         >
           <source
-            src={`${import.meta.env.BASE_URL}videos/metro-background.mp4`}
-            type="video/mp4"
+            src={`${import.meta.env.BASE_URL}videos/metro-background.webm`}
+            type="video/webm"
           />
         </video>
 

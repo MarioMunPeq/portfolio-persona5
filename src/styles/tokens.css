@@ -3118,6 +3118,7 @@ html {
   font-family: var(--p5-font-hatty);
   font-size: var(--p5-clock-size);
   font-weight: 400;
+  line-height: 1;
   color: #fff;
   letter-spacing: -0.02em;
   white-space: nowrap;

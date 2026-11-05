@@ -1093,11 +1093,32 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "",
-        alt: "Repository Library con el shell del cliente de Steam",
+        src: "/images/projects/repository-library/1.png",
+        alt: "Pantalla de inicio de Repository Library con la biblioteca de portfolios",
       },
     ],
-    screenshots: null,
+    screenshots: [
+      {
+        src: "/images/projects/repository-library/Inicio.png",
+        alt: "Biblioteca de portfolios en Repository Library",
+        caption: "Biblioteca",
+      },
+      {
+        src: "/images/projects/repository-library/Tienda.png",
+        alt: "Página de tienda de un proyecto en Repository Library",
+        caption: "Tienda",
+      },
+      {
+        src: "/images/projects/repository-library/Detalles%20Juego.png",
+        alt: "Vista de detalles de un juego en Repository Library",
+        caption: "Detalles del juego",
+      },
+      {
+        src: "/images/projects/repository-library/Perfil.png",
+        alt: "Perfil de usuario en Repository Library",
+        caption: "Perfil",
+      },
+    ],
     features: [
       {
         name: "Shell calcado del cliente de escritorio",
