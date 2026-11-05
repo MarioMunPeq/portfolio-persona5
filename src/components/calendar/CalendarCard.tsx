@@ -2,14 +2,17 @@
  * Tarjeta individual de fecha del calendario tipo Persona 5.
  *
  * Cada composición es un lockup vertical indivisible:
- *   Día numérico (ARRIBA) + PNG del día de la semana (DEBAJO, solapado).
+ *   - Wrapper exterior (position:absolute, se anima SOLO en y durante la caída).
+ *   - Contenido interior (número + PNG del día de la semana): rotación ESTÁTICA
+ *     en CSS, nunca se anima su rotación/x/scale/transformOrigin durante la caída.
+ *
  * El número usa dos capas position:absolute superpuestas con fuente p5hatty:
  *   - Capa trasera (z-index:1): texto blanco con -webkit-text-stroke blanco grueso
  *     (0.24em) que crea un halo BLANCO PURO ancho.
  *   - Capa delantera (z-index:2): mismo texto en color según el día, con stroke fino
- *     (0.03em) del mismo color para engordar el trazo.
- * La imagen del día de la semana va DELANTE (z-index:3), centrada horizontalmente,
- * empezando en el 85% de la altura del número (tapa su ~20% inferior).
+ *     (0.03em) del mismo color.
+ * La imagen del día de la semana va DELANTE (z-index:3), empezando en el 85% de la
+ * altura del número (tapa su ~20% inferior).
  *
  * La sombra negra (drop-shadow) se aplica sobre el contenedor de las capas del
  * número, NO sobre el texto blanco.
@@ -21,6 +24,7 @@
  *
  * La rotación del número y de la imagen es diferente por cada día.
  */
+import { forwardRef, type Ref } from "react";
 import type { CalendarDate } from "../../lib/calendar";
 import { calendarAsset } from "../../lib/calendar";
 import { useMediaQuery } from "../../lib/use-media-query";
@@ -29,6 +33,19 @@ interface CalendarCardProps {
   date: CalendarDate;
   /** Índice dentro del array de siete fechas (0-6). */
   index: number;
+  /** Ref al wrapper exterior (el único elemento que se anima en y durante la caída). */
+  wrapperRef?: Ref<HTMLDivElement>;
+  /** Ref al contenido interior (número + imagen, rotación estática). */
+  contentRef?: Ref<HTMLDivElement>;
+}
+
+/** Asigna una ref de forma segura (acepta callback o RefObject). */
+function assignRef<T>(ref: Ref<T> | undefined, instance: T | null): void {
+  if (typeof ref === "function") {
+    (ref as (instance: T | null) => void)(instance);
+  } else if (ref) {
+    (ref as React.RefObject<T | null>).current = instance;
+  }
 }
 
 /** Color de relleno del número según el día de la semana (índice JS: 0=Dom…6=Sáb). */
@@ -86,17 +103,9 @@ const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   6: 110, // hoy+4 (buffer)
 };
 
-/** Posición vertical del nombre como fracción de la altura del número.
- *  Valor mayor = nombre más bajo = menos tapado del número. */
-const NAME_OVERLAP_TOP = 0.85;
+const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwardedRef) => {
+  const { date, index, wrapperRef, contentRef } = props;
 
-/** Grosor del contorno blanco de la capa trasera (en em). */
-const OUTLINE_WIDTH_EM = 0.24;
-
-/** Grosor del trazo del relleno de la capa delantera (en em). */
-const FILL_STROKE_EM = 0.03;
-
-export function CalendarCard({ date, index }: CalendarCardProps) {
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   const isMobile = useMediaQuery("(max-width: 639px)");
   const widthScale = isMobile ? 0.45 : isTablet ? 0.8 : 1;
@@ -108,25 +117,19 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
   const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
   const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
 
-  // Grosor del contorno proporcional al tamaño del número (en em):
-  //   - capa trasera: OUTLINE_WIDTH_EM (borde blanco ancho)
-  //   - capa delantera: FILL_STROKE_EM (engrosar trazo del color)
-  const backStrokeEm = OUTLINE_WIDTH_EM;
-  const frontStrokeEm = FILL_STROKE_EM;
+  // Grosor del contorno proporcional al tamaño del número (en em).
+  const backStrokeEm = 0.24;
+  const frontStrokeEm = 0.03;
 
-  // La imagen empieza en NAME_OVERLAP_TOP de la altura del número (tapa su ~20% inferior).
-  const weekdayTopPx = fontSize * NAME_OVERLAP_TOP;
+  // La imagen empieza en el 85% de la altura del número (tapa su ~20% inferior).
+  const weekdayTopPx = fontSize * 0.85;
 
-  // Contenedor de las capas del número: position:relative para que las capas
-  // se posicionen respecto a él, y filter drop-shadow para la sombra negra.
-  const numberContainerStyle: React.CSSProperties = {
-    position: "relative",
-    width: "100%",
-    height: `${fontSize}px`,
-    filter: "drop-shadow(0.03em 0.03em 0 #000)",
+  const handleWrapperRef = (el: HTMLDivElement | null) => {
+    assignRef(wrapperRef, el);
+    assignRef(forwardedRef, el);
   };
 
-  // Capa trasera: contorno blanco ancho (z-index:1)
+  // Capa trasera: halo blanco ancho (z-index:1)
   const backStyle: React.CSSProperties = {
     position: "absolute",
     top: 0,
@@ -140,6 +143,7 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
     WebkitTextFillColor: "#fff",
     WebkitTextStroke: `${backStrokeEm}em #fff`,
     paintOrder: "stroke fill",
+    filter: "drop-shadow(4px 4px 0 #000)",
     transform: `rotate(${numberRotation}deg)`,
     zIndex: 1,
     whiteSpace: "nowrap",
@@ -179,18 +183,23 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
 
   return (
     <div
-      aria-label={`${date.weekdayLabel} ${date.day}`}
-      data-calendar-card
-      data-index={String(index)}
       className="calendar-card pointer-events-none"
+      ref={handleWrapperRef}
       style={{
-        width: `${width}px`,
         position: "relative",
-        // Sin flex-direction:column ni align-items; usamos position:absolute
+        width: `${width}px`,
+        height: "auto",
       }}
     >
-      {/* Contenedor de las capas del número (arriba) */}
-      <div style={numberContainerStyle}>
+      {/* Contenido interior: rotación estática (nunca se anima durante la caída) */}
+      <div
+        ref={contentRef}
+        style={{
+          position: "relative",
+          transform: `rotate(${numberRotation}deg)`,
+          width: "100%",
+        }}
+      >
         {/* Día numérico — capa trasera: halo blanco ancho (z-index:1) */}
         <span className="calendar-date-number" aria-hidden="true" style={backStyle}>
           {date.day}
@@ -200,20 +209,22 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
         <span className="calendar-date-number" aria-hidden="true" style={frontStyle}>
           {date.day}
         </span>
-      </div>
 
-      {/* Imagen del día de la semana (PNG con tipografía original) — DELANTE (z-index:3) */}
-      <img
-        src={src}
-        alt=""
-        loading="eager"
-        decoding="async"
-        className="calendar-weekday-img"
-        aria-hidden="true"
-        style={weekdayStyle}
-      />
+        {/* Imagen del día de la semana (PNG con tipografía original) — DELANTE (z-index:3) */}
+        <img
+          src={src}
+          alt=""
+          loading="eager"
+          decoding="async"
+          className="calendar-weekday-img"
+          aria-hidden="true"
+          style={weekdayStyle}
+        />
+      </div>
     </div>
   );
-}
+});
 
 CalendarCard.displayName = "CalendarCard";
+
+export { CalendarCard };

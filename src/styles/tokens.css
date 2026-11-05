@@ -2698,3 +2698,457 @@ html {
 @media (max-width: 639px) and (orientation: landscape) {
   .calendar-knife { width: 100px; }
 }
+
+/* ================================================================
+   TOPBAR / BOTTOMBAR — Persona 5 (menú principal)
+   Placas .p5-plate: técnica EXACTAMENTE igual que los botones del
+   menú principal (Perfil, Inventario…): clip-path poligonal, borde
+   blanco (capa exterior #fff + capa interior #111 con clip-path
+   inset 3px), sombra roja en wrapper padre, rotación pequeña distinta
+   por pieza. Sin fondo sólido de barra; solo degradado negro suave.
+   Todas las medidas en variables CSS (clamp).
+   ================================================================ */
+
+:root {
+  --p5-red: #e8112d;
+  --p5-plate-bg: #111111;
+  --p5-plate-border: #ffffff;
+  --p5-shadow: drop-shadow(5px 5px 0 var(--p5-red));
+  --p5-font-hatty: var(--font-hatty);
+  --p5-font-sans: var(--font-sans);
+  /* Polígono de esquinas cortadas en diagonal (misma técnica que .hero-cmd). */
+  --p5-cut: polygon(5% 0%, 100% 0%, 100% 95%, 95% 100%, 0% 100%, 0% 5%);
+  /* Rotación por pieza (se inyecta en línea). */
+  --p5-rot: 0deg;
+  /* Tamaños legibles (REGLA 2). */
+  --p5-title: clamp(40px, 3.4vw, 72px);        /* títulos p5hatty */
+  --p5-text-sm: clamp(14px, 0.95vw, 20px);     /* texto pequeño */
+  --p5-pad: clamp(10px, 0.8vw, 18px) clamp(18px, 1.6vw, 36px);
+  --p5-margin: clamp(20px, 2vw, 44px);         /* margen a bordes de pantalla */
+}
+
+/* ── Wrapper con sombra roja desplazada (REGLA 1: la sombra va en el padre) ── */
+.p5-plate-wrap {
+  display: inline-flex;
+  filter: var(--p5-shadow);
+}
+
+/* ── Placa: igual que .hero-cmd (fondo #111, borde blanco, esquinas cortadas) ── */
+.p5-plate {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: var(--p5-plate-bg); /* fondo #111 */
+  border: 2px solid var(--p5-plate-border); /* borde blanco 2px */
+  clip-path: var(--p5-cut);
+  transform: rotate(var(--p5-rot)) skewX(-12deg);
+}
+
+/* Capa interior #111 (reforzada) con el mismo clip-path, inset 3px → el borde blanco
+   queda como marco alrededor del interior oscuro. Se mantiene para cumplir la regla
+   de doble capa, pero el borde ya se declara en .p5-plate por robustez visual. */
+.p5-plate__fill {
+  position: absolute;
+  inset: 3px;
+  background: var(--p5-plate-bg);
+  clip-path: var(--p5-cut);
+  transform: skewX(12deg);
+}
+
+/* Contenido contra-inclinado para que se lea recto. */
+.p5-plate__inner {
+  position: relative;
+  z-index: 1;
+  transform: skewX(12deg);
+  padding: var(--p5-pad);
+}
+
+/* ── Contenedores de barra: sin fondo sólido, solo degradado negro 0.55→0 ── */
+.p5-topbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 50;
+  padding: 0 var(--p5-margin);
+  /* Degradado negro suave solo en el borde superior (~120px de influencia visual). */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 120px);
+  pointer-events: auto;
+}
+.p5-bottombar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 0 var(--p5-margin);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 120px);
+  pointer-events: auto;
+}
+.p5-topbar__inner,
+.p5-bb-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* ── Entrada: deslizamiento desde el borde, 0.5s ease-out, escalonado 80ms ── */
+@keyframes p5-slide-down {
+  from { opacity: 0; transform: translateY(-120%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes p5-slide-up {
+  from { opacity: 0; transform: translateY(120%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.p5-enter--top { animation: p5-slide-down 0.5s ease-out both; }
+.p5-enter--bottom { animation: p5-slide-up 0.5s ease-out both; }
+
+/* ── TOPBAR ─── */
+.p5-mm {
+  font-family: var(--p5-font-hatty);
+  font-size: var(--p5-title);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  display: block;
+}
+.p5-mm-sub {
+  font-family: var(--p5-font-sans);
+  font-size: var(--p5-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  display: block;
+  margin-top: 8px;
+}
+
+/* Fecha derecha — reutiliza la técnica de CalendarCard: número con halo blanco
+   (capa trasera blanco stroke ancho + capa delantera negro) y la imagen del
+   día solapándolo. Sin placa. */
+.p5-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.p5-day {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  line-height: 1;
+  /* Ancho explícito para que las capas absolutas (halo + frente + imagen)
+     no se desborden ni colapsen el contenedor. */
+  min-width: calc(var(--p5-title) * 1.15);
+}
+.p5-day__layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-family: var(--p5-font-hatty);
+  font-weight: 400;
+  white-space: nowrap;
+  letter-spacing: -0.03em;
+  paint-order: stroke fill;
+}
+.p5-day__back {
+  z-index: 1;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  -webkit-text-stroke: 0.28em #fff;
+  font-size: var(--p5-title);
+}
+.p5-day__front {
+  z-index: 2;
+  color: #111;
+  -webkit-text-fill-color: #111;
+  -webkit-text-stroke: 0.04em #111;
+  font-size: var(--p5-title);
+}
+.p5-day__img {
+  position: absolute;
+  top: 78%;
+  left: 0;
+  width: 100%;
+  height: auto;
+  transform: rotate(-2deg);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ── BOTTOMBAR ─── */
+/* Reloj centrado: HH:MM rojo, tamaño medio, ♦ parpadeando 1↔0.3.
+   Se ancla por abajo con el mismo margen que las demás piezas para no
+   ser cortado por el borde inferior. */
+.p5-bb-clock {
+  position: absolute;
+  left: 50%;
+  bottom: var(--p5-margin);
+  transform: translateX(-50%);
+  font-family: var(--p5-font-hatty);
+  font-size: clamp(16px, 1.1vw, 22px);
+  font-weight: 400;
+  color: var(--p5-red);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.p5-bb-clock__dot {
+  display: inline-block;
+  animation: p5-blink 1.6s ease-in-out infinite alternate;
+}
+@keyframes p5-blink {
+  from { opacity: 1; }
+  to   { opacity: 0.3; }
+}
+
+/* Redes sociales: placas .p5-plate con icono + texto + imagen de mando. */
+.p5-bb-social {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* separación de 16px entre GitHub y LinkedIn */
+}
+.p5-plate--social {
+  padding: var(--p5-pad);
+  gap: 10px;
+  font-family: var(--p5-font-sans);
+  font-size: var(--p5-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+  transition: transform 150ms ease, background-color 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.p5-plate--social:hover {
+  background: var(--p5-red);
+  transform: translate(3px, -3px);
+}
+.p5-plate--social .p5-social__icon {
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+}
+.p5-plate--social .p5-social__btnimg {
+  height: 1.6em;
+  width: auto;
+  display: inline-block;
+  margin-left: 8px;
+  /* Las teclas L3/R3 son oscuras; invert para que se vean blancas sobre #111. */
+  filter: invert(1);
+}
+
+/* ── Menú de pistas — lista encima de la placa, estética .p5-plate ── */
+.p5-track-selector-wrap {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+  max-width: 340px;
+  animation: p5-slide-up 0.2s ease-out both;
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.p5-track-selector__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.p5-track-selector__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: clamp(8px, 0.6vw, 12px) clamp(14px, 1.2vw, 24px);
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--p5-font-sans);
+  font-size: var(--p5-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.1s, background-color 0.1s;
+}
+.p5-track-selector__item:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.p5-track-selector__item--active {
+  color: var(--p5-red);
+}
+.p5-track-selector__item--active::before {
+  content: "♦";
+  color: var(--p5-red);
+  margin-right: 6px;
+  font-family: var(--p5-font-hatty);
+  font-size: clamp(14px, 0.95vw, 20px);
+}
+
+/* ── Reproductor como placa (MusicPlayer en modo flat, sin su propio fondo) ── */
+.p5-bb-player {
+  width: auto;
+}
+
+/* ── Responsive móvil (<768px): oculta reloj, placas al 75%, apila redes ── */
+@media (max-width: 767px) {
+  .p5-bb-clock { display: none !important; }
+  .p5-topbar .p5-plate,
+  .p5-bottombar .p5-plate {
+    transform: rotate(var(--p5-rot)) skewX(-12deg) scale(0.75);
+    transform-origin: left center;
+  }
+  .p5-plate--social {
+    transform-origin: left center;
+  }
+  .p5-bb-inner {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .p5-bb-social {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+  .p5-plate--social {
+    width: 100%;
+    justify-content: center;
+  }
+  .p5-topbar__inner,
+  .p5-bb-inner {
+    justify-content: center;
+  }
+  .p5-date {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p5-enter--top,
+  .p5-enter--bottom {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ================================================================
+   MUSIC PLAYER — modo placa (flat) para BottomBar
+   ================================================================ */
+
+.bgm-player {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  flex: none;
+  width: auto;
+  min-width: auto;
+  user-select: none;
+  animation: none;
+}
+
+.bgm-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  /* En modo flat el fondo/borde/clip-path lo da el wrapper .p5-plate. */
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: var(--p5-font-sans);
+  font-size: var(--p5-text-sm);
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+
+/* Icono ♪ rojo (expandir / contraer). */
+.bgm-bar__label {
+  color: var(--p5-red);
+  font-size: var(--p5-title);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.bgm-bar__label--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: inherit;
+  line-height: 1;
+}
+.bgm-bar__label--btn:focus-visible {
+  outline: 2px solid var(--p5-red);
+  outline-offset: 2px;
+}
+
+/* Contador 01/05 — p5hatty, texto pequeño (no enorme). */
+.bgm-bar__track {
+  font-family: var(--p5-font-hatty);
+  font-size: var(--p5-text-sm);
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: -0.02em;
+  opacity: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Título de pista con marquee opcional — tamaño medio, ocupa el espacio restante. */
+.bgm-bar__title-wrap {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+.bgm-bar__title {
+  font-family: var(--p5-font-sans);
+  font-size: clamp(16px, 1.1vw, 22px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: inline-block;
+}
+.bgm-bar__title.marquee {
+  animation: p5-marquee 14s linear infinite;
+}
+@keyframes p5-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-100% - 24px)); }
+}
+
+/* Pausa en rojo. */
+.bgm-bar__play {
+  color: var(--p5-red);
+  font-size: var(--p5-text-sm);
+  line-height: 1;
+  padding: 4px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.bgm-bar__play:focus-visible {
+  outline: 2px solid var(--p5-red);
+  outline-offset: 2px;
+}
+
+/* Ecualizador en rojo. */
+.bgm-viz__bar { background: var(--p5-red); }
+
+/* Sin separador visual. */
+.bgm-bar__sep { display: none; }

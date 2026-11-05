@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
 import { TopBar } from "../ui/TopBar";
 import { BottomBar } from "../ui/BottomBar";
 import { Cursor } from "./Cursor";
@@ -16,8 +15,6 @@ interface LayoutProps {
  * global, el cargador, el grano y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {
-  const { pathname } = useLocation();
-
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
       <a
@@ -27,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <CalendarTransition />
-      <TopBar static={pathname === "/"} />
+      <TopBar />
       <BottomBar />
       <Grain />
       <Cursor />

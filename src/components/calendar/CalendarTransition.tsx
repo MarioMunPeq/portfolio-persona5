@@ -17,21 +17,40 @@
  *     - Pausa ~200ms en negro.
  *     - Overlay fade-out 1→0 (~0.8s) revelando el home.
  *
+ * ANIMACIÓN DE CAÍDA DE LOS DÍAS (una sola gsap.timeline):
+ *   - Cada día tiene un wrapper exterior (position:absolute, left:0, top:0
+ *     dentro del ancla CSS que define su posición final). GSAP anima SOLO
+ *     la propiedad y del wrapper. Nada de x, left, top, rotation o scale.
+ *   - La rotación de cada día va fija en el elemento interior (CSS estático).
+ *   1. Los 6 días que NO son hoy caen TODOS A LA VEZ (stagger: 0), desde
+ *      fuera de pantalla por arriba (y: -(viewport height + 200px)) hasta
+ *      y: 0, duration 0.5s, ease "power4.in". Todos aterrizan al mismo
+ *      instante: PUM.
+ *   2. En el impacto: shake de pantalla (±8px, 0.35s, amortiguado) y los
+ *      números de esos 6 días tiemblan (±3px, 0.3s) sobre su contenido
+ *      interior, volviendo exactamente a su posición.
+ *   3. Con el impacto (≈0.08s después), cae HOY en el centro por su propio
+ *      peso: y desde fuera de pantalla hasta 0, vertical, 0.5s,
+ *      "power4.in", con un shake más fuerte al aterrizar (±12px, 0.45s)
+ *      y rebote mínimo.
+ *   4. onComplete de la timeline: pausa y salida a negro ya existentes.
+ *
  * El cuchillo está fuera de alcance (por requisito) y no se renderiza.
  *
  * Interacción:
  *   Clic en cualquier parte del overlay, Escape o Space salta la
  *   introducción y revela el home inmediatamente.
  *
- * ARQUITECTURA DOM (ver tokens.css §CALENDAR TRANSITION):
- *   .calendar-anchor   — posición final de la fecha (left/top %),
- *                        centrado con translate(-50%, -50%) en CSS.
- *                        GSAP NO lo anima.
- *   .calendar-visual   — envoltorio animado por GSAP (x/y/scale/rotation).
- *                        Está dentro del ancla, así sus traslaciones son
- *                        relativas al centro de la composición.
- *   .calendar-card     — número (arriba) + PNG del weekday (abajo),
- *                        centrados como un solo lockup vertical.
+ * ARQUITECTURA DOM:
+ *   .calendar-ancla   — posición final de la fecha (left/top % sobre el
+ *                        contenedor del calendario) con translate(-50%,-50%)
+ *                        para centrar la composición sobre el punto.
+ *                        Definido en CSS; GSAP NO lo toca.
+ *   .calendar-card    — composición de la fecha dentro del ancla. GSAP anima
+ *                        SOLO su y durante la caída. Nada de x, left, top,
+ *                        rotation ni scale.
+ *   .calendar-content — contenido interior (número + imagen), rotación
+ *                        estática en CSS.
  *
  * Cada fecha muestra: hoy-2, hoy-1 (ayer), hoy, hoy+1, hoy+2, hoy+3,
  * hoy+4 (buffer a la derecha para continuidad del desplazamiento).
@@ -63,9 +82,12 @@ const FADE_IN_MS = 800;   // overlay fade-in al salir (opacity 0→1)
 const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 
 /**
- * Desplazamiento horizontal inicial (puntos porcentuales del viewport).
+ * Constantes de la animación de caída (ajustar a mano).
  */
-const INITIAL_SHIFT_PCT = 22;
+const FALL_MS = 500;      // duración de la caída de cada día (ms)
+const SHAKE_PX = 8;       // desplazamiento de temblor de pantalla normal (px)
+const SHAKE_TODAY_PX = 12; // desplazamiento de temblor de pantalla para hoy (px)
+const SHAKE_MS = 350;     // duración del temblor (ms)
 
 /**
  * POSICIONES FINALES (después del desplazamiento hacia la izquierda):
@@ -111,9 +133,6 @@ const T = {
   datesStart: 0.55,
 };
 
-/** Tiempo de pausa tras el desplazamiento antes de iniciar la salida. */
-const HOLD_AFTER_SHIFT_S = 0.5;
-
 /** Tiempo máximo antes de forzar la salida aunque algo falle. */
 const SAFETY_MS = 10000;
 
@@ -142,6 +161,7 @@ export function CalendarTransition() {
   const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const visualRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
+  const contentRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
 
   const isMountedRef = useRef(false);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -167,7 +187,7 @@ export function CalendarTransition() {
 
   /**
    * Camino de finalización idempotente. Usado por:
-   *   - Finalización normal de la secuencia de salida (onComplete)
+   *   - Finalización normal de la secuencia de salida (onComplete de la timeline)
    *   - Clic / Escape / Space sobre el overlay (salto de introducción)
    *   - Temporizador de seguridad (10 s)
    */
@@ -310,7 +330,7 @@ export function CalendarTransition() {
     });
   }, []);
 
-  // ---------- Animación del calendario (GSAP timeline) ----------
+  // ---------- Animación de caída del calendario (GSAP timeline) ----------
   useEffect(() => {
     if (
       !showCalendar ||
@@ -321,6 +341,7 @@ export function CalendarTransition() {
       !bgRef.current ||
       !containerRef.current ||
       visualRefs.current.some((ref) => ref === null) ||
+      contentRefs.current.some((ref) => ref === null) ||
       timelineCreatedRef.current
     ) {
       return;
@@ -336,9 +357,7 @@ export function CalendarTransition() {
       }
     }, SAFETY_MS);
 
-    const positions = CARD_POSITIONS[breakpoint];
-    const vw = window.innerWidth;
-    const px = (pct: number) => vw * (pct / 100);
+    const vh = window.innerHeight;
 
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
     tlRef.current = tl;
@@ -358,136 +377,119 @@ export function CalendarTransition() {
       T.bgStart + 0.4
     );
 
-    // ---------- ACT 2 — LAS FECHAS QUE NO SON HOY CAEN PRIMERO ----------
-    // Los seis índices que no son hoy caen todos a la vez, sin
-    // desplazamiento lateral, directamente a su posición final.
-    const fallDuration = 0.4;
+    // ---------- Estado inicial: todos los días fuera de pantalla por arriba ----------
+    // GSAP solo toca la y de cada wrapper; así no hay destello de días ya en su sitio.
+    const allWrappers = visualRefs.current.filter(
+      (ref): ref is HTMLDivElement => ref !== null
+    );
+    tl.set(allWrappers, { y: -(vh + 200) }, 0);
+
+    // ---------- ACT 2 — LOS 6 DÍAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
+    // Caen simultáneamente (sin stagger) desde fuera de pantalla, solo en y,
+    // hasta su posición final fija en CSS. PUM: aterrizan al mismo instante.
+    const fallDuration = FALL_MS / 1000;
     const otherIndices = [0, 1, 3, 4, 5, 6];
+    const fallStart = T.datesStart;
+
     otherIndices.forEach((i) => {
-      const ref = visualRefs.current[i];
-      if (!ref) return;
-      const pos = positions[i];
+      const wrapper = visualRefs.current[i];
+      if (!wrapper) return;
 
+      // Caída vertical desde fuera de pantalla hasta y: 0 (posición final en CSS).
       tl.fromTo(
-        ref,
-        {
-          x: px(INITIAL_SHIFT_PCT),
-          y: -750,
-          scale: 0.15,
-          rotation: -7,
-          autoAlpha: 0,
-        },
-        {
-          x: px(INITIAL_SHIFT_PCT),
-          y: 0,
-          scale: pos.scale,
-          rotation: 0,
-          autoAlpha: 1,
-          duration: fallDuration,
-          ease: "power4.in",
-          clearProps: "rotation",
-        },
-        T.datesStart
-      );
-
-      tl.to(
-        ref,
-        { scaleY: 0.75, scaleX: 1.2, duration: 0.09, ease: "power2.in" },
-        T.datesStart + fallDuration
-      );
-
-      tl.to(
-        ref,
-        { scaleY: 1.08, scaleX: 0.92, duration: 0.14, ease: "power2.out" },
-        T.datesStart + fallDuration + 0.09
-      );
-
-      tl.to(
-        ref,
-        { scaleY: pos.scale, scaleX: pos.scale, duration: 0.16, ease: "power2.out" },
-        T.datesStart + fallDuration + 0.09 + 0.14
+        wrapper,
+        { y: -(vh + 200) },
+        { y: 0, duration: fallDuration, ease: "power4.in" },
+        fallStart
       );
     });
 
-    // Sacudida de pantalla sincronizada con el impacto de las fechas
-    tl.to(
-      containerRef.current,
-      {
-        x: () => (Math.random() > 0.5 ? 16 : -16),
-        y: () => (Math.random() > 0.5 ? 14 : -14),
-        duration: 0.025,
-        repeat: 14,
-        yoyo: true,
-        ease: "none",
-      },
-      T.datesStart + fallDuration
-    );
+    // Momento del impacto (todas las caídas terminan al mismo instante).
+    const impactTime = fallStart + fallDuration;
 
-    tl.add("otherDatesLanded");
+    // ---------- Temblor tras el impacto ----------
+    // Pantalla: ±SHAKE_PX durante SHAKE_MS (0.35s), amortiguado, vuelve a 0.
+    const shakeThird = SHAKE_MS / 3 / 1000;
+    tl.to(containerRef.current, {
+      keyframes: [
+        { x: SHAKE_PX, duration: shakeThird, ease: "power2.in" },
+        { x: -SHAKE_PX, duration: shakeThird, ease: "power2.inOut" },
+        { x: 0, duration: shakeThird, ease: "power2.out" },
+      ],
+    }, impactTime);
+
+    // Números de los 6 días: ±3px durante 0.3s sobre el contenido interior,
+    // volviendo exactamente a su posición (x: 0). GSAP no toca rotación del
+    // contenido: solo tiembla en su lugar.
+    const trembleDur = 0.3;
+    const trembleThird = trembleDur / 3;
+    otherIndices.forEach((i) => {
+      const content = contentRefs.current[i];
+      if (!content) return;
+      tl.to(content, {
+        keyframes: [
+          { x: 3, duration: trembleThird, ease: "power2.in" },
+          { x: -3, duration: trembleThird, ease: "power2.inOut" },
+          { x: 0, duration: trembleThird, ease: "power2.out" },
+        ],
+      }, impactTime);
+    });
 
     // ---------- ACT 3 — HOY CAE ÚLTIMO ----------
+    // ≈0.08s después del impacto, hoy cae en el centro por su propio peso.
     const hoyIndex = 2;
-    const hoyRef = visualRefs.current[hoyIndex];
-    const hoyFallDuration = 0.3;
-    const hoyPos = positions[hoyIndex];
+    const hoyWrapper = visualRefs.current[hoyIndex];
+    const hoyContent = contentRefs.current[hoyIndex];
+    const hoyFallDuration = fallDuration;
+    const hoyTime = impactTime + 0.08;
 
-    if (hoyRef) {
+    if (hoyWrapper) {
+      // Caída de hoy: solo en y, desde fuera de pantalla hasta 0.
       tl.fromTo(
-        hoyRef,
-        {
-          x: px(INITIAL_SHIFT_PCT),
-          y: -750,
-          scale: 0.15,
-          rotation: -14,
-          autoAlpha: 0,
-        },
-        {
-          x: px(INITIAL_SHIFT_PCT),
-          y: 0,
-          scale: hoyPos.scale,
-          rotation: 0,
-          autoAlpha: 1,
-          duration: hoyFallDuration,
-          ease: "power4.in",
-          clearProps: "rotation",
-        },
-        T.datesStart + fallDuration + 0.09 + 0.14 + 0.16
+        hoyWrapper,
+        { y: -(vh + 200) },
+        { y: 0, duration: hoyFallDuration, ease: "power4.in" },
+        hoyTime
       );
 
+      // Rebote mínimo al llegar.
+      const reboundPx = 4;
+      const reboundDur = 0.08;
+      const hoyLandTime = hoyTime + hoyFallDuration;
+      tl.to(hoyWrapper, { y: reboundPx, duration: reboundDur, ease: "power2.in" }, hoyLandTime);
       tl.to(
-        hoyRef,
-        { scaleY: 0.75, scaleX: 1.2, duration: 0.09, ease: "power2.in" },
-        T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration
+        hoyWrapper,
+        { y: 0, duration: reboundDur, ease: "power2.out" },
+        hoyLandTime + reboundDur
       );
 
-      tl.to(
-        hoyRef,
-        { scaleY: 1.08, scaleX: 0.92, duration: 0.14, ease: "power2.out" },
-        T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration + 0.09
-      );
+      // ---------- Segundo temblor al aterrizar hoy ----------
+      // Pantalla más fuerte (±SHAKE_TODAY_PX, 0.45s) y su número (±3px, 0.3s).
+      const hoyFinalTime = hoyLandTime + reboundDur + reboundDur;
+      const todayShakeThird = 0.45 / 3;
 
-      tl.to(
-        hoyRef,
-        { scaleY: hoyPos.scale, scaleX: hoyPos.scale, duration: 0.16, ease: "power2.out" },
-        T.datesStart + fallDuration + 0.09 + 0.14 + 0.16 + hoyFallDuration + 0.09 + 0.14
-      );
+      tl.to(containerRef.current, {
+        keyframes: [
+          { x: SHAKE_TODAY_PX, duration: todayShakeThird, ease: "power2.in" },
+          { x: -SHAKE_TODAY_PX, duration: todayShakeThird, ease: "power2.inOut" },
+          { x: 0, duration: todayShakeThird, ease: "power2.out" },
+        ],
+      }, hoyFinalTime);
+
+      if (hoyContent) {
+        tl.to(hoyContent, {
+          keyframes: [
+            { x: 3, duration: trembleThird, ease: "power2.in" },
+            { x: -3, duration: trembleThird, ease: "power2.inOut" },
+            { x: 0, duration: trembleThird, ease: "power2.out" },
+          ],
+        }, hoyFinalTime);
+      }
+
+      // ---------- Final de la timeline ----------
+      // Lanza la pausa y la salida a negro (startExit).
+      tl.to({}, { duration: 0, onComplete: startExit }, hoyFinalTime + todayShakeThird * 3);
     }
-
-    tl.add("hoyLanded");
-    tl.add("allDatesLanded");
-
-    // Pausa antes del desplazamiento (posición relativa al final real de las fechas)
-    tl.add("calendarShift", "+=" + 1.0);
-
-    // ---------- ACT 4 — EL CALENDARIO SE DESPLAZA HACIA LA IZQUIERDA ----------
-    tl.to(
-      visualRefs.current.filter((ref): ref is HTMLDivElement => ref !== null),
-      { x: 0, duration: 1.0, ease: "power2.inOut" },
-      "calendarShift"
-    );
-
-    // ---------- SALIDA: iniciar secuencia de overlay ----------
-    tl.to({}, { duration: HOLD_AFTER_SHIFT_S, onComplete: startExit });
 
     return () => {
       isMountedRef.current = false;
@@ -549,20 +551,24 @@ export function CalendarTransition() {
               return (
                 <div
                   key={index}
-                  className="calendar-anchor"
+                  className="calendar-ancla"
                   style={{
+                    position: "absolute",
                     left: `${pos.x}%`,
                     top: `${pos.y}%`,
+                    transform: "translate(-50%, -50%)",
                   } as React.CSSProperties}
                 >
-                  <div
-                    ref={(el) => {
+                  <CalendarCard
+                    date={date}
+                    index={index}
+                    wrapperRef={(el: HTMLDivElement | null) => {
                       visualRefs.current[index] = el;
                     }}
-                    className="calendar-visual"
-                  >
-                    <CalendarCard date={date} index={index} />
-                  </div>
+                    contentRef={(el: HTMLDivElement | null) => {
+                      contentRefs.current[index] = el;
+                    }}
+                  />
                 </div>
               );
             })}

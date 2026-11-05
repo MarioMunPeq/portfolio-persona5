@@ -25,64 +25,7 @@ function trackUrl(file: string): string {
 let sessionDispatched = false;
 
 /* ------------------------------------------------------------------ */
-/*  Track Selector                                                     */
-/* ------------------------------------------------------------------ */
-
-interface SelectorProps {
-  current: number;
-  onSelect: (i: number) => void;
-  onClose: () => void;
-}
-
-function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const onMouse = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("mousedown", onMouse);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onMouse);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      ref={ref}
-      className="bgm-selector"
-      role="listbox"
-      aria-label="Select track"
-    >
-      {TRACKS.map((t, i) => (
-        <button
-          key={t.file}
-          role="option"
-          aria-selected={i === current}
-          className={`bgm-selector__item${i === current ? " bgm-selector__item--active" : ""}`}
-          onClick={() => {
-            onSelect(i);
-            onClose();
-          }}
-        >
-          <span className="bgm-selector__num">
-            {String(i + 1).padStart(2, "0")}
-          </span>
-          <span className="bgm-selector__title">{t.title}</span>
-          {i === current && <span className="bgm-selector__now">▶</span>}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Visualizer — 4 bars driven by Web Audio API AnalyserNode           */
+/*  Visualizer — 6 bars driven by Web Audio API AnalyserNode           */
 /* ------------------------------------------------------------------ */
 
 function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
@@ -152,36 +95,69 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 /*  MusicPlayer                                                        */
 /* ------------------------------------------------------------------ */
 
-export function MusicPlayer() {
+export function MusicPlayer({
+  className,
+  style,
+  flat = false,
+  onSelectorToggle,
+  trackIndex: trackIndexProp,
+  onTrackChange,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+  /** Cuando true, omite fondo/borde/padding de .bgm-bar (el wrapper .p5-plate
+     provee el marco). */
+  flat?: boolean;
+  /** Callback para abrir/cerrar el menú. */
+  onSelectorToggle?: () => void;
+  /** Índice de pista controlado externamente (BottomBar). */
+  trackIndex?: number;
+  /** Callback cuando cambia la pista (audio terminado, selección manual). */
+  onTrackChange?: (i: number) => void;
+} = {}) {
   const booted = useBooted();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  /* Web Audio API — created lazily on first user gesture to avoid
-     React StrictMode double-mount destroying createMediaElementSource */
-  const ctxRef = useRef<AudioContext | null>(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-
-  /* Imperative UI refs */
   const progressFillRef = useRef<HTMLDivElement>(null);
   const timeLabelRef = useRef<HTMLSpanElement>(null);
   const volFillRef = useRef<HTMLDivElement>(null);
 
+  /* Título de la pista: marquee solo cuando no cabe en el espacio disponible. */
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const [marquee, setMarquee] = useState(false);
+
+  useEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    const check = () => setMarquee(el.scrollWidth > el.clientWidth + 1);
+    check();
+    const ro =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(check)
+        : null;
+    if (ro) {
+      ro.observe(el);
+      return () => ro.disconnect();
+    }
+    return undefined;
+  }, []);
+
   /* Reactive state */
-  const [trackIndex, setTrackIndex] = useState(0);
+  const [internalTrackIndex, setInternalTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(DEFAULT_VOLUME);
-  const [muted, setMuted] = useState(false);
+  const [volume] = useState(DEFAULT_VOLUME);
+  const [muted] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [selectorOpen, setSelectorOpen] = useState(false);
+  const [, setDuration] = useState(0);
+
+  /* Índice de pista visible: prop controlada si se pasa, si no estado interno. */
+  const displayTrackIndex = trackIndexProp ?? internalTrackIndex;
 
   /* Ref mirrors (avoid stale closures) */
   const isPlayingRef = useRef(false);
   const volumeRef = useRef(DEFAULT_VOLUME);
   const mutedRef = useRef(false);
-  const trackIndexRef = useRef(0);
+  const trackIndexRef = useRef(displayTrackIndex);
 
   /* Cleanup ref for pending canplay listener */
   const canplayCleanupRef = useRef<(() => void) | null>(null);
@@ -228,6 +204,10 @@ export function MusicPlayer() {
     }
   }, []);
 
+  const ctxRef = useRef<AudioContext | null>(null);
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+
   /* ================================================================ */
   /*  Audio event handlers                                             */
   /* ================================================================ */
@@ -248,6 +228,7 @@ export function MusicPlayer() {
     const onEnd = () => {
       const next = (trackIndexRef.current + 1) % TRACKS.length;
       loadAndPlay(next, true);
+      onTrackChange?.(next);
     };
     const onErr = (e: Event) => {
       console.warn("[BGM] Audio error:", (e.target as HTMLAudioElement)?.error);
@@ -289,7 +270,8 @@ export function MusicPlayer() {
       a.load();
 
       trackIndexRef.current = index;
-      setTrackIndex(index);
+      setInternalTrackIndex(index);
+      onTrackChange?.(index);
       setDuration(0);
       if (progressFillRef.current) progressFillRef.current.style.width = "0%";
       if (timeLabelRef.current) timeLabelRef.current.textContent = "0:00";
@@ -318,7 +300,7 @@ export function MusicPlayer() {
         a.removeEventListener("canplay", onReady);
       a.addEventListener("canplay", onReady);
     },
-    [ensureAudioGraph],
+    [ensureAudioGraph, onTrackChange],
   );
 
   /* ================================================================ */
@@ -336,10 +318,11 @@ export function MusicPlayer() {
       document.removeEventListener("pointerdown", onInteract);
       document.removeEventListener("keydown", onInteract);
       await loadAndPlay(0, true);
+      onTrackChange?.(0);
     };
     document.addEventListener("pointerdown", onInteract);
     document.addEventListener("keydown", onInteract);
-  }, [booted, loadAndPlay]);
+  }, [booted, loadAndPlay, onTrackChange]);
 
   /* ================================================================ */
   /*  Controls                                                         */
@@ -381,52 +364,6 @@ export function MusicPlayer() {
     );
   }, [loadAndPlay, ensureAudioGraph]);
 
-  const selectTrack = useCallback(
-    async (i: number) => {
-      await ensureAudioGraph();
-      loadAndPlay(i, true);
-    },
-    [loadAndPlay, ensureAudioGraph],
-  );
-
-  const toggleMute = useCallback(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (mutedRef.current) {
-      a.muted = false;
-      mutedRef.current = false;
-      setMuted(false);
-    } else {
-      a.muted = true;
-      mutedRef.current = true;
-      setMuted(true);
-    }
-  }, []);
-
-  const seek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current;
-    if (!a || !isFinite(a.duration) || a.duration <= 0) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    a.currentTime = pct * a.duration;
-    /* Immediate visual feedback */
-    if (progressFillRef.current) {
-      progressFillRef.current.style.width = `${pct * 100}%`;
-    }
-    if (timeLabelRef.current) {
-      timeLabelRef.current.textContent = formatTime(pct * a.duration);
-    }
-  }, []);
-
-  const changeVolume = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    volumeRef.current = pct;
-    setVolume(pct);
-    const a = audioRef.current;
-    if (a && !mutedRef.current) a.volume = pct;
-  }, []);
-
   /* ================================================================ */
   /*  Keyboard shortcuts                                               */
   /* ================================================================ */
@@ -464,7 +401,7 @@ export function MusicPlayer() {
   /*  Render                                                           */
   /* ================================================================ */
 
-  const t = TRACKS[trackIndex];
+  const t = TRACKS[displayTrackIndex];
 
   return (
     <>
@@ -472,7 +409,10 @@ export function MusicPlayer() {
 
       <div className="bgm-player" aria-label="Music Player">
         {/* ── Compact bar (always visible inside BottomBar) ── */}
-        <div className="bgm-bar">
+        <div
+          className={`bgm-bar ${flat ? "bgm-bar--flat" : ""} ${className ?? ""}`}
+          style={style}
+        >
           <button
             type="button"
             className="bgm-bar__label bgm-bar__label--btn"
@@ -480,19 +420,25 @@ export function MusicPlayer() {
             aria-expanded={expanded}
             aria-label={`Sistema BGM: ${t.title}. ${expanded ? "Contraer" : "Expandir"} panel`}
           >
-            ♫ MUSIC
+            ♪
           </button>
-          <span className="bgm-bar__sep" />
           <button
             type="button"
             className="bgm-bar__track bgm-bar__track--btn"
-            onClick={() => setSelectorOpen((v) => !v)}
-            aria-label={`Pista ${trackIndex + 1} de ${TRACKS.length}: ${t.title}. Cambiar pista`}
+            onClick={onSelectorToggle}
+            aria-label={`Pista ${displayTrackIndex + 1} de ${TRACKS.length}: ${t.title}. Cambiar pista`}
           >
-            {String(trackIndex + 1).padStart(2, "0")} /{" "}
+            {String(displayTrackIndex + 1).padStart(2, "0")} /{" "}
             {String(TRACKS.length).padStart(2, "0")}
           </button>
-          <span className="bgm-bar__title">{t.title}</span>
+          <span className="bgm-bar__title-wrap">
+            <span
+              className={`bgm-bar__title${marquee ? " marquee" : ""}`}
+              ref={titleRef}
+            >
+              {t.title}
+            </span>
+          </span>
           <button
             type="button"
             className="bgm-bar__play"
@@ -503,171 +449,6 @@ export function MusicPlayer() {
           </button>
           <Visualizer analyser={analyser} />
         </div>
-
-        {/* ── Expanded BGM System Panel ── */}
-        {expanded && (
-          <div className="bgm-panel">
-            {/* Header: system label + track counter */}
-            <div className="bgm-panel__head">
-              <span className="bgm-panel__sys">BGM SYSTEM</span>
-              <button
-                type="button"
-                className="bgm-panel__counter"
-                onClick={() => setSelectorOpen((v) => !v)}
-                aria-label={`Pista ${trackIndex + 1} de ${TRACKS.length}. Abrir selector de pistas`}
-              >
-                {String(trackIndex + 1).padStart(2, "0")} /{" "}
-                {String(TRACKS.length).padStart(2, "0")}
-              </button>
-            </div>
-
-            {/* Track title */}
-            <div className="bgm-panel__track">
-              <span className="bgm-panel__title">{t.title}</span>
-            </div>
-
-            {/* Transport controls */}
-            <div className="bgm-panel__controls">
-              <button
-                className="bgm-ctrl"
-                onClick={prevTrack}
-                aria-label="Pista anterior"
-              >
-                <span className="bgm-ctrl__icon">◀</span>
-                <span className="bgm-ctrl__label">PREV</span>
-              </button>
-              <button
-                className="bgm-ctrl bgm-ctrl--play"
-                onClick={togglePlay}
-                aria-label={isPlaying ? "Pausar" : "Reproducir"}
-              >
-                <span className="bgm-ctrl__icon">{isPlaying ? "❚❚" : "▶"}</span>
-                <span className="bgm-ctrl__label">
-                  {isPlaying ? "PAUSE" : "PLAY"}
-                </span>
-              </button>
-              <button
-                className="bgm-ctrl"
-                onClick={nextTrack}
-                aria-label="Siguiente pista"
-              >
-                <span className="bgm-ctrl__icon">▶</span>
-                <span className="bgm-ctrl__label">NEXT</span>
-              </button>
-            </div>
-
-            {/* Progress bar */}
-            <div className="bgm-panel__progress-wrap">
-              <div
-                className="bgm-progress"
-                onMouseDown={seek}
-                onTouchStart={(e) => {
-                  const touch = e.touches[0];
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const pct = Math.max(
-                    0,
-                    Math.min(1, (touch.clientX - rect.left) / rect.width),
-                  );
-                  const a = audioRef.current;
-                  if (a && isFinite(a.duration) && a.duration > 0) {
-                    a.currentTime = pct * a.duration;
-                    if (progressFillRef.current)
-                      progressFillRef.current.style.width = `${pct * 100}%`;
-                    if (timeLabelRef.current)
-                      timeLabelRef.current.textContent = formatTime(
-                        pct * a.duration,
-                      );
-                  }
-                }}
-                role="slider"
-                aria-label="Track progress"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  const a = audioRef.current;
-                  if (!a || !isFinite(a.duration)) return;
-                  if (e.key === "ArrowRight")
-                    a.currentTime = Math.min(a.duration, a.currentTime + 5);
-                  if (e.key === "ArrowLeft")
-                    a.currentTime = Math.max(0, a.currentTime - 5);
-                }}
-              >
-                <div className="bgm-progress__track" />
-                <div ref={progressFillRef} className="bgm-progress__fill" />
-              </div>
-              <div className="bgm-panel__time">
-                <span ref={timeLabelRef}>0:00</span>
-                <span>{formatTime(duration)}</span>
-              </div>
-            </div>
-
-            {/* Volume */}
-            <div className="bgm-vol">
-              <button
-                className="bgm-vol__btn"
-                onClick={toggleMute}
-                aria-label={muted ? "Unmute" : "Mute"}
-              >
-                {muted ? "🔇" : "🔊"}
-              </button>
-              <div
-                className="bgm-vol__track"
-                onMouseDown={changeVolume}
-                onTouchStart={(e) => {
-                  const touch = e.touches[0];
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const pct = Math.max(
-                    0,
-                    Math.min(1, (touch.clientX - rect.left) / rect.width),
-                  );
-                  volumeRef.current = pct;
-                  setVolume(pct);
-                  const a = audioRef.current;
-                  if (a && !mutedRef.current) a.volume = pct;
-                }}
-                role="slider"
-                aria-label="Volume"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={muted ? 0 : Math.round(volume * 100)}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  const step = 0.05;
-                  if (e.key === "ArrowRight") {
-                    volumeRef.current = Math.min(1, volumeRef.current + step);
-                    setVolume(volumeRef.current);
-                    const a = audioRef.current;
-                    if (a && !mutedRef.current) a.volume = volumeRef.current;
-                  }
-                  if (e.key === "ArrowLeft") {
-                    volumeRef.current = Math.max(0, volumeRef.current - step);
-                    setVolume(volumeRef.current);
-                    const a = audioRef.current;
-                    if (a && !mutedRef.current) a.volume = volumeRef.current;
-                  }
-                }}
-              >
-                <div ref={volFillRef} className="bgm-vol__fill" />
-              </div>
-              <span className="bgm-vol__pct">
-                {muted ? "0" : Math.round(volume * 100)}%
-              </span>
-            </div>
-
-            {/* Visualizer */}
-            <Visualizer analyser={analyser} />
-          </div>
-        )}
-
-        {/* ── Track selector dropdown ── */}
-        {selectorOpen && (
-          <TrackSelector
-            current={trackIndex}
-            onSelect={selectTrack}
-            onClose={() => setSelectorOpen(false)}
-          />
-        )}
       </div>
     </>
   );
