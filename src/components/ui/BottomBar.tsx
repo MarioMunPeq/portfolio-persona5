@@ -40,7 +40,7 @@ function BrandIcon({ icon }: { icon: typeof faGithub }) {
 
 /* ------------------------------------------------------------------ */
 /*  Reloj grande y protagonista: HH:MM blanco con contorno negro      */
-/*  y sombra roja desplazada. ♦ rojo parpadeando como separador.      */
+/*  y sombra roja desplazada. Dos rombos rojos marcan el paso del tiempo. */
 /* ------------------------------------------------------------------ */
 
 function DigitalClock() {
@@ -70,8 +70,9 @@ function DigitalClock() {
     >
       {clock.hours}
       <span className="p5-bb-clock__dot" aria-hidden="true">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <polygon points="12,2 22,12 12,22 2,12" />
+        <svg viewBox="0 0 24 32" aria-hidden="true">
+          <polygon points="12,2 18,8 12,14 6,8" />
+          <polygon points="12,18 18,24 12,30 6,24" />
         </svg>
       </span>
       {clock.minutes}
@@ -105,7 +106,7 @@ function SocialLink({
       target="_blank"
       rel="noreferrer"
       data-cursor="contact"
-      className="p5-plate p5-plate--social p5-enter--bottom p5-plate--social"
+      className="p5-plate p5-plate--social p5-enter--bottom"
       style={{
         animationDelay: delay,
         ...(rotStyle ? { "--p5-rot": `${rot}deg` } : {}),
@@ -296,10 +297,7 @@ export function BottomBar() {
     <div ref={barRef} className="p5-bottombar">
       <div className="p5-bb-inner">
         {/* ── Izquierda: reproductor en placa inclinada ── */}
-        <div
-          className="p5-bb-player-wrapper"
-          style={{ position: "relative", marginLeft: "var(--p5-margin)", marginBottom: "var(--p5-margin)" }}
-        >
+        <div className="p5-bb-player-wrapper">
           <MusicPlayer
             ref={musicPlayerRef}
             className="p5-player-root"
@@ -309,7 +307,7 @@ export function BottomBar() {
 
           {/* Menú de pistas (hermano del reproductor, NO dentro: evita recorte por clip-path) */}
           {selectorOpen && (
-            <div className="p5-track-selector-position" style={{ position: "relative" }}>
+            <div className="p5-track-selector-position">
               <TrackSelectorMenu
                 current={trackIndex}
                 onSelect={(e, i) => {

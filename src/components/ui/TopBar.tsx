@@ -13,8 +13,8 @@ import { useEffect } from "react";
  * Izquierda: botón compacto (max 16vw × 9vh):
  *   • En el menú principal ("/"): "xNaque" (p5hatty) + "DESARROLLADOR"
  *     (pequeño), NO clicable.
- *   • En cualquier otra pantalla: "← MENÚ" con icono ○ (círculo
- *     PlayStation, rojo) a la izquierda, texto "MENÚ" en p5hatty.
+ *   • En cualquier otra pantalla: botón de regreso con icono de casa
+ *     y texto "MENÚ".
  *     Click o Escape → vuelve al menú principal con fundido a negro
  *     existente. Hover: fondo rojo, placa 4px derecha, flecha 4px
  *     izquierda. Transición del texto con clip-path wipe (0.3s).
@@ -75,7 +75,9 @@ export function TopBar() {
                 aria-label="Volver al menú principal"
               >
                 <span className="p5-topbar-back__icon" aria-hidden="true">
-                  ○
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" />
+                  </svg>
                 </span>
                 <span className="p5-topbar-back__label">MENÚ</span>
               </button>

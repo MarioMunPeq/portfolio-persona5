@@ -125,13 +125,13 @@ export function About() {
 
   return (
     <Screen className="min-h-dvh text-paper">
-      <section className="relative px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
+      <section className="relative overflow-x-clip px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
         style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         {/* Palabra fantasma de marca */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-2 z-0 hidden -rotate-6 select-none font-p5-menu uppercase leading-none text-outline-faint opacity-55 md:block"
-          style={{ fontSize: "clamp(7rem, 15vw, 14rem)" }}
+          className="pointer-events-none absolute right-[2vw] top-2 z-0 hidden -rotate-6 select-none font-p5-menu uppercase leading-none text-outline-faint opacity-55 md:block"
+          style={{ fontSize: "clamp(6rem, 11vw, 12rem)" }}
         >
           PERFIL
         </span>

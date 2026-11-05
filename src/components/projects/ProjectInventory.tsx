@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import type { Project } from "../../data/projects";
 import { NavRow } from "../ui/NavRow";
 
@@ -20,6 +20,32 @@ export function ProjectInventory({
   onSelect,
 }: ProjectInventoryProps) {
   const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const isScrolling = useRef(false);
+  const scrollTimeout = useRef<number | null>(null);
+
+  const pauseHoverSelection = () => {
+    isScrolling.current = true;
+    if (scrollTimeout.current !== null) {
+      window.clearTimeout(scrollTimeout.current);
+    }
+    scrollTimeout.current = window.setTimeout(() => {
+      isScrolling.current = false;
+      scrollTimeout.current = null;
+    }, 160);
+  };
+
+  useEffect(
+    () => () => {
+      if (scrollTimeout.current !== null) {
+        window.clearTimeout(scrollTimeout.current);
+      }
+    },
+    [],
+  );
+
+  const selectOnHover = (project: Project) => {
+    if (!isScrolling.current) onSelect(project);
+  };
 
   const setItemRef = (index: number) => (el: HTMLAnchorElement | null) => {
     itemRefs.current[index] = el;
@@ -37,16 +63,23 @@ export function ProjectInventory({
   return (
     <nav
       aria-label="Inventario de proyectos"
-      className="relative"
+      className="project-inventory-list relative"
+      data-lenis-prevent
+      onWheelCapture={pauseHoverSelection}
+      onTouchMoveCapture={pauseHoverSelection}
+      onScroll={pauseHoverSelection}
     >
-      <ol className="relative flex flex-col gap-2.5 overflow-x-hidden" onKeyDown={onKeyDown}>
+      <ol
+        className="project-inventory-list__items relative flex flex-col gap-2.5"
+        onKeyDown={onKeyDown}
+      >
         {projects.map((project, index) => (
           <NavRow
             key={project.slug}
             label={project.name}
             path={`/proyectos/${project.slug}`}
             active={project.slug === selected.slug}
-            onSelect={() => onSelect(project)}
+            onSelect={() => selectOnHover(project)}
             setItemRef={setItemRef(index)}
           />
         ))}

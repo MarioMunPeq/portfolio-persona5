@@ -38,7 +38,7 @@ export function PageBackground({ variant }: PageBackgroundProps) {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || variant !== "projects") return;
+    if (!video) return;
 
     const syncPlayback = () => {
       if (document.hidden || reducedMotion || !videoSourceUrl) {
@@ -64,7 +64,7 @@ export function PageBackground({ variant }: PageBackgroundProps) {
       className={`page-background page-background--${variant}`}
       aria-hidden="true"
     >
-      {variant === "projects" && !reducedMotion && videoSourceUrl && (
+      {!reducedMotion && videoSourceUrl && (
         <video
           ref={videoRef}
           className="page-background__video"
@@ -78,7 +78,7 @@ export function PageBackground({ variant }: PageBackgroundProps) {
           onError={() => handleVideoError(videoSourceUrl)}
         />
       )}
-      {(variant === "profile" || reducedMotion || !videoSourceUrl) && (
+      {(reducedMotion || !videoSourceUrl) && (
         <div className="page-background__poster" />
       )}
       <div className="page-background__overlay" />

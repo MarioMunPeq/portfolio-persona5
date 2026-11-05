@@ -25,7 +25,13 @@ export function Layout({ children }: LayoutProps) {
   const isDocumentScrollPage =
     pathname === "/about" ||
     pathname === "/projects" ||
+    pathname === "/experience" ||
     pathname.startsWith("/proyectos/");
+  const hasPageBackground =
+    pathname === "/about" ||
+    pathname === "/projects" ||
+    pathname.startsWith("/proyectos/");
+  const isProjectInventoryPage = pathname === "/projects";
   const backgroundVariant = pathname === "/about" ? "profile" : "projects";
   const lenis = useLenis();
 
@@ -54,9 +60,9 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`min-h-dvh text-paper ${isDocumentScrollPage ? "bg-transparent" : "bg-bg-hero"}`}
+      className={`min-h-dvh text-paper ${hasPageBackground ? "bg-transparent" : "bg-bg-hero"}`}
     >
-      {isDocumentScrollPage && (
+      {hasPageBackground && (
         <PageBackground variant={backgroundVariant} />
       )}
       <a
@@ -73,7 +79,9 @@ export function Layout({ children }: LayoutProps) {
       <main
         id="main"
         className={
-          isDocumentScrollPage
+          isProjectInventoryPage
+            ? "relative z-[1] h-dvh overflow-hidden pt-20"
+            : isDocumentScrollPage
             ? "relative z-[1] min-h-dvh pt-20"
             : `h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"}`
         }

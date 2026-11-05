@@ -44,42 +44,35 @@ function ProjectsGraphicLayer() {
 }
 
 /**
- * Pantalla de proyectos = inventario del sistema. La gran captura del
- * proyecto seleccionado domina la izquierda; a la derecha, el selector
- * tipo inventario: filas de texto plano donde la seleccionada se pinta
- * con la colision de dos vigas sesgadas (cian + rojo). En escritorio,
+ * Pantalla de inventario: selector desplazable a la izquierda y vista
+ * previa del proyecto seleccionado a la derecha. En escritorio,
  * hover/foco selecciona y el clic abre la ficha (/proyectos/:slug). En
- * movil/tactil, tocar una fila NO seleccionada la selecciona (actualiza
- * la vista previa de arriba) sin navegar; tocar la fila ya seleccionada
- * o su boton "ACCEDER" navega a la ficha.
+ * movil/tactil, tocar una fila NO seleccionada la selecciona sin navegar;
+ * tocar la fila ya seleccionada abre la ficha.
  */
 export function Projects() {
   const [selected, setSelected] = useState<Project>(PROJECTS[0]);
 
   return (
-    <Screen className="text-paper">
-      <section className="relative overflow-x-hidden min-h-screen"
-        style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
+    <Screen className="projects-screen text-paper">
+      <section className="project-inventory-screen relative overflow-hidden">
         <ProjectsGraphicLayer />
 
-        <div
-          className="relative min-h-[calc(100vh-260px)] grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pt-6 pt-[clamp(1.5rem,5vw,3rem)]"
-        >
-          <div className="flex flex-col gap-4">
+        <div className="project-inventory-layout relative">
+          <div className="project-inventory-selector">
             <SectionTitle
               label="Inventario de proyectos"
               title="INVENTARIO"
               persona
               compact
             />
-            <ProjectPreview project={selected} />
+            <ProjectInventory
+              projects={PROJECTS}
+              selected={selected}
+              onSelect={setSelected}
+            />
           </div>
-
-          <ProjectInventory
-            projects={PROJECTS}
-            selected={selected}
-            onSelect={setSelected}
-          />
+          <ProjectPreview project={selected} />
         </div>
       </section>
     </Screen>

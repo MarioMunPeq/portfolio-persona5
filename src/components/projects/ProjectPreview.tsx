@@ -11,7 +11,7 @@ export function ProjectPreview({ project }: { project: Project }) {
   const image = project.images?.[0] ?? null;
 
   return (
-    <div className="relative mx-auto w-full max-w-[min(100%,21rem)] sm:max-w-[min(100%,28rem)] lg:mx-0 lg:max-w-[42rem]">
+    <article className="project-preview relative">
       <div className="relative">
         {/* Sombra dura roja desplazada tras el marco */}
         <span
@@ -22,6 +22,7 @@ export function ProjectPreview({ project }: { project: Project }) {
         <PreviewBox
           src={image?.src ?? null}
           alt={image?.alt ?? `Captura pendiente de ${project.name}`}
+          className="project-preview__frame"
         >
           {/* Franja de rayas del pie del marco */}
           <span aria-hidden="true" className="flex h-2 overflow-hidden">
@@ -63,20 +64,14 @@ export function ProjectPreview({ project }: { project: Project }) {
         </PreviewBox>
       </div>
 
-      <div className="relative mt-4 sm:mt-6 lg:mt-10">
+      <div className="project-preview__copy relative">
         <div>
           <h2
-            className="font-expose uppercase leading-[0.95] text-paper"
-            style={{
-              fontSize: "clamp(2rem, 3.4vw, 3.25rem)",
-              textShadow: "4px 4px 0 var(--color-accent-deep)",
-            }}
+            className="project-preview__title font-expose uppercase leading-[0.95] text-paper"
           >
             {project.name}
           </h2>
-          {/* Reserva 4 lineas (13px × 1.625) para que el bloque no cambie de
-              alto al alternar proyectos con resumenes de 3 o 4 lineas. */}
-          <p className="mt-2 min-h-[5.3rem] max-w-md text-caption leading-relaxed text-paper/70">
+          <p className="project-preview__summary mt-3 max-w-2xl text-paper">
             {project.summary}
           </p>
         </div>
@@ -84,6 +79,6 @@ export function ProjectPreview({ project }: { project: Project }) {
           <span className="block h-2 w-32 -skew-x-12 bg-accent" />
         </span>
       </div>
-    </div>
+    </article>
   );
 }

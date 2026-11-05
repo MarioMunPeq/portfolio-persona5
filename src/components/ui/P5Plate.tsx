@@ -28,12 +28,11 @@ export function P5Plate({
     <span
       className={`p5-plate-wrap ${className}`}
       style={{ "--p5-rot": `${rot}deg`, ...style } as unknown as React.CSSProperties}
-      aria-hidden="true"
     >
       <div className="p5-plate">
-        <div className="p5-plate__shadow" />
-        <div className="p5-plate__border" />
-        <div className="p5-plate__fill" />
+        <div className="p5-plate__shadow" aria-hidden="true" />
+        <div className="p5-plate__border" aria-hidden="true" />
+        <div className="p5-plate__fill" aria-hidden="true" />
         <div className="p5-plate__inner" style={{ padding: pad || "var(--p5-pad)" }}>
           {children}
         </div>

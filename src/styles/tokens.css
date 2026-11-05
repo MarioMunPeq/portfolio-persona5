@@ -2743,7 +2743,7 @@ html {
   --p5-btn-max-w: 16vw;
   --p5-btn-max-h: 9vh;
   /* Reproductor */
-  --p5-player-w: clamp(460px, 30vw, 640px);
+  --p5-player-w: clamp(360px, 27vw, 420px);
   --p5-player-h: clamp(92px, 10.5vh, 124px);
   /* Disco: 118% del alto de la placa */
   --p5-disc-d: clamp(109px, 12.4vh, 146px);
@@ -2824,7 +2824,7 @@ html {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: clamp(20px, 2vw, 44px);
+  bottom: clamp(6px, 0.8vh, 10px);
   z-index: 50;
   padding: 0 var(--p5-margin);
   /* Fondo transparente: sin franja ni degradado que se salga de pantalla. */
@@ -2842,7 +2842,7 @@ html {
 }
 .p5-topbar__inner,
 .p5-bb-inner {
-  position: relative; /* contenedor para el reloj absoluto centrado */
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2895,7 +2895,7 @@ html {
   font-family: var(--p5-font-hatty);
   font-size: clamp(36px, 3vw, 64px);
   font-weight: 400;
-  color: #fff;
+  color: var(--p5-red);
   line-height: 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -2910,18 +2910,34 @@ html {
   white-space: nowrap;
 }
 
-/* Versión otras pantallas: "← MENÚ" con icono ○ rojo. */
+/* Versión otras pantallas: casa roja y etiqueta MENÚ en placa P5. */
 .p5-topbar-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 2px 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
 }
 .p5-topbar-back__icon {
-  font-family: var(--p5-font-hatty);
-  font-size: clamp(24px, 2vw, 36px);
+  display: inline-grid;
+  width: clamp(24px, 1.8vw, 32px);
+  aspect-ratio: 1;
+  place-items: center;
   color: var(--p5-red);
-  line-height: 1;
+  transition: color 150ms ease, transform 180ms ease;
+}
+.p5-topbar-back__icon svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
 }
 .p5-topbar-back__label {
   font-family: var(--p5-font-hatty);
@@ -2940,12 +2956,17 @@ html {
   transition: transform 150ms ease, background-color 150ms ease;
 }
 .p5-plate--back:hover {
-  background: var(--p5-red);
   transform: rotate(var(--p5-rot)) skewX(-12deg) translate(4px, 0);
 }
+.p5-plate--back:hover .p5-plate__fill { background: var(--p5-red); }
 .p5-plate--back:hover .p5-topbar-back__icon {
-  transform: translateX(-4px);
-  transition: transform 150ms ease;
+  color: #fff;
+  transform: translateY(-2px) scale(1.08);
+}
+.p5-plate--back:hover .p5-topbar-back__label { color: #fff; }
+.p5-topbar-back:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
 }
 
 /* ── Fecha derecha (se mantiene como está) ── */
@@ -3003,14 +3024,9 @@ html {
 
 /* ===== BOTTOMBAR ── */
 /* Reloj: cifras p5hatty más pequeñas, centrado horizontalmente y alineado con
-   el centro del reproductor. Rombo separador con parpadeo suave. */
+   el centro del reproductor. Dos rombos parpadean como un separador digital. */
 .p5-bb-clock {
-  position: absolute;
-  /* Centrado en la pantalla sobre el eje común de la bottombar (misma línea central
-     que el reproductor y los botones sociales). */
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
@@ -3026,14 +3042,22 @@ html {
   filter: drop-shadow(0.06em 0.06em 0 var(--p5-red));
 }
 .p5-bb-clock__dot {
-  display: inline-block;
+  display: inline-flex;
+  width: 0.3em;
+  height: 0.58em;
+  flex: 0 0 auto;
   color: var(--p5-red);
-  font-size: var(--p5-clock-size);
-  animation: p5-blink 2s ease-in-out infinite alternate;
+  animation: p5-clock-tick 1s steps(1, end) infinite;
 }
-@keyframes p5-blink {
-  from { opacity: 1; }
-  to   { opacity: 0.3; }
+.p5-bb-clock__dot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+@keyframes p5-clock-tick {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
 }
 
 /* Redes sociales: placas reales con esquinas cortadas (misma construcción de
@@ -3043,11 +3067,12 @@ html {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-right: var(--p5-margin);
-  margin-bottom: var(--p5-margin);
+  justify-self: end;
+  margin: 0;
 }
 .p5-plate--social {
   position: relative;
+  isolation: isolate;
   height: clamp(44px, 5vh, 60px);
   padding: 0 clamp(16px, 1.3vw, 26px);
   gap: 0.7em;
@@ -3064,17 +3089,21 @@ html {
   cursor: pointer;
   outline: none;
   transition: transform 0.15s ease;
+  background: #fff;
+  filter: drop-shadow(4px 4px 0 var(--p5-red));
 }
-/* Indicador diagonal rojo en el borde izquierdo. */
+/* Las capas propias hacen que cada enlace lea como un boton, no como texto. */
 .p5-plate--social::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--p5-red);
-  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  inset: 3px;
+  z-index: -1;
+  background: #1a1a1a;
+  clip-path: var(--p5-cut);
+}
+.p5-plate--social > * {
+  position: relative;
+  z-index: 1;
 }
 .p5-plate--social:focus-visible {
   outline: 3px solid #fff;
@@ -3082,26 +3111,14 @@ html {
 }
 .p5-plate--social:hover {
   transform: translate(0, -4px) rotate(0deg);
-  box-shadow: 0 4px 0 #000;
+  filter: drop-shadow(4px 7px 0 var(--p5-red));
 }
-.p5-plate--social:hover .p5-plate__fill {
+.p5-plate--social:hover::before {
   background: var(--p5-red);
 }
 .p5-plate--social:active {
   transform: translate(0, 2px) scale(0.97);
   transition-duration: 0.05s;
-}
-/* 3 capas de la placa social (mismo clip-path que .p5-plate). */
-.p5-plate--social .p5-plate__shadow {
-  background: var(--p5-red);
-  transform: translate(4px, 4px);
-}
-.p5-plate--social .p5-plate__border {
-  border: 2px solid #ffffff;
-}
-.p5-plate--social .p5-plate__fill {
-  inset: 2px;
-  background: #1a1a1a;
 }
 .p5-plate--social .p5-social__icon {
   width: 1.4em;
@@ -3656,6 +3673,278 @@ html {
   }
 }
 
+/* ── Inventario: pantalla contenida, lista como unico scroller ── */
+.projects-screen {
+  height: 100%;
+}
+.project-inventory-screen {
+  box-sizing: border-box;
+  height: 100%;
+  padding: clamp(12px, 2.4vh, 24px) clamp(20px, 5vw, 80px)
+    calc(var(--bottombar-h) + 24px);
+}
+.project-inventory-layout {
+  display: grid;
+  grid-template-columns: minmax(19rem, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 84px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.project-inventory-selector {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 4vh, 38px);
+  min-width: 0;
+}
+.project-inventory-list {
+  width: 100%;
+  max-height: min(27rem, calc(100dvh - var(--bottombar-h) - 20rem));
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--p5-red) rgba(255, 255, 255, 0.1);
+  scrollbar-width: thin;
+  border-left: 5px solid var(--p5-red);
+  background: rgba(8, 8, 8, 0.84);
+  padding: 12px 16px 12px 10px;
+  clip-path: polygon(0 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
+}
+.project-inventory-list::-webkit-scrollbar {
+  width: 6px;
+}
+.project-inventory-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+.project-inventory-list::-webkit-scrollbar-thumb {
+  background: var(--p5-red);
+}
+.project-inventory-list__items > li {
+  flex: 0 0 4.5rem;
+  min-width: 0;
+}
+.project-inventory-list__items {
+  overflow: visible;
+}
+.project-inventory-list__items .proj-row {
+  height: 100%;
+  padding-block: 0;
+}
+.project-preview {
+  min-width: 0;
+}
+.project-preview__frame > div:first-child {
+  height: clamp(210px, 39vh, 360px);
+  aspect-ratio: auto;
+}
+.project-preview__copy {
+  margin-top: clamp(14px, 2.5vh, 24px);
+}
+.project-preview__title {
+  font-size: clamp(2.25rem, 4.1vw, 4.5rem);
+  text-shadow: 4px 4px 0 var(--color-accent-deep);
+}
+.project-preview__summary {
+  max-width: 62ch;
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* La barra ocupa una sola linea y comparte eje vertical entre sus controles. */
+.p5-bb-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(8px, 1vw, 18px);
+}
+.p5-bb-player-wrapper {
+  position: relative;
+  justify-self: start;
+  margin-left: var(--p5-margin);
+}
+.p5-bb-clock {
+  display: inline-flex;
+  justify-self: center;
+}
+.p5-bb-social {
+  justify-self: end;
+}
+
+@media (max-width: 899px) {
+  :root {
+    --p5-player-w: clamp(280px, 39vw, 360px);
+    --p5-player-h: clamp(78px, 9vh, 92px);
+    --p5-disc-d: clamp(84px, 10vh, 98px);
+  }
+  .p5-bb-clock {
+    display: inline-flex !important;
+    font-size: clamp(20px, 3vw, 30px);
+  }
+  .p5-bb-clock__dot {
+    width: 0.3em;
+    height: 0.58em;
+  }
+  .p5-bb-social {
+    gap: 8px;
+  }
+  .p5-plate--social {
+    height: 44px;
+    padding-inline: 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --p5-player-w: clamp(172px, 45vw, 300px);
+    --p5-player-h: 72px;
+    --p5-disc-d: clamp(68px, 19vw, 82px);
+  }
+  .p5-bottombar {
+    padding-inline: 8px;
+  }
+  .p5-bb-inner {
+    grid-template-columns: auto auto auto;
+    gap: 6px;
+    justify-content: space-between;
+  }
+  .p5-bb-player-wrapper {
+    margin-left: 20px;
+  }
+  .p5-bb-social {
+    flex-direction: row;
+    width: auto;
+    gap: 6px;
+  }
+  .p5-plate--social {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    gap: 0;
+  }
+  .p5-bottombar .p5-plate--social {
+    transform: none;
+  }
+  .p5-plate--social > span,
+  .p5-plate--social .p5-social__btnimg {
+    display: none;
+  }
+  .p5-plate--social .p5-social__icon {
+    width: 21px;
+    height: 21px;
+  }
+  .project-inventory-screen {
+    padding: 12px 16px calc(var(--bottombar-h) + 18px);
+  }
+  .project-inventory-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: start;
+    align-items: start;
+    gap: 14px;
+  }
+  .project-inventory-selector {
+    gap: 12px;
+  }
+  .project-inventory-selector .section-title__h1 {
+    margin-top: 6px;
+  }
+  .project-inventory-selector header > span {
+    margin-top: 8px;
+  }
+  .project-inventory-list {
+    max-height: min(14rem, 30dvh);
+    padding: 6px 12px 6px 8px;
+  }
+  .project-inventory-list__items > li {
+    flex-basis: 3.4rem;
+  }
+  .project-inventory-list__items .proj-row-name {
+    font-size: clamp(1.25rem, 5vw, 1.8rem) !important;
+  }
+  .project-preview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+  }
+  .project-preview__frame > div:first-child {
+    height: clamp(160px, 23vh, 194px);
+  }
+  .project-preview__frame figcaption {
+    padding: 6px 8px;
+  }
+  .project-preview__copy {
+    margin-top: 0;
+  }
+  .project-preview__title {
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+  }
+  .project-preview__summary {
+    margin-top: 8px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .project-preview__copy > span {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --p5-player-w: 160px;
+    --p5-player-h: 64px;
+    --p5-disc-d: 66px;
+  }
+  .p5-player-header,
+  .p5-player-progress-wrap,
+  .p5-player-time,
+  .p5-eq,
+  .p5-list-btn-cell {
+    display: none !important;
+  }
+  .p5-player-transport {
+    gap: 2px;
+  }
+  .p5-ctrl-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .p5-bb-clock {
+    font-size: 18px;
+  }
+  .p5-plate--social {
+    width: 36px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 700px) {
+  .project-inventory-layout {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+  }
+  .project-inventory-selector {
+    gap: 8px;
+  }
+  .project-inventory-list {
+    max-height: min(10rem, 23dvh);
+  }
+  .project-preview__frame > div:first-child {
+    height: 18vh;
+  }
+  .project-preview__summary {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
 /* ================================================================
    MUSIC PLAYER — modo placa (flat) para BottomBar
    ================================================================ */
@@ -3670,6 +3959,10 @@ html {
   min-width: auto;
   user-select: none;
   animation: none;
+}
+.bgm-player.p5-player-root {
+  width: var(--p5-player-w);
+  min-width: var(--p5-player-w);
 }
 
 .bgm-bar {
