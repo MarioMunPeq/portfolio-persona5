@@ -2670,39 +2670,11 @@ html {
    como una sola unidad durante la caída. */
 .calendar-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Contorno negro fuerte (estilo cómic) */
-  filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.95));
-}
-
-/* Día numérico — arriba, visualmente dominante.
-   Fuente condensa, tamaño grande, contorno negro grueso.
-   El tamaño se aplica en línea desde CalendarCard (por índice). */
-.calendar-date-number {
-  margin-bottom: -10px; /* leve solapamiento con el PNG del weekday */
-  font-family: var(--font-anton);
-  font-weight: 800;
-  white-space: nowrap;
-  letter-spacing: -0.03em;
-  text-shadow:
-    -3px -3px 0 #000000,
-    3px -3px 0 #000000,
-    -3px 3px 0 #000000,
-    3px 3px 0 #000000;
-}
-
-/* Día numérico — color según el día de la semana (definido en línea):
-   Mon–Fri: blanco | Sábado: azul | Domingo: rojo.
-   Nunca se colorea según isToday. */
-
-/* Imagen del día de la semana (PNG con tipografía original, no se toca) */
-.calendar-weekday-img {
-  display: block;
   width: 100%;
-  height: auto;
 }
+
+/* Día numérico — estilo gestionado en CalendarCard.tsx (fuente p5hatty, contorno, rotación, capas). */
+/* Imagen del día de la semana — estilo gestionado en CalendarCard.tsx (z-index, rotación, margin-top). */
 
 /* Cuchillo: rotación gestionada por GSAP.
    El PNG es horizontal (hoja a la izquierda, mango a la derecha). */
@@ -2714,19 +2686,15 @@ html {
   will-change: transform;
 }
 
-/* Responsive: ajuste de fuente del número y tamaño del cuchillo por breakpoint.
-   Las posiciones left/top se aplican como estilos en línea en el componente. */
+/* Responsive: ajuste de tamaño del cuchillo por breakpoint. */
 @media (max-width: 1023px) {
-  .calendar-date-number { margin-bottom: -8px; }
   .calendar-knife { width: 160px; }
 }
 
 @media (max-width: 639px) {
-  .calendar-date-number { margin-bottom: -6px; }
   .calendar-knife { width: 120px; }
 }
 
 @media (max-width: 639px) and (orientation: landscape) {
-  .calendar-date-number { margin-bottom: -5px; }
   .calendar-knife { width: 100px; }
 }

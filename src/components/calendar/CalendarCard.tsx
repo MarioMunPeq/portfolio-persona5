@@ -2,17 +2,24 @@
  * Tarjeta individual de fecha del calendario tipo Persona 5.
  *
  * Cada composición es un lockup vertical indivisible:
- *   Día numérico (ARRIBA) + PNG del día de la semana (ABAJO).
- * Ambos comparten el mismo eje horizontal central y se mueven
- * siempre como una sola unidad durante la caída.
+ *   Día numérico (ARRIBA) + PNG del día de la semana (DEBAJO, solapado).
+ * El número usa dos capas position:absolute superpuestas con fuente p5hatty:
+ *   - Capa trasera (z-index:1): texto blanco con -webkit-text-stroke blanco grueso
+ *     (0.24em) que crea un halo BLANCO PURO ancho.
+ *   - Capa delantera (z-index:2): mismo texto en color según el día, con stroke fino
+ *     (0.03em) del mismo color para engordar el trazo.
+ * La imagen del día de la semana va DELANTE (z-index:3), centrada horizontalmente,
+ * empezando en el 85% de la altura del número (tapa su ~20% inferior).
  *
- * El color del número depende EXCLUSIVAMENTE del día de la semana:
- *   Lunes a Viernes: blanco
- *   Sábado: azul
- *   Domingo: rojo
+ * La sombra negra (drop-shadow) se aplica sobre el contenedor de las capas del
+ * número, NO sobre el texto blanco.
  *
- * Esto es independiente de `isToday`. `isToday` solo controla la escala
- * y el énfasis visual (gestionados por GSAP en el padre), nunca el color.
+ * El color de relleno del número depende EXCLUSIVAMENTE del día de la semana:
+ *   Lunes a Viernes: #111 (casi negro)
+ *   Sábado: #4fb3f0 (azul claro)
+ *   Domingo: #e8112d (rojo)
+ *
+ * La rotación del número y de la imagen es diferente por cada día.
  */
 import type { CalendarDate } from "../../lib/calendar";
 import { calendarAsset } from "../../lib/calendar";
@@ -24,21 +31,54 @@ interface CalendarCardProps {
   index: number;
 }
 
-/** Color del día numérico según el día de la semana (índice JS: 0=Dom…6=Sáb). */
-const NUMBER_COLOR_BY_WEEKDAY: Record<number, string> = {
-  0: "#e60012", // domingo → rojo
-  1: "#ffffff", // lunes → blanco
-  2: "#ffffff", // martes → blanco
-  3: "#ffffff", // miércoles → blanco
-  4: "#ffffff", // jueves → blanco
-  5: "#ffffff", // viernes → blanco
-  6: "#2563eb", // sábado → azul
+/** Color de relleno del número según el día de la semana (índice JS: 0=Dom…6=Sáb). */
+const NUMBER_FILL_BY_WEEKDAY: Record<number, string> = {
+  0: "#e8112d", // domingo → rojo
+  1: "#111111", // lunes → casi negro
+  2: "#111111", // martes → casi negro
+  3: "#111111", // miércoles → casi negro
+  4: "#111111", // jueves → casi negro
+  5: "#111111", // viernes → casi negro
+  6: "#4fb3f0", // sábado → azul claro
+};
+
+/** Tamaño de fuente del número (px) — visualmente dominante. */
+const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
+  0: 105, // hoy-2
+  1: 140, // ayer
+  2: 200, // HOY — el número más grande de la pantalla
+  3: 140, // hoy+1
+  4: 105, // hoy+2
+  5: 80,  // hoy+3
+  6: 80,  // hoy+4 (buffer)
+};
+
+/** Rotación del número por índice (grados). Cada día tiene un ángulo distinto. */
+const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
+  0: -5, // hoy-2
+  1: -3, // ayer
+  2: -4, // HOY
+  3: -2, // hoy+1
+  4: -1, // hoy+2
+  5: -3, // hoy+3
+  6: -2, // hoy+4
+};
+
+/** Rotación de la imagen del día por índice (grados). Cada día tiene un ángulo distinto. */
+const WEEKDAY_ROTATION_BY_INDEX: Record<number, number> = {
+  0: 3, // hoy-2
+  1: 2, // ayer
+  2: 1, // HOY
+  3: 3, // hoy+1
+  4: 2, // hoy+2
+  5: 1, // hoy+3
+  6: 0, // hoy+4
 };
 
 /** Ancho de cada composición (px) — el número domina visualmente. */
 const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   0: 130, // hoy-2
-  1: 170, // hoy-1
+  1: 170, // ayer
   2: 280, // HOY (activo, el más grande)
   3: 170, // hoy+1
   4: 130, // hoy+2
@@ -46,21 +86,17 @@ const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   6: 110, // hoy+4 (buffer)
 };
 
-/** Tamaño de fuente del número (px) — visualmente dominante. */
-const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
-  0: 100, // hoy-2
-  1: 125, // hoy-1
-  2: 175, // HOY — el número más grande de la pantalla
-  3: 125, // hoy+1
-  4: 100, // hoy+2
-  5: 85,  // hoy+3
-  6: 85,  // hoy+4 (buffer)
-};
+/** Posición vertical del nombre como fracción de la altura del número.
+ *  Valor mayor = nombre más bajo = menos tapado del número. */
+const NAME_OVERLAP_TOP = 0.85;
+
+/** Grosor del contorno blanco de la capa trasera (en em). */
+const OUTLINE_WIDTH_EM = 0.24;
+
+/** Grosor del trazo del relleno de la capa delantera (en em). */
+const FILL_STROKE_EM = 0.03;
 
 export function CalendarCard({ date, index }: CalendarCardProps) {
-  // Las anchuras base están pensadas para escritorio (≥1024px). En
-  // tableta y móvil se reducen para que la composición quepa sin
-  // solaparse en pantallas estrechas. Escritorio se queda sin cambios.
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   const isMobile = useMediaQuery("(max-width: 639px)");
   const widthScale = isMobile ? 0.45 : isTablet ? 0.8 : 1;
@@ -68,7 +104,78 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
   const width = CARD_WIDTH_BY_INDEX[index] * widthScale;
   const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index] * widthScale;
   const src = calendarAsset(date.weekdayFile);
-  const numberColor = NUMBER_COLOR_BY_WEEKDAY[date.weekday];
+  const numberFill = NUMBER_FILL_BY_WEEKDAY[date.weekday];
+  const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
+  const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
+
+  // Grosor del contorno proporcional al tamaño del número (en em):
+  //   - capa trasera: OUTLINE_WIDTH_EM (borde blanco ancho)
+  //   - capa delantera: FILL_STROKE_EM (engrosar trazo del color)
+  const backStrokeEm = OUTLINE_WIDTH_EM;
+  const frontStrokeEm = FILL_STROKE_EM;
+
+  // La imagen empieza en NAME_OVERLAP_TOP de la altura del número (tapa su ~20% inferior).
+  const weekdayTopPx = fontSize * NAME_OVERLAP_TOP;
+
+  // Contenedor de las capas del número: position:relative para que las capas
+  // se posicionen respecto a él, y filter drop-shadow para la sombra negra.
+  const numberContainerStyle: React.CSSProperties = {
+    position: "relative",
+    width: "100%",
+    height: `${fontSize}px`,
+    filter: "drop-shadow(0.03em 0.03em 0 #000)",
+  };
+
+  // Capa trasera: contorno blanco ancho (z-index:1)
+  const backStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    textAlign: "center",
+    fontFamily: "'p5hatty', sans-serif",
+    fontWeight: "400",
+    fontSize: `${fontSize}px`,
+    color: "#fff",
+    WebkitTextFillColor: "#fff",
+    WebkitTextStroke: `${backStrokeEm}em #fff`,
+    paintOrder: "stroke fill",
+    transform: `rotate(${numberRotation}deg)`,
+    zIndex: 1,
+    whiteSpace: "nowrap",
+    letterSpacing: "-0.03em",
+  };
+
+  // Capa delantera: relleno de color según el día (z-index:2)
+  const frontStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    textAlign: "center",
+    fontFamily: "'p5hatty', sans-serif",
+    fontWeight: "400",
+    fontSize: `${fontSize}px`,
+    color: numberFill,
+    WebkitTextFillColor: numberFill,
+    WebkitTextStroke: `${frontStrokeEm}em ${numberFill}`,
+    paintOrder: "stroke fill",
+    transform: `rotate(${numberRotation}deg)`,
+    zIndex: 2,
+    whiteSpace: "nowrap",
+    letterSpacing: "-0.03em",
+  };
+
+  // Imagen del día de la semana: DELANTE de ambas capas (z-index:3)
+  const weekdayStyle: React.CSSProperties = {
+    position: "absolute",
+    top: `${weekdayTopPx}px`,
+    left: 0,
+    width: "100%",
+    height: "auto",
+    transform: `rotate(${weekdayRotation}deg)`,
+    zIndex: 3,
+  };
 
   return (
     <div
@@ -76,18 +183,26 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
       data-calendar-card
       data-index={String(index)}
       className="calendar-card pointer-events-none"
-      style={{ width: `${width}px` }}
+      style={{
+        width: `${width}px`,
+        position: "relative",
+        // Sin flex-direction:column ni align-items; usamos position:absolute
+      }}
     >
-      {/* Día numérico — arriba, visualmente dominante */}
-      <span
-        className="calendar-date-number"
-        aria-hidden="true"
-        style={{ color: numberColor, fontSize: `${fontSize}px` }}
-      >
-        {date.day}
-      </span>
+      {/* Contenedor de las capas del número (arriba) */}
+      <div style={numberContainerStyle}>
+        {/* Día numérico — capa trasera: halo blanco ancho (z-index:1) */}
+        <span className="calendar-date-number" aria-hidden="true" style={backStyle}>
+          {date.day}
+        </span>
 
-      {/* Imagen del día de la semana (PNG con tipografía original) — debajo */}
+        {/* Día numérico — capa delantera: relleno de color (z-index:2) */}
+        <span className="calendar-date-number" aria-hidden="true" style={frontStyle}>
+          {date.day}
+        </span>
+      </div>
+
+      {/* Imagen del día de la semana (PNG con tipografía original) — DELANTE (z-index:3) */}
       <img
         src={src}
         alt=""
@@ -95,7 +210,10 @@ export function CalendarCard({ date, index }: CalendarCardProps) {
         decoding="async"
         className="calendar-weekday-img"
         aria-hidden="true"
+        style={weekdayStyle}
       />
     </div>
   );
 }
+
+CalendarCard.displayName = "CalendarCard";
