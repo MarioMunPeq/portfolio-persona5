@@ -42,7 +42,7 @@
 }
 
 .page-background__poster {
-  background: url("/images/background/background_redstars.png") center / cover
+  background: url("/images/background/background_redstars.webp") center / cover
     no-repeat;
 }
 

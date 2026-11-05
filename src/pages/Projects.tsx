@@ -55,7 +55,6 @@ export function Projects() {
         <div className="project-inventory-layout relative">
           <div className="project-inventory-selector">
             <SectionTitle
-              label="Inventario de proyectos"
               title="INVENTARIO"
               persona
               compact

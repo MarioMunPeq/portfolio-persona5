@@ -504,33 +504,33 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/images/projects/cosmere-archive/main.png",
+        src: "/images/projects/cosmere-archive/main.webp",
         alt: "Vista principal del mapa galactico de Cosmere Archive",
       },
     ],
     screenshots: [
       {
-        src: "/images/projects/cosmere-archive/biblioteca.png",
+        src: "/images/projects/cosmere-archive/biblioteca.webp",
         alt: "Biblioteca virtual con los libros del archivo",
         caption: "Biblioteca",
       },
       {
-        src: "/images/projects/cosmere-archive/personajes.png",
+        src: "/images/projects/cosmere-archive/libro personaje.webp",
         alt: "Archivo biografico de personajes",
         caption: "Personajes",
       },
       {
-        src: "/images/projects/cosmere-archive/ars-arcanum.png",
+        src: "/images/projects/cosmere-archive/el diagrama.webp",
         alt: "Manuscrito Ars Arcanum de los sistemas de magia",
         caption: "Ars Arcanum",
       },
       {
-        src: "/images/projects/cosmere-archive/aharietiam.png",
+        src: "/images/projects/cosmere-archive/aharietiam.webp",
         alt: "Escena 3D del Aharietiam con las hojas de los Heraldos",
         caption: "Aharietiam",
       },
       {
-        src: "/images/projects/cosmere-archive/mind-map.png",
+        src: "/images/projects/cosmere-archive/shadesmar.webp",
         alt: "Mapa mental del archivo",
         caption: "Mapa mental",
       },

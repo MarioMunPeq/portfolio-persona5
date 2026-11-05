@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const poster = "/images/background/background_redstars.png";
+const poster = "/images/background/background_redstars.webp";
 const videoSource = "/images/background/background_blackstars.webm";
 const mp4FallbackSource =
   "/images/background/background_blackstars_fallback.mp4";

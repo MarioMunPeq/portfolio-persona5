@@ -160,7 +160,7 @@ export function CalendarTransition() {
   const bgSrc = useMemo(
     () =>
       calendarAsset(
-        dayNight === "day" ? "calendar_day.png" : "calendar_night.png",
+        dayNight === "day" ? "calendar_day.webp" : "calendar_night.webp",
       ),
     [dayNight],
   );
