@@ -10,6 +10,7 @@ import { Experience } from "./pages/Experience";
 import { Education } from "./pages/Education";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { NotFound } from "./pages/NotFound";
+import { RouteMetadata } from "./components/seo/RouteMetadata";
 
 /**
  * La app se sirve bajo `/` (dominio personalizado mariomunpeq.is-a.dev).
@@ -20,6 +21,7 @@ const APP_BASE = "/";
 function App() {
   return (
     <BrowserRouter basename={APP_BASE}>
+      <RouteMetadata />
       <ScrollProvider>
         <Layout>
           <TransitionRoutes>

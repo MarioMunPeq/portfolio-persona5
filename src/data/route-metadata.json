@@ -1,0 +1,67 @@
+{
+  "/": {
+    "title": "Mario Muñoz Pequeño — Desarrollador de aplicaciones",
+    "description": "Desarrollador de aplicaciones en Valladolid. Descubre mis proyectos, experiencia profesional y formación.",
+    "indexable": true
+  },
+  "/about": {
+    "title": "Perfil — Mario Muñoz Pequeño",
+    "description": "Conoce a Mario Muñoz Pequeño: desarrollador de aplicaciones en Valladolid, sus habilidades y trayectoria.",
+    "indexable": true
+  },
+  "/projects": {
+    "title": "Proyectos — Mario Muñoz Pequeño",
+    "description": "Explora proyectos de desarrollo web, aplicaciones y software creados por Mario Muñoz Pequeño.",
+    "indexable": true
+  },
+  "/experience": {
+    "title": "Experiencia profesional — Mario Muñoz Pequeño",
+    "description": "Experiencia profesional de Mario Muñoz Pequeño en desarrollo de aplicaciones, automatización y robótica.",
+    "indexable": true
+  },
+  "/education": {
+    "title": "Formación y habilidades — Mario Muñoz Pequeño",
+    "description": "Formación académica y habilidades técnicas de Mario Muñoz Pequeño en desarrollo de software.",
+    "indexable": true
+  },
+  "/proyectos/dungeon-archive": {
+    "title": "Dungeon Archive — Proyectos de Mario Muñoz Pequeño",
+    "description": "Una PWA rápida e instalable que pone la referencia de D&D 5e al alcance de la mesa sin depender de una conexión a Internet.",
+    "indexable": true
+  },
+  "/proyectos/euromario": {
+    "title": "Euromario — Proyectos de Mario Muñoz Pequeño",
+    "description": "Un radar de noticias de videojuegos que filtra el ruido, agrupa las historias duplicadas y usa IA para resumir y priorizar solo lo que importa, publicado como web estática sin infraestructura de pago.",
+    "indexable": true
+  },
+  "/proyectos/cosmere-archive": {
+    "title": "Cosmere Archive — Proyectos de Mario Muñoz Pequeño",
+    "description": "Archivo interactivo del Cosmere, el universo literario de Brandon Sanderson, pensado para explorar sus mundos, personajes, historias y sistemas a través de una experiencia visual alejada del formato tradicional de una wiki.",
+    "indexable": true
+  },
+  "/proyectos/recomendador-campeones": {
+    "title": "Recomendador de Campeones — Proyectos de Mario Muñoz Pequeño",
+    "description": "Proyecto final del bootcamp de Qualentum: un modelo de machine learning en Python que recomienda campeones de League of Legends, entrenado con datos reales de partidas obtenidos de la API de Riot Games.",
+    "indexable": true
+  },
+  "/proyectos/proyecto-gambia": {
+    "title": "Proyecto Gambia — Proyectos de Mario Muñoz Pequeño",
+    "description": "Aplicación Android nativa en Kotlin para la gestión de salud en Gambia, inspirada en MyGNUHealth e implementada como mi Trabajo de Fin de Grado de DAM, con datos médicos offline y sincronización a un servidor remoto.",
+    "indexable": true
+  },
+  "/proyectos/repository-library": {
+    "title": "Repository Library — Proyectos de Mario Muñoz Pequeño",
+    "description": "Un hub con la distribución del cliente de escritorio de Steam que reúne varios portfolios temáticos de videojuegos y los abre como si fueran productos de una tienda.",
+    "indexable": true
+  },
+  "/proyectos/vault-archive": {
+    "title": "Vault Archive — Proyectos de Mario Muñoz Pequeño",
+    "description": "Un portfolio construido dentro de un Pip-Boy 3000 replicado carcasa por carcasa, con seis módulos que funcionan en lugar de un filtro verde sobre una página web.",
+    "indexable": true
+  },
+  "/404": {
+    "title": "Página no encontrada — Mario Muñoz Pequeño",
+    "description": "La página solicitada no existe. Vuelve al portfolio de Mario Muñoz Pequeño.",
+    "indexable": false
+  }
+}
