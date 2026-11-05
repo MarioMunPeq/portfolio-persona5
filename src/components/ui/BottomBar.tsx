@@ -65,12 +65,7 @@ function DigitalClock() {
   return (
     <span
       className="p5-bb-clock p5-enter--bottom"
-      style={{
-        animationDelay: "80ms",
-        /* Alineado verticalmente con el centro del reproductor: mismo bottom +
-           la mitad de la diferencia de alturas. */
-        bottom: `calc(var(--p5-margin) + (var(--p5-player-h) - var(--p5-clock-size)) / 2)`,
-      }}
+      style={{ animationDelay: "80ms" }}
       aria-label="Reloj"
     >
       {clock.hours}
@@ -322,7 +317,7 @@ export function BottomBar() {
               url={profile.links.github.url}
               btnImg="/images/ui/Button_L3.png"
               delay="160ms"
-              rot={-2}
+              rot={-1.5}
             />
           )}
           {profile.links.linkedin && (
@@ -332,7 +327,7 @@ export function BottomBar() {
               url={profile.links.linkedin.url}
               btnImg="/images/ui/Button_R3.png"
               delay="240ms"
-              rot={1.5}
+              rot={1}
             />
           )}
         </div>

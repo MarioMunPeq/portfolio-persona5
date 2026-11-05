@@ -2823,10 +2823,10 @@ html {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: clamp(20px, 2vw, 44px);
   z-index: 50;
   padding: 0 var(--p5-margin);
-  /* Fondo transparente: sin franja ni degradado que se salga de pantalla (problema 4). */
+  /* Fondo transparente: sin franja ni degradado que se salga de pantalla. */
   background: transparent;
   pointer-events: none;
 }
@@ -3005,9 +3005,11 @@ html {
    el centro del reproductor. Rombo separador con parpadeo suave. */
 .p5-bb-clock {
   position: absolute;
+  /* Centrado en la pantalla sobre el eje común de la bottombar (misma línea central
+     que el reproductor y los botones sociales). */
   left: 50%;
-  bottom: var(--p5-margin);
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
@@ -3033,22 +3035,23 @@ html {
   to   { opacity: 0.3; }
 }
 
-/* Redes sociales: placas más pequeñas con fondo propio, borde blanco y sombra
-   roja por capas. Hover: fondo rojo y sube 3px. */
+/* Redes sociales: placas reales con esquinas cortadas (misma construcción de
+   3 capas que .p5-plate: sombra roja 4px 4px, borde blanco 2px, fondo #1a1a1a
+   con inset 2px). Rotación distinta por botón (-1.5° y +1° vía --p5-rot). */
 .p5-bb-social {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   margin-right: var(--p5-margin);
   margin-bottom: var(--p5-margin);
 }
 .p5-plate--social {
   position: relative;
-  height: clamp(36px, 4.2vh, 52px);
-  padding: 0 clamp(12px, 1vw, 24px);
-  gap: 8px;
+  height: clamp(44px, 5vh, 60px);
+  padding: 0 clamp(16px, 1.3vw, 26px);
+  gap: 0.7em;
   font-family: var(--p5-font-sans);
-  font-size: var(--p5-social-text);
+  font-size: clamp(14px, 1vw, 20px);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3057,44 +3060,67 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   outline: none;
-  transition: transform 150ms ease;
+  transition: transform 0.15s ease;
+}
+/* Indicador diagonal rojo en el borde izquierdo. */
+.p5-plate--social::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--p5-red);
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
 }
 .p5-plate--social:focus-visible {
   outline: 3px solid #fff;
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .p5-plate--social:hover {
-  transform: translate(0, -3px);
+  transform: translate(0, -4px) rotate(0deg);
+  box-shadow: 0 4px 0 #000;
 }
 .p5-plate--social:hover .p5-plate__fill {
   background: var(--p5-red);
 }
 .p5-plate--social:active {
-  transform: translate(0, -3px) scale(0.97);
+  transform: translate(0, 2px) scale(0.97);
   transition-duration: 0.05s;
 }
+/* 3 capas de la placa social (mismo clip-path que .p5-plate). */
+.p5-plate--social .p5-plate__shadow {
+  background: var(--p5-red);
+  transform: translate(4px, 4px);
+}
+.p5-plate--social .p5-plate__border {
+  border: 2px solid #ffffff;
+}
 .p5-plate--social .p5-plate__fill {
-  background: rgba(17, 17, 17, 0.88);
+  inset: 2px;
+  background: #1a1a1a;
 }
 .p5-plate--social .p5-social__icon {
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.4em;
+  height: 1.4em;
   display: inline-block;
 }
 .p5-plate--social .p5-social__btnimg {
-  height: var(--p5-social-key);
+  height: 1.6em;
   width: auto;
   display: inline-block;
-  margin-left: 8px;
+  margin-left: 0.7em;
   filter: invert(1);
 }
 .p5-plate--social:hover .p5-social__btnimg {
-  animation: p5-btn-pulse 0.3s ease-in-out;
+  animation: p5-btn-pulse 0.25s ease-in-out;
 }
 @keyframes p5-btn-pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
   100% { transform: scale(1); }
 }
 /* ── Menú de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
