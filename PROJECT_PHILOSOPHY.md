@@ -34,8 +34,8 @@ Spanish, professional but with real personality — confident, a little creative
 
 - Independent repo, no shared code with the Cosmere Archive or Dungeon Archive (D&D Companion) projects unless there's a clear technical reason.
 - Desktop-first, but mobile must remain a deliberate, functional composition — not a broken fallback.
-- Deployed on GitHub Pages via GitHub Actions. The domain/URL strategy is intentionally undecided until the site is functional — don't make assumptions about a custom domain in code (base paths, absolute URLs, etc. should stay flexible).
-- SEO/social metadata and Lighthouse-level performance auditing are deferred to the polish phase — but don't make choices early on that would be expensive to fix later (unoptimized images, unnecessarily heavy libraries).
+- Deployed on GitHub Pages via GitHub Actions at `mariomunpeq.is-a.dev`, with Vite's base set to `/`. Keep the `CNAME`, canonical URLs, sitemap, and prerendered route metadata in sync if the domain or route structure changes.
+- Route-specific SEO and social metadata are generated during the production build and updated during client navigation. Keep the metadata source, sitemap, and route handling aligned when adding or removing pages.
 
 ## When genuinely stuck
 

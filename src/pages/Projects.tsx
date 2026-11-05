@@ -5,14 +5,8 @@ import { ProjectInventory } from "../components/projects/ProjectInventory";
 import { SectionTitle } from "../components/ui/SectionTitle";
 import { projects } from "../data/projects";
 import type { Project } from "../data/projects";
-import { withProjectMedia } from "../lib/project-media";
 
-/**
- * Los proyectos con capturas en `src/assets/projects/<slug>/` resuelven su
- * galeria desde el sistema de archivos; el resto conserva las listas escritas
- * a mano en `data/projects.ts`.
- */
-const PROJECTS = withProjectMedia(projects);
+const PROJECTS = projects;
 
 /**
  * Capa grafica de fondo del inventario: estrellas de contorno por toda la

@@ -25,6 +25,16 @@ export interface CalendarDate {
   isToday: number;
 }
 
+/** Rotacion del numero por indice (grados) en la secuencia de entrada. */
+export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
+  0: -5,
+  1: -3,
+  2: -4,
+  3: -2,
+  4: -1,
+  5: -3,
+};
+
 /** Mapa de indice de dia de la semana a archivo de asset. */
 const WEEKDAY_FILES: Record<number, string> = {
   0: "calendar_sunday.png",

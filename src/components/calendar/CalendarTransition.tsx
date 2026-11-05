@@ -58,9 +58,10 @@ import {
   getCalendarDates,
   getDayNight,
   calendarAsset,
+  NUMBER_ROTATION_BY_INDEX,
   type CalendarDate,
 } from "../../lib/calendar";
-import { CalendarCard, NUMBER_ROTATION_BY_INDEX } from "./CalendarCard";
+import { CalendarCard } from "./CalendarCard";
 import { CalendarKnife } from "./CalendarKnife";
 
 /**
@@ -74,16 +75,16 @@ let introCompleted = false;
  * Se definen como constantes arriba del archivo para ajustarlas a mano.
  */
 const FADE_OUT_MS = 1200; // overlay fade-out al entrar (opacity 1→0)
-const FADE_IN_MS = 800;   // overlay fade-in al salir (opacity 0→1)
+const FADE_IN_MS = 800; // overlay fade-in al salir (opacity 0→1)
 const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 
 /**
  * Constantes de la animacion de caida (ajustar a mano).
  */
-const FALL_S = 0.55;               // duracion de la caida de cada dia (s)
-const START_ROT_DEG_MIN = 14;      // rotacion inicial extra minima (grados)
-const START_ROT_DEG_MAX = 28;      // rotacion inicial extra maxima (grados)
-const TODAY_DELAY_S = 0.24;        // la onda del primer impacto desencadena la caida de hoy
+const FALL_S = 0.55; // duracion de la caida de cada dia (s)
+const START_ROT_DEG_MIN = 14; // rotacion inicial extra minima (grados)
+const START_ROT_DEG_MAX = 28; // rotacion inicial extra maxima (grados)
+const TODAY_DELAY_S = 0.24; // la onda del primer impacto desencadena la caida de hoy
 const KNIFE_FLIGHT_S = 0.72;
 const KNIFE_SETTLE_S = 0.12;
 const KNIFE_HOLD_S = 1;
@@ -98,12 +99,12 @@ const KNIFE_HOLD_S = 1;
  */
 const CARD_POSITIONS: Record<Breakpoint, { x: number; y: number }[]> = {
   desktop: [
-    { x: 8, y: 42 },   // hoy-2
-    { x: 28, y: 51 },  // ayer
-    { x: 50, y: 61 },  // HOY
-    { x: 67, y: 43 },  // hoy+1
-    { x: 82, y: 32 },  // hoy+2
-    { x: 93, y: 27 },  // hoy+3
+    { x: 8, y: 42 }, // hoy-2
+    { x: 28, y: 51 }, // ayer
+    { x: 50, y: 61 }, // HOY
+    { x: 67, y: 43 }, // hoy+1
+    { x: 82, y: 32 }, // hoy+2
+    { x: 93, y: 27 }, // hoy+3
   ],
   tablet: [
     { x: 12, y: 40 },
@@ -136,7 +137,11 @@ export function CalendarTransition() {
   const isMobile = useMediaQuery("(max-width: 639px)");
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   const dates: CalendarDate[] = useMemo(() => getCalendarDates(), []);
-  const breakpoint: Breakpoint = isMobile ? "mobile" : isTablet ? "tablet" : "desktop";
+  const breakpoint: Breakpoint = isMobile
+    ? "mobile"
+    : isTablet
+      ? "tablet"
+      : "desktop";
   const visibleDates = useMemo(
     () =>
       (isMobile ? dates.slice(1, 4) : dates).map((date, visibleIndex) => ({
@@ -152,8 +157,11 @@ export function CalendarTransition() {
   );
   const dayNight = useMemo(() => getDayNight(), []);
   const bgSrc = useMemo(
-    () => calendarAsset(dayNight === "day" ? "calendar_day.png" : "calendar_night.png"),
-    [dayNight]
+    () =>
+      calendarAsset(
+        dayNight === "day" ? "calendar_day.png" : "calendar_night.png",
+      ),
+    [dayNight],
   );
 
   // ---------- Estado del overlay (unica capa reutilizada en ambas transiciones) ----------
@@ -303,7 +311,7 @@ export function CalendarTransition() {
         setShowCalendar(true); // el calendario aparece debajo del overlay
       },
     });
-  }, [imagesLoaded, reduced, introCompleted, isPositioned]);
+  }, [imagesLoaded, reduced, isPositioned]);
 
   // ---------- SALIDA: overlay fade-in → ocultar calendario → pausa → overlay fade-out ----------
   const startExit = useCallback(() => {
@@ -372,26 +380,28 @@ export function CalendarTransition() {
       bgRef.current,
       { scale: 1.25, autoAlpha: 0.25 },
       { scale: 1, autoAlpha: 1, duration: 1.4, ease: "power3.out" },
-      T.bgStart
+      T.bgStart,
     );
 
     // Movimiento sutil de camara (ken burns lento)
     tl.to(
       bgRef.current,
       { scale: 1.05, duration: 4.0, ease: "sine.inOut" },
-      T.bgStart + 0.4
+      T.bgStart + 0.4,
     );
 
     // ---------- Rotacion inicial: cada dia parte girado respecto a su rotacion final ----------
     const startRotByIndex: Record<number, number> = {};
     [0, 1, 3, 4, 5, 2].forEach((i) => {
       const sign = i % 2 === 0 ? 1 : -1;
-      const spread = START_ROT_DEG_MIN + ((i % 6) / 5) * (START_ROT_DEG_MAX - START_ROT_DEG_MIN);
+      const spread =
+        START_ROT_DEG_MIN +
+        ((i % 6) / 5) * (START_ROT_DEG_MAX - START_ROT_DEG_MIN);
       startRotByIndex[i] = sign * spread;
     });
 
     const allWrappers = visualRefs.current.filter(
-      (ref): ref is HTMLDivElement => ref !== null
+      (ref): ref is HTMLDivElement => ref !== null,
     );
     tl.set(allWrappers, { y: -(vh + 250), filter: "blur(3px)" }, 0);
 
@@ -399,10 +409,14 @@ export function CalendarTransition() {
       const content = contentRefs.current[i];
       if (!content) return;
       const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
-      tl.set(content, {
-        rotation: rotFinal + startRotByIndex[i],
-        transformOrigin: "50% 50%",
-      }, 0);
+      tl.set(
+        content,
+        {
+          rotation: rotFinal + startRotByIndex[i],
+          transformOrigin: "50% 50%",
+        },
+        0,
+      );
     });
 
     const fallStart = T.datesStart;
@@ -423,15 +437,19 @@ export function CalendarTransition() {
           duration: FALL_S,
           ease: "power4.in",
         },
-        fallStart
+        fallStart,
       );
 
-      tl.to(content, {
-        rotation: NUMBER_ROTATION_BY_INDEX[i],
-        transformOrigin: "50% 50%",
-        duration: FALL_S,
-        ease: "power4.in",
-      }, fallStart);
+      tl.to(
+        content,
+        {
+          rotation: NUMBER_ROTATION_BY_INDEX[i],
+          transformOrigin: "50% 50%",
+          duration: FALL_S,
+          ease: "power4.in",
+        },
+        fallStart,
+      );
     });
 
     otherIndices.forEach((i) => {
@@ -440,32 +458,66 @@ export function CalendarTransition() {
       if (!wrapper || !content) return;
       const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
 
-      tl.to(wrapper, {
-        scaleY: 0.91,
-        transformOrigin: "50% 100%",
-        duration: 0.055,
-        ease: "power4.in",
-      }, impactTime);
-      tl.to(wrapper, {
-        scaleY: 1.018,
-        duration: 0.09,
-        ease: "power2.out",
-      }, impactTime + 0.055);
-      tl.to(wrapper, {
-        scaleY: 1,
-        duration: 0.17,
-        ease: "power2.out",
-      }, impactTime + 0.145);
-      tl.to(wrapper, { y: -6, duration: 0.085, ease: "power2.out" }, impactTime);
-      tl.to(wrapper, { y: 0, duration: 0.18, ease: "power3.out" }, impactTime + 0.085);
+      tl.to(
+        wrapper,
+        {
+          scaleY: 0.91,
+          transformOrigin: "50% 100%",
+          duration: 0.055,
+          ease: "power4.in",
+        },
+        impactTime,
+      );
+      tl.to(
+        wrapper,
+        {
+          scaleY: 1.018,
+          duration: 0.09,
+          ease: "power2.out",
+        },
+        impactTime + 0.055,
+      );
+      tl.to(
+        wrapper,
+        {
+          scaleY: 1,
+          duration: 0.17,
+          ease: "power2.out",
+        },
+        impactTime + 0.145,
+      );
+      tl.to(
+        wrapper,
+        { y: -6, duration: 0.085, ease: "power2.out" },
+        impactTime,
+      );
+      tl.to(
+        wrapper,
+        { y: 0, duration: 0.18, ease: "power3.out" },
+        impactTime + 0.085,
+      );
 
-      tl.to(content, {
-        keyframes: [
-          { rotation: rotFinal + 0.65, y: -1.2, duration: 0.07, ease: "power2.in" },
-          { rotation: rotFinal - 0.35, y: 0.5, duration: 0.1, ease: "power2.inOut" },
-          { rotation: rotFinal, y: 0, duration: 0.15, ease: "power2.out" },
-        ],
-      }, impactTime);
+      tl.to(
+        content,
+        {
+          keyframes: [
+            {
+              rotation: rotFinal + 0.65,
+              y: -1.2,
+              duration: 0.07,
+              ease: "power2.in",
+            },
+            {
+              rotation: rotFinal - 0.35,
+              y: 0.5,
+              duration: 0.1,
+              ease: "power2.inOut",
+            },
+            { rotation: rotFinal, y: 0, duration: 0.15, ease: "power2.out" },
+          ],
+        },
+        impactTime,
+      );
     });
 
     // Onda de impacto comun: vertical, breve y amortiguada; sin flash ni vibracion lateral.
@@ -478,13 +530,17 @@ export function CalendarTransition() {
       ],
     };
     tl.to(bgRef.current, impactWave, impactTime);
-    tl.to(containerRef.current, {
-      ...impactWave,
-      keyframes: impactWave.keyframes.map((frame) => ({
-        ...frame,
-        y: Number(frame.y) * 0.72,
-      })),
-    }, impactTime);
+    tl.to(
+      containerRef.current,
+      {
+        ...impactWave,
+        keyframes: impactWave.keyframes.map((frame) => ({
+          ...frame,
+          y: Number(frame.y) * 0.72,
+        })),
+      },
+      impactTime,
+    );
 
     const hoyIndex = 2;
     const hoyWrapper = visualRefs.current[hoyIndex];
@@ -496,7 +552,9 @@ export function CalendarTransition() {
     if (hoyWrapper && hoyContent && knife) {
       const hoyRotFinal = NUMBER_ROTATION_BY_INDEX[hoyIndex];
       const rootRect = rootRef.current?.getBoundingClientRect();
-      const number = hoyContent.querySelector<HTMLElement>(".calendar-date-number");
+      const number = hoyContent.querySelector<HTMLElement>(
+        ".calendar-date-number",
+      );
       const numberRect = number?.getBoundingClientRect();
       const knifeRect = knife.getBoundingClientRect();
 
@@ -518,116 +576,183 @@ export function CalendarTransition() {
         const lungeX = targetX + Math.min(rootRect.width * 0.08, 92);
         const lungeY = targetY - Math.min(rootRect.height * 0.1, 64);
 
-        tl.set(knife, {
-          x: startX - originX,
-          y: startY - originY,
-          rotation: -25,
-          rotationY: 0,
-          transformPerspective: 900,
-          transformOrigin: "3% 50%",
-          autoAlpha: 0,
-        }, 0);
-        tl.to(knife, {
-          autoAlpha: 1,
-          duration: 0.08,
-          ease: "power1.out",
-        }, knifeStartTime);
-        tl.to(knife, {
-          keyframes: [
-            {
-              x: arcX - originX,
-              y: arcY - originY,
-              rotation: 145,
-              rotationY: 48,
-              duration: 0.3,
-              ease: "power2.out",
-            },
-            {
-              x: lungeX - originX,
-              y: lungeY - originY,
-              rotation: 245,
-              rotationY: -18,
-              duration: 0.25,
-              ease: "power2.inOut",
-            },
-            {
-              x: targetLeft,
-              y: targetTop,
-              rotation: 315,
-              rotationY: 0,
-              duration: KNIFE_FLIGHT_S - 0.55,
-              ease: "power4.in",
-            },
-          ],
-        }, knifeStartTime + 0.08);
-        tl.to(knife, {
-          x: targetLeft - 4,
-          y: targetTop + 4,
-          rotation: 319,
-          duration: 0.055,
-          ease: "power4.in",
-        }, knifeStartTime + 0.08 + KNIFE_FLIGHT_S);
-        tl.to(knife, {
-          x: targetLeft - 1,
-          y: targetTop + 1,
-          rotation: 315,
-          duration: KNIFE_SETTLE_S,
-          ease: "power2.out",
-        }, knifeStartTime + 0.135 + KNIFE_FLIGHT_S);
+        tl.set(
+          knife,
+          {
+            x: startX - originX,
+            y: startY - originY,
+            rotation: -25,
+            rotationY: 0,
+            transformPerspective: 900,
+            transformOrigin: "3% 50%",
+            autoAlpha: 0,
+          },
+          0,
+        );
+        tl.to(
+          knife,
+          {
+            autoAlpha: 1,
+            duration: 0.08,
+            ease: "power1.out",
+          },
+          knifeStartTime,
+        );
+        tl.to(
+          knife,
+          {
+            keyframes: [
+              {
+                x: arcX - originX,
+                y: arcY - originY,
+                rotation: 145,
+                rotationY: 48,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              {
+                x: lungeX - originX,
+                y: lungeY - originY,
+                rotation: 245,
+                rotationY: -18,
+                duration: 0.25,
+                ease: "power2.inOut",
+              },
+              {
+                x: targetLeft,
+                y: targetTop,
+                rotation: 315,
+                rotationY: 0,
+                duration: KNIFE_FLIGHT_S - 0.55,
+                ease: "power4.in",
+              },
+            ],
+          },
+          knifeStartTime + 0.08,
+        );
+        tl.to(
+          knife,
+          {
+            x: targetLeft - 4,
+            y: targetTop + 4,
+            rotation: 319,
+            duration: 0.055,
+            ease: "power4.in",
+          },
+          knifeStartTime + 0.08 + KNIFE_FLIGHT_S,
+        );
+        tl.to(
+          knife,
+          {
+            x: targetLeft - 1,
+            y: targetTop + 1,
+            rotation: 315,
+            duration: KNIFE_SETTLE_S,
+            ease: "power2.out",
+          },
+          knifeStartTime + 0.135 + KNIFE_FLIGHT_S,
+        );
 
-        tl.to({}, {
-          duration: KNIFE_HOLD_S,
-          onComplete: startExit,
-        }, knifeStartTime + 0.135 + KNIFE_FLIGHT_S + KNIFE_SETTLE_S);
+        tl.to(
+          {},
+          {
+            duration: KNIFE_HOLD_S,
+            onComplete: startExit,
+          },
+          knifeStartTime + 0.135 + KNIFE_FLIGHT_S + KNIFE_SETTLE_S,
+        );
       }
 
       tl.fromTo(
         hoyWrapper,
         { y: -(vh + 250), filter: "blur(3px)" },
         { y: 0, filter: "blur(0px)", duration: FALL_S, ease: "power4.in" },
-        hoyTime
+        hoyTime,
       );
 
-      tl.to(hoyContent, {
-        rotation: hoyRotFinal,
-        transformOrigin: "50% 50%",
-        duration: FALL_S,
-        ease: "power4.in",
-      }, hoyTime);
+      tl.to(
+        hoyContent,
+        {
+          rotation: hoyRotFinal,
+          transformOrigin: "50% 50%",
+          duration: FALL_S,
+          ease: "power4.in",
+        },
+        hoyTime,
+      );
 
-      tl.to(hoyWrapper, {
-        scaleY: 0.95,
-        transformOrigin: "50% 100%",
-        duration: 0.055,
-        ease: "power4.in",
-      }, hoyLandTime);
+      tl.to(
+        hoyWrapper,
+        {
+          scaleY: 0.95,
+          transformOrigin: "50% 100%",
+          duration: 0.055,
+          ease: "power4.in",
+        },
+        hoyLandTime,
+      );
       tl.to(
         hoyWrapper,
         { scaleY: 1.012, duration: 0.09, ease: "power2.out" },
-        hoyLandTime + 0.055
+        hoyLandTime + 0.055,
       );
-      tl.to(hoyWrapper, { scaleY: 1, duration: 0.15, ease: "power2.out" }, hoyLandTime + 0.145);
-      tl.to(hoyWrapper, { y: -4, duration: 0.08, ease: "power2.out" }, hoyLandTime);
-      tl.to(hoyWrapper, { y: 0, duration: 0.17, ease: "power3.out" }, hoyLandTime + 0.08);
+      tl.to(
+        hoyWrapper,
+        { scaleY: 1, duration: 0.15, ease: "power2.out" },
+        hoyLandTime + 0.145,
+      );
+      tl.to(
+        hoyWrapper,
+        { y: -4, duration: 0.08, ease: "power2.out" },
+        hoyLandTime,
+      );
+      tl.to(
+        hoyWrapper,
+        { y: 0, duration: 0.17, ease: "power3.out" },
+        hoyLandTime + 0.08,
+      );
 
-      tl.to(hoyContent, {
-        keyframes: [
-          { rotation: hoyRotFinal + 0.45, y: -0.8, duration: 0.07, ease: "power2.in" },
-          { rotation: hoyRotFinal - 0.25, y: 0.3, duration: 0.1, ease: "power2.inOut" },
-          { rotation: hoyRotFinal, y: 0, duration: 0.14, ease: "power2.out" },
-        ],
-      }, hoyLandTime);
+      tl.to(
+        hoyContent,
+        {
+          keyframes: [
+            {
+              rotation: hoyRotFinal + 0.45,
+              y: -0.8,
+              duration: 0.07,
+              ease: "power2.in",
+            },
+            {
+              rotation: hoyRotFinal - 0.25,
+              y: 0.3,
+              duration: 0.1,
+              ease: "power2.inOut",
+            },
+            { rotation: hoyRotFinal, y: 0, duration: 0.14, ease: "power2.out" },
+          ],
+        },
+        hoyLandTime,
+      );
 
       otherIndices.forEach((i) => {
         const content = contentRefs.current[i];
         if (!content) return;
         const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
-        tl.to(content, {
-          keyframes: [
-            { rotation: rotFinal + 0.2, y: -0.4, duration: 0.08, ease: "power2.in" },
-            { rotation: rotFinal, y: 0, duration: 0.16, ease: "power2.out" },
-          ],
-        }, hoyLandTime);
+        tl.to(
+          content,
+          {
+            keyframes: [
+              {
+                rotation: rotFinal + 0.2,
+                y: -0.4,
+                duration: 0.08,
+                ease: "power2.in",
+              },
+              { rotation: rotFinal, y: 0, duration: 0.16, ease: "power2.out" },
+            ],
+          },
+          hoyLandTime,
+        );
       });
 
       const hoyRipple = {
@@ -638,14 +763,17 @@ export function CalendarTransition() {
         ],
       };
       tl.to(bgRef.current, hoyRipple, hoyLandTime);
-      tl.to(containerRef.current, {
-        ...hoyRipple,
-        keyframes: hoyRipple.keyframes.map((frame) => ({
-          ...frame,
-          y: Number(frame.y) * 0.65,
-        })),
-      }, hoyLandTime);
-
+      tl.to(
+        containerRef.current,
+        {
+          ...hoyRipple,
+          keyframes: hoyRipple.keyframes.map((frame) => ({
+            ...frame,
+            y: Number(frame.y) * 0.65,
+          })),
+        },
+        hoyLandTime,
+      );
     }
 
     return () => {
@@ -656,7 +784,17 @@ export function CalendarTransition() {
       }
       tlRef.current = null;
     };
-  }, [showCalendar, hidden, reduced, introCompleted, isPositioned, breakpoint, isMobile, visibleIndices, startExit]);
+  }, [
+    showCalendar,
+    hidden,
+    reduced,
+    isPositioned,
+    breakpoint,
+    isMobile,
+    visibleIndices,
+    startExit,
+    finish,
+  ]);
 
   if (hidden || exitComplete || introCompleted) return null;
 
@@ -709,12 +847,14 @@ export function CalendarTransition() {
                 <div
                   key={sourceIndex}
                   className="calendar-ancla"
-                  style={{
-                    position: "absolute",
-                    left: `${pos.x}%`,
-                    top: `${pos.y}%`,
-                    transform: "translate(-50%, -50%)",
-                  } as React.CSSProperties}
+                  style={
+                    {
+                      position: "absolute",
+                      left: `${pos.x}%`,
+                      top: `${pos.y}%`,
+                      transform: "translate(-50%, -50%)",
+                    } as React.CSSProperties
+                  }
                 >
                   <CalendarCard
                     date={date}

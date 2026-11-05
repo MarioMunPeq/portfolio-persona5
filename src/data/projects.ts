@@ -510,11 +510,6 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        src: "/images/projects/cosmere-archive/mapa-galaxia.png",
-        alt: "Mapa galactico actual con los mundos del Cosmere",
-        caption: "Mapa galactico",
-      },
-      {
         src: "/images/projects/cosmere-archive/biblioteca.png",
         alt: "Biblioteca virtual con los libros del archivo",
         caption: "Biblioteca",
@@ -1239,11 +1234,32 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "",
+        src: "/images/projects/vault-archive/1.png",
         alt: "Vault Archive con el Pip-Boy 3000 y la barra de modulos",
       },
     ],
-    screenshots: null,
+    screenshots: [
+      {
+        src: "/images/projects/vault-archive/data.png",
+        alt: "Modulo DATA con los registros personales del operador",
+        caption: "Modulo DATA",
+      },
+      {
+        src: "/images/projects/vault-archive/mapa.png",
+        alt: "Mapa interactivo de Valladolid en el modulo MAP",
+        caption: "Modulo MAP",
+      },
+      {
+        src: "/images/projects/vault-archive/misiones.png",
+        alt: "Diario de misiones del Pip-Boy",
+        caption: "Modulo MISIONES",
+      },
+      {
+        src: "/images/projects/vault-archive/radio.png",
+        alt: "Radio del Pip-Boy con sintonizador y espectro de audio",
+        caption: "Modulo RADIO",
+      },
+    ],
     features: [
       {
         name: "Modulo STAT",

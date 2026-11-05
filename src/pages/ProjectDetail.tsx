@@ -7,10 +7,8 @@ import { PreviewBox } from "../components/ui/PreviewBox";
 import { Lightbox } from "../components/ui/Lightbox";
 import { projects } from "../data/projects";
 import type { ProjectScreenshot } from "../data/projects";
-import { withProjectMedia } from "../lib/project-media";
 
-/** Igual que en el inventario: las galerias con carpeta en src/assets mandan. */
-const PROJECTS = withProjectMedia(projects);
+const PROJECTS = projects;
 
 /* ── Font Awesome icons ── */
 import {
@@ -515,7 +513,7 @@ function PrevNextNav({
 }
 
 /* ════════════════════════════════════════════════════════════════
-   MAIN TEMPLATE — shared by all four project detail pages
+   MAIN TEMPLATE — shared by every project detail page
    ════════════════════════════════════════════════════════════════ */
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -553,7 +551,10 @@ export function ProjectDetail() {
         className="pointer-events-none absolute left-0 top-0 bottom-0 w-[1.5rem] bg-halftone-red opacity-10 hidden lg:block"
       />
 
-      <section className="project-detail-screen relative px-6 py-20 md:px-10 md:py-24 pb-40" style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
+      <section
+        className="project-detail-screen relative px-6 py-20 md:px-10 md:py-24 pb-40"
+        style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}
+      >
         <div className="mx-auto max-w-[var(--max-w-content)] relative z-10">
           {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">

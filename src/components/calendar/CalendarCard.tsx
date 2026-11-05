@@ -25,7 +25,10 @@
  * La rotacion del numero y de la imagen es diferente por cada dia.
  */
 import { forwardRef, type Ref } from "react";
-import type { CalendarDate } from "../../lib/calendar";
+import {
+  NUMBER_ROTATION_BY_INDEX,
+  type CalendarDate,
+} from "../../lib/calendar";
 import { calendarAsset } from "../../lib/calendar";
 import { useMediaQuery } from "../../lib/use-media-query";
 
@@ -66,17 +69,7 @@ const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
   2: 200, // HOY — el numero mas grande de la pantalla
   3: 140, // hoy+1
   4: 105, // hoy+2
-  5: 80,  // hoy+3
-};
-
-/** Rotacion del numero por indice (grados). Cada dia tiene un angulo distinto. */
-export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
-  0: -5, // hoy-2
-  1: -3, // ayer
-  2: -4, // HOY
-  3: -2, // hoy+1
-  4: -1, // hoy+2
-  5: -3, // hoy+3
+  5: 80, // hoy+3
 };
 
 /** Rotacion de la imagen del dia por indice (grados). Cada dia tiene un angulo distinto. */
@@ -99,127 +92,139 @@ const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   5: 110, // hoy+3
 };
 
-const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwardedRef) => {
-  const { date, index, wrapperRef, contentRef } = props;
+const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>(
+  (props, forwardedRef) => {
+    const { date, index, wrapperRef, contentRef } = props;
 
-  const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
-  const isMobile = useMediaQuery("(max-width: 639px)");
-  const widthScale = isMobile ? 0.45 : isTablet ? 0.8 : 1;
+    const isTablet = useMediaQuery(
+      "(min-width: 640px) and (max-width: 1023px)",
+    );
+    const isMobile = useMediaQuery("(max-width: 639px)");
+    const widthScale = isMobile ? 0.45 : isTablet ? 0.8 : 1;
 
-  const width = CARD_WIDTH_BY_INDEX[index] * widthScale;
-  const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index] * widthScale;
-  const src = calendarAsset(date.weekdayFile);
-  const numberFill = NUMBER_FILL_BY_WEEKDAY[date.weekday];
-  const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
-  const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
+    const width = CARD_WIDTH_BY_INDEX[index] * widthScale;
+    const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index] * widthScale;
+    const src = calendarAsset(date.weekdayFile);
+    const numberFill = NUMBER_FILL_BY_WEEKDAY[date.weekday];
+    const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
+    const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
 
-  // Grosor del contorno proporcional al tamaño del numero (en em).
-  const backStrokeEm = 0.24;
-  const frontStrokeEm = 0.03;
+    // Grosor del contorno proporcional al tamaño del numero (en em).
+    const backStrokeEm = 0.24;
+    const frontStrokeEm = 0.03;
 
-  // La imagen empieza en el 85% de la altura del numero (tapa su ~20% inferior).
-  const weekdayTopPx = fontSize * 0.85;
+    // La imagen empieza en el 85% de la altura del numero (tapa su ~20% inferior).
+    const weekdayTopPx = fontSize * 0.85;
 
-  const handleWrapperRef = (el: HTMLDivElement | null) => {
-    assignRef(wrapperRef, el);
-    assignRef(forwardedRef, el);
-  };
+    const handleWrapperRef = (el: HTMLDivElement | null) => {
+      assignRef(wrapperRef, el);
+      assignRef(forwardedRef, el);
+    };
 
-  // Capa trasera: halo blanco ancho (z-index:1)
-  const backStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    textAlign: "center",
-    fontFamily: "'p5hatty', sans-serif",
-    fontWeight: "400",
-    fontSize: `${fontSize}px`,
-    color: "#fff",
-    WebkitTextFillColor: "#fff",
-    WebkitTextStroke: `${backStrokeEm}em #fff`,
-    paintOrder: "stroke fill",
-    filter: "drop-shadow(4px 4px 0 #000)",
-    transform: `rotate(${numberRotation}deg)`,
-    zIndex: 1,
-    whiteSpace: "nowrap",
-    letterSpacing: "-0.03em",
-  };
+    // Capa trasera: halo blanco ancho (z-index:1)
+    const backStyle: React.CSSProperties = {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      textAlign: "center",
+      fontFamily: "'p5hatty', sans-serif",
+      fontWeight: "400",
+      fontSize: `${fontSize}px`,
+      color: "#fff",
+      WebkitTextFillColor: "#fff",
+      WebkitTextStroke: `${backStrokeEm}em #fff`,
+      paintOrder: "stroke fill",
+      filter: "drop-shadow(4px 4px 0 #000)",
+      transform: `rotate(${numberRotation}deg)`,
+      zIndex: 1,
+      whiteSpace: "nowrap",
+      letterSpacing: "-0.03em",
+    };
 
-  // Capa delantera: relleno de color segun el dia (z-index:2)
-  const frontStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    textAlign: "center",
-    fontFamily: "'p5hatty', sans-serif",
-    fontWeight: "400",
-    fontSize: `${fontSize}px`,
-    color: numberFill,
-    WebkitTextFillColor: numberFill,
-    WebkitTextStroke: `${frontStrokeEm}em ${numberFill}`,
-    paintOrder: "stroke fill",
-    transform: `rotate(${numberRotation}deg)`,
-    zIndex: 2,
-    whiteSpace: "nowrap",
-    letterSpacing: "-0.03em",
-  };
+    // Capa delantera: relleno de color segun el dia (z-index:2)
+    const frontStyle: React.CSSProperties = {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      textAlign: "center",
+      fontFamily: "'p5hatty', sans-serif",
+      fontWeight: "400",
+      fontSize: `${fontSize}px`,
+      color: numberFill,
+      WebkitTextFillColor: numberFill,
+      WebkitTextStroke: `${frontStrokeEm}em ${numberFill}`,
+      paintOrder: "stroke fill",
+      transform: `rotate(${numberRotation}deg)`,
+      zIndex: 2,
+      whiteSpace: "nowrap",
+      letterSpacing: "-0.03em",
+    };
 
-  // Imagen del dia de la semana: DELANTE de ambas capas (z-index:3)
-  const weekdayStyle: React.CSSProperties = {
-    position: "absolute",
-    top: `${weekdayTopPx}px`,
-    left: 0,
-    width: "100%",
-    height: "auto",
-    transform: `rotate(${weekdayRotation}deg)`,
-    zIndex: 3,
-  };
+    // Imagen del dia de la semana: DELANTE de ambas capas (z-index:3)
+    const weekdayStyle: React.CSSProperties = {
+      position: "absolute",
+      top: `${weekdayTopPx}px`,
+      left: 0,
+      width: "100%",
+      height: "auto",
+      transform: `rotate(${weekdayRotation}deg)`,
+      zIndex: 3,
+    };
 
-  return (
-    <div
-      className="calendar-card pointer-events-none"
-      ref={handleWrapperRef}
-      style={{
-        position: "relative",
-        width: `${width}px`,
-        height: "auto",
-      }}
-    >
-      {/* Contenido interior: rotacion estatica (nunca se anima durante la caida) */}
+    return (
       <div
-        ref={contentRef}
+        className="calendar-card pointer-events-none"
+        ref={handleWrapperRef}
         style={{
           position: "relative",
-          transform: `rotate(${numberRotation}deg)`,
-          width: "100%",
+          width: `${width}px`,
+          height: "auto",
         }}
       >
-        {/* Dia numerico — capa trasera: halo blanco ancho (z-index:1) */}
-        <span className="calendar-date-number" aria-hidden="true" style={backStyle}>
-          {date.day}
-        </span>
+        {/* Contenido interior: rotacion estatica (nunca se anima durante la caida) */}
+        <div
+          ref={contentRef}
+          style={{
+            position: "relative",
+            transform: `rotate(${numberRotation}deg)`,
+            width: "100%",
+          }}
+        >
+          {/* Dia numerico — capa trasera: halo blanco ancho (z-index:1) */}
+          <span
+            className="calendar-date-number"
+            aria-hidden="true"
+            style={backStyle}
+          >
+            {date.day}
+          </span>
 
-        {/* Dia numerico — capa delantera: relleno de color (z-index:2) */}
-        <span className="calendar-date-number" aria-hidden="true" style={frontStyle}>
-          {date.day}
-        </span>
+          {/* Dia numerico — capa delantera: relleno de color (z-index:2) */}
+          <span
+            className="calendar-date-number"
+            aria-hidden="true"
+            style={frontStyle}
+          >
+            {date.day}
+          </span>
 
-        {/* Imagen del dia de la semana (PNG con tipografia original) — DELANTE (z-index:3) */}
-        <img
-          src={src}
-          alt=""
-          loading="eager"
-          decoding="async"
-          className="calendar-weekday-img"
-          aria-hidden="true"
-          style={weekdayStyle}
-        />
+          {/* Imagen del dia de la semana (PNG con tipografia original) — DELANTE (z-index:3) */}
+          <img
+            src={src}
+            alt=""
+            loading="eager"
+            decoding="async"
+            className="calendar-weekday-img"
+            aria-hidden="true"
+            style={weekdayStyle}
+          />
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 CalendarCard.displayName = "CalendarCard";
 
