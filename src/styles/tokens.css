@@ -284,7 +284,7 @@
   z-index: 1;
 }
 
-/* Sprite icono del botón - usa Buttons Icons.png */
+/* Sprite icono del boton - usa Buttons Icons.png */
 .sprite-btn {
   background-image: url("/images/ui/Buttons Icons.png");
   background-repeat: no-repeat;
@@ -1129,7 +1129,7 @@ html.lenis body {
   background-color: var(--color-accent);
   border: 2px solid var(--color-paper);
   border-radius: 0;
-  /* Diagonal cut Persona 5: corta la esquina inferior-izquierda en ángulo */
+  /* Diagonal cut Persona 5: corta la esquina inferior-izquierda en angulo */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);
 }
 
@@ -2685,56 +2685,56 @@ html {
 }
 
 /* ================================================================
-   CALENDAR TRANSITION — Pantalla de introducción tipo Persona 5
+   CALENDAR TRANSITION — Pantalla de introduccion tipo Persona 5
    ================================================================
 
    ARQUITECTURA DE POSICIONAMIENTO (robusta, sin lucha de transform):
-   - .calendar-anchor   : ancla exterior. Define la posición FINAL de la
+   - .calendar-anchor   : ancla exterior. Define la posicion FINAL de la
      fecha en pantalla con left/top en % sobre el viewport y un
-     translate(-50%, -50%) en CSS que CENTRA la composición sobre el
+     translate(-50%, -50%) en CSS que CENTRA la composicion sobre el
      punto (X%, Y%). GSAP NO toca este elemento ni su transform.
-   - .calendar-visual   : envoltorio interior. GSAP es el único propietario
-     de su transform (x/y/scale/rotation) para la caída y el desplazamiento
+   - .calendar-visual   : envoltorio interior. GSAP es el unico propietario
+     de su transform (x/y/scale/rotation) para la caida y el desplazamiento
      final. Vive dentro del ancla, por lo que sus traslaciones son relativas
-     al centro de la composición.
-   - .calendar-card     : lockup vertical (número arriba, PNG abajo) centrado
+     al centro de la composicion.
+   - .calendar-card     : lockup vertical (numero arriba, PNG abajo) centrado
      dentro del visual.
 
-   Así CSS define dónde queda cada fecha y GSAP solo anima el movimiento
+   Asi CSS define donde queda cada fecha y GSAP solo anima el movimiento
    dentro de esa caja. Nunca compiten por el mismo transform.
    ================================================================ */
 
-/* Ancla exterior: posición final de cada fecha, centrada en el punto %. */
+/* Ancla exterior: posicion final de cada fecha, centrada en el punto %. */
 .calendar-anchor {
   position: absolute;
   z-index: 10;
-  /* Centra la composición sobre el punto (left, top). Porcentaje relativo
-     al propio tamaño del ancla, así funciona con cualquier ancho de fecha. */
+  /* Centra la composicion sobre el punto (left, top). Porcentaje relativo
+     al propio tamaño del ancla, asi funciona con cualquier ancho de fecha. */
   transform: translate(-50%, -50%);
 }
 
 /* Envoltorio interior animado por GSAP. Su transform es independiente del
    translate(-50%, -50%) del ancla (elemento distinto, no hay lucha).
    Empieza oculto (opacity: 0) para que no haya destello al montar; GSAP
-   lo revela (autoAlpha: 0 → 1) durante la caída de cada fecha. */
+   lo revela (autoAlpha: 0 → 1) durante la caida de cada fecha. */
 .calendar-visual {
   position: relative;
   opacity: 0;
   will-change: transform;
 }
 
-/* Lockup vertical: número arriba, PNG del weekday abajo.
+/* Lockup vertical: numero arriba, PNG del weekday abajo.
    Ambos comparten el mismo eje horizontal central y se mueven
-   como una sola unidad durante la caída. */
+   como una sola unidad durante la caida. */
 .calendar-card {
   position: relative;
   width: 100%;
 }
 
-/* Día numérico — estilo gestionado en CalendarCard.tsx (fuente p5hatty, contorno, rotación, capas). */
-/* Imagen del día de la semana — estilo gestionado en CalendarCard.tsx (z-index, rotación, margin-top). */
+/* Dia numerico — estilo gestionado en CalendarCard.tsx (fuente p5hatty, contorno, rotacion, capas). */
+/* Imagen del dia de la semana — estilo gestionado en CalendarCard.tsx (z-index, rotacion, margin-top). */
 
-/* Cuchillo: rotación gestionada por GSAP.
+/* Cuchillo: rotacion gestionada por GSAP.
    El PNG es horizontal (hoja a la izquierda, mango a la derecha). */
 .calendar-knife {
   transform-origin: center;
@@ -2759,10 +2759,10 @@ html {
 
 /* ================================================================
    TOPBAR / BOTTOMBAR — Persona 5 (menu principal)
-   Rediseño completo con estética P5, GSAP para micro-animaciones.
+   Rediseño completo con estetica P5, GSAP para micro-animaciones.
    Placas .p5-plate: clip-path poligonal, borde blanco (doble capa
    #fff exterior + #111 interior), sombra roja desplazada en wrapper
-   padre, rotación por pieza. Sin fondo sólido; solo degradado negro
+   padre, rotacion por pieza. Sin fondo solido; solo degradado negro
    suave 0.55→0. Todas las medidas en clamp().
    ================================================================ */
 
@@ -2779,7 +2779,7 @@ html {
   --p5-text-sm: clamp(14px, 0.95vw, 20px);
   --p5-pad: clamp(10px, 0.8vw, 18px) clamp(18px, 1.6vw, 36px);
   --p5-margin: clamp(20px, 2vw, 44px);
-  /* Botón superior izquierdo compacto */
+  /* Boton superior izquierdo compacto */
   --p5-btn-max-w: 16vw;
   --p5-btn-max-h: 9vh;
   /* Reproductor */
@@ -2787,9 +2787,9 @@ html {
   --p5-player-h: clamp(92px, 10.5vh, 124px);
   /* Disco: 118% del alto de la placa */
   --p5-disc-d: clamp(109px, 12.4vh, 146px);
-  /* Reloj (más pequeño) */
+  /* Reloj (mas pequeño) */
   --p5-clock-size: clamp(30px, 2.3vw, 52px);
-  /* Redes sociales (más pequeñas) */
+  /* Redes sociales (mas pequeñas) */
   --p5-social-text: clamp(12px, 0.85vw, 17px);
   --p5-social-icon: 1.2em;
   --p5-social-key: 1.3em;
@@ -2902,7 +2902,7 @@ html {
 .p5-enter--top { animation: p5-slide-down 0.5s ease-out both; }
 .p5-enter--bottom { animation: p5-slide-up 0.5s ease-out both; }
 
-/* ===== TOPBAR — botón izquierdo ===== */
+/* ===== TOPBAR — boton izquierdo ===== */
 /* Placa compacta: max 16vw de ancho, max 9vh de alto.
    Se deja margen extra (8px) para que la sombra roja desplazada
    (5px 5px) no se corte por el borde de la pantalla. */
@@ -2913,7 +2913,7 @@ html {
   gap: 4px;
   max-width: var(--p5-btn-max-w);
   max-height: var(--p5-btn-max-h);
-  /* Posición absoluta para no tapar títulos de páginas interiores */
+  /* Posicion absoluta para no tapar titulos de paginas interiores */
   position: absolute;
   left: calc(var(--p5-margin) + 8px);
   top: calc(var(--p5-margin) + 8px);
@@ -2930,7 +2930,7 @@ html {
   gap: 4px;
 }
 
-/* Versión menu principal: "xNaque" + "DESARROLLADOR" (no clicable). */
+/* Version menu principal: "xNaque" + "DESARROLLADOR" (no clicable). */
 .p5-topbar-brand {
   font-family: var(--p5-font-hatty);
   font-size: clamp(36px, 3vw, 64px);
@@ -2950,7 +2950,7 @@ html {
   white-space: nowrap;
 }
 
-/* Versión otras pantallas: casa roja y etiqueta menu en placa P5. */
+/* Version otras pantallas: casa roja y etiqueta menu en placa P5. */
 .p5-topbar-back {
   display: inline-flex;
   align-items: center;
@@ -2987,11 +2987,11 @@ html {
   line-height: 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
-  /* Transición con clip-path wipe (corte diagonal rápido 0.3s) */
+  /* Transicion con clip-path wipe (corte diagonal rapido 0.3s) */
   transition: clip-path 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover del botón back: fondo rojo, placa 4px derecha, flecha 4px izquierda */
+/* Hover del boton back: fondo rojo, placa 4px derecha, flecha 4px izquierda */
 .p5-plate--back {
   transition: transform 150ms ease, background-color 150ms ease;
 }
@@ -3112,7 +3112,7 @@ html {
 }
 
 /* ===== BOTTOMBAR ── */
-/* Reloj: cifras p5hatty más pequeñas, centrado horizontalmente y alineado con
+/* Reloj: cifras p5hatty mas pequeñas, centrado horizontalmente y alineado con
    el centro del reproductor. Dos rombos parpadean como un separador digital. */
 .p5-bb-clock {
   position: relative;
@@ -3149,9 +3149,9 @@ html {
   50%, 100% { opacity: 0.25; }
 }
 
-/* Redes sociales: placas reales con esquinas cortadas (misma construcción de
+/* Redes sociales: placas reales con esquinas cortadas (misma construccion de
    3 capas que .p5-plate: sombra roja 4px 4px, borde blanco 2px, fondo #1a1a1a
-   con inset 2px). Rotación distinta por botón (-1.5° y +1° vía --p5-rot). */
+   con inset 2px). Rotacion distinta por boton (-1.5° y +1° via --p5-rot). */
 .p5-bb-social {
   display: flex;
   align-items: center;
@@ -3277,7 +3277,7 @@ html {
   cursor: pointer;
   text-align: left;
   transition: color 0.15s, background-color 0.15s, transform 0.15s;
-  /* Cada fila en una sola línea, sin envuelto */
+  /* Cada fila en una sola linea, sin envuelto */
   white-space: nowrap;
 }
 .p5-track-selector__item:hover {
@@ -3328,7 +3328,7 @@ html {
 }
 
 /* ── Reproductor (placa horizontal, grid dentro de la placa) ── */
-/* Filas del grid de contenido: [ahora/contador] [título] [controles | progreso | tiempo/eq/lista] */
+/* Filas del grid de contenido: [ahora/contador] [titulo] [controles | progreso | tiempo/eq/lista] */
 .p5-player-root {
   position: relative;
   display: grid;
@@ -3343,8 +3343,8 @@ html {
   transform: rotate(var(--p5-rot));
 }
 
-/* Capas de la placa: fondo + borde (misma construcción de 3 capas que .p5-plate),
-   absolutas detrás del contenido del grid. No recortan el disco (no es hijo suyo). */
+/* Capas de la placa: fondo + borde (misma construccion de 3 capas que .p5-plate),
+   absolutas detras del contenido del grid. No recortan el disco (no es hijo suyo). */
 .p5-player-plate {
   position: absolute;
   inset: 0;
@@ -3375,7 +3375,7 @@ html {
 }
 
 /* Disco: celda cuadrada propia, centrado verticalmente respecto a la placa y asomando
-   por la izquierda con margin-left negativo (~35% del diámetro). 118% del alto de la placa.
+   por la izquierda con margin-left negativo (~35% del diametro). 118% del alto de la placa.
    Solo gira el  */
 .p5-disc-cell {
   display: grid;
@@ -3448,7 +3448,7 @@ html {
   flex-shrink: 0;
 }
 
-/* Fila 2: nombre de la pista, sans condensada gruesa, una línea, marquee si no cabe. */
+/* Fila 2: nombre de la pista, sans condensada gruesa, una linea, marquee si no cabe. */
 .p5-player-title-wrap {
   min-width: 0;
 }
@@ -3539,7 +3539,7 @@ html {
   transition: width 0.1s linear;
 }
 
-/* Tiempo pequeño, ecualizador y botón lista (derecha de la fila 3). */
+/* Tiempo pequeño, ecualizador y boton lista (derecha de la fila 3). */
 .p5-player-time {
   font-family: var(--p5-font-sans);
   font-size: clamp(11px, 0.6vw, 14px);
@@ -3579,7 +3579,7 @@ html {
   50% { height: 100%; }
 }
 
-/* Botón lista ≡ (24px). */
+/* Boton lista ≡ (24px). */
 .p5-list-btn-cell {
   display: flex;
   align-items: center;
@@ -3608,7 +3608,7 @@ html {
   bottom: calc(100% + 14px); /* hueco de 14px sobre la placa, nunca solapa */
   left: 0;
   width: var(--p5-player-w);
-  /* Altura máx.: resto de pantalla menos placa y 120px de margen inferior */
+  /* Altura max.: resto de pantalla menos placa y 120px de margen inferior */
   max-height: calc(100dvh - var(--p5-player-h) - 120px);
   overflow-y: auto;
   overflow-x: hidden;
@@ -3647,7 +3647,7 @@ html {
   cursor: pointer;
   text-align: left;
   transition: color 0.15s, background-color 0.15s, transform 0.15s;
-  /* Una sola línea, sin envuelto */
+  /* Una sola linea, sin envuelto */
   white-space: nowrap;
 }
 .p5-track-selector__item:hover:not(.p5-track-selector__item--active) {
@@ -3655,7 +3655,7 @@ html {
   background-color: rgba(232, 17, 45, 0.25);
   transform: translateX(6px);
 }
-/* Línea blanca separadora 1px al 12% de ancho entre número y título */
+/* Linea blanca separadora 1px al 12% de ancho entre numero y titulo */
 .p5-track-selector__item::before {
   content: "";
   width: 1px;
@@ -3665,7 +3665,7 @@ html {
   flex-shrink: 0;
 }
 .p5-track-selector__item--active {
-  /* Banda sólida roja recortada en diagonal (lado derecho), texto blanco, ♦ blanco */
+  /* Banda solida roja recortada en diagonal (lado derecho), texto blanco, ♦ blanco */
   background-color: var(--p5-red);
   clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
   color: #fff;

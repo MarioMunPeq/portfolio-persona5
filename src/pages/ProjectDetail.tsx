@@ -175,27 +175,27 @@ function getTechMeta(tech: string): TechMeta {
 
 /* ── Feature icon mapping ── */
 const FEATURE_ICONS: Record<string, typeof faCode> = {
-  "Búsqueda instantánea": faSearch,
-  "Compendio sin conexión": faBookOpen,
+  "Busqueda instantanea": faSearch,
+  "Compendio sin conexion": faBookOpen,
   "Relaciones entre entidades": faLink,
-  "Gestión de personajes": faUser,
+  "Gestion de personajes": faUser,
   "Seguimiento de combate": faShieldHalved,
   "Tirada de dados": faDiceD20,
-  "Marcadores de sesión": faThumbTack,
+  "Marcadores de sesion": faThumbTack,
   "Favoritos y recientes": faStar,
   "Modo principiante": faGraduationCap,
   "Referencia de reglas": faBook,
   "Copia de seguridad en la nube": faCloudArrowUp,
-  "Aplicación web progresiva": faMobileScreen,
-  "Múltiples fuentes de noticias": faRss,
+  "Aplicacion web progresiva": faMobileScreen,
+  "Multiples fuentes de noticias": faRss,
   "Filtrado de ruido": faFilter,
   "Seguimiento curado de juegos": faGears,
-  "Agrupación de historias": faCubes,
-  "Resumen y puntuación con IA": faBrain,
+  "Agrupacion de historias": faCubes,
+  "Resumen y puntuacion con IA": faBrain,
   "Fallos controlados de IA": faShieldHalved,
-  "Límite previo a la IA": faBolt,
-  "Publicación sin infraestructura": faCloudArrowUp,
-  "Automatización por hora": faBolt,
+  "Limite previo a la IA": faBolt,
+  "Publicacion sin infraestructura": faCloudArrowUp,
+  "Automatizacion por hora": faBolt,
   "Frontend sin dependencias": faCode,
   "Registro de datos medicos": faDatabase,
   "Graficas interactivas": faChartLine,
@@ -687,7 +687,7 @@ export function ProjectDetail() {
                 </Reveal>
               )}
 
-              {/* Mi rol / Aportación */}
+              {/* Mi rol / Aportacion */}
               {project.role && (
                 <Reveal delay={0.24}>
                   <div className="relative max-w-2xl">
@@ -731,7 +731,7 @@ export function ProjectDetail() {
                 </Reveal>
               )}
 
-              {/* Retos técnicos */}
+              {/* Retos tecnicos */}
               {project.challenges && (
                 <Reveal delay={0.26}>
                   <div>

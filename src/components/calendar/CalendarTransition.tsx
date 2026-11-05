@@ -1,14 +1,14 @@
 /**
- * Pantalla de introducción tipo Persona 5 — transición de calendario.
+ * Pantalla de introduccion tipo Persona 5 — transicion de calendario.
  *
- * Sustituye a LoadScreen como única pantalla de arranque. Reutiliza la
+ * Sustituye a LoadScreen como unica pantalla de arranque. Reutiliza la
  * arquitectura de arranque existente (boot.ts, markBooted/useBooted) para
- * que el ciclo de vida del home y el resto de la aplicación quede intacto.
+ * que el ciclo de vida del home y el resto de la aplicacion quede intacto.
  *
- * Coreografía (GSAP, una sola timeline coordinada):
+ * Coreografia (GSAP, una sola timeline coordinada):
  *   ENTRADA:
  *     - Overlay negro opaco (opacity 1) montado desde el primer render.
- *     - Preload de imágenes (fondo día/noche + PNGs de días de semana).
+ *     - Preload de imagenes (fondo dia/noche + PNGs de dias de semana).
  *     - Al cargar: overlay fade-out 1→0 (~1.2s), calendario aparece debajo.
  *   SALIDA:
  *     - Al terminar: overlay fade-in 0→1 (~0.8s).
@@ -17,40 +17,40 @@
  *     - Pausa ~200ms en negro.
  *     - Overlay fade-out 1→0 (~0.8s) revelando el home.
  *
- * ANIMACIÓN DE CAÍDA DE LOS DÍAS (una sola gsap.timeline):
- *   - Cada día tiene un wrapper exterior (position:absolute, left:0, top:0
- *     dentro del ancla CSS que define su posición final). GSAP anima SOLO
+ * ANIMACION DE CAIDA DE LOS DIAS (una sola gsap.timeline):
+ *   - Cada dia tiene un wrapper exterior (position:absolute, left:0, top:0
+ *     dentro del ancla CSS que define su posicion final). GSAP anima SOLO
  *     la propiedad y del wrapper. Nada de x, left, top, rotation o scale.
- *   - La rotación de cada día va fija en el elemento interior (CSS estático).
- *   1. Los 6 días que NO son hoy caen TODOS A LA VEZ (stagger: 0), desde
+ *   - La rotacion de cada dia va fija en el elemento interior (CSS estatico).
+ *   1. Los 6 dias que NO son hoy caen TODOS A LA VEZ (stagger: 0), desde
  *      fuera de pantalla por arriba (y: -(viewport height + 200px)) hasta
  *      y: 0, duration 0.5s, ease "power4.in". Todos aterrizan al mismo
  *      instante: PUM.
  *   2. En el impacto: shake de pantalla (±8px, 0.35s, amortiguado) y los
- *      números de esos 6 días tiemblan (±3px, 0.3s) sobre su contenido
- *      interior, volviendo exactamente a su posición.
- *   3. Con el impacto (≈0.08s después), cae HOY en el centro por su propio
+ *      numeros de esos 6 dias tiemblan (±3px, 0.3s) sobre su contenido
+ *      interior, volviendo exactamente a su posicion.
+ *   3. Con el impacto (≈0.08s despues), cae HOY en el centro por su propio
  *      peso: y desde fuera de pantalla hasta 0, vertical, 0.5s,
- *      "power4.in", con un shake más fuerte al aterrizar (±12px, 0.45s)
- *      y rebote mínimo.
+ *      "power4.in", con un shake mas fuerte al aterrizar (±12px, 0.45s)
+ *      y rebote minimo.
  *   4. onComplete de la timeline: pausa y salida a negro ya existentes.
  *
- * El cuchillo está fuera de alcance (por requisito) y no se renderiza.
+ * El cuchillo esta fuera de alcance (por requisito) y no se renderiza.
  *
- * Interacción:
+ * Interaccion:
  *   Clic en cualquier parte del overlay, Escape o Space salta la
- *   introducción y revela el home inmediatamente.
+ *   introduccion y revela el home inmediatamente.
  *
  * ARQUITECTURA DOM:
- *   .calendar-ancla   — posición final de la fecha (left/top % sobre el
+ *   .calendar-ancla   — posicion final de la fecha (left/top % sobre el
  *                        contenedor del calendario) con translate(-50%,-50%)
- *                        para centrar la composición sobre el punto.
+ *                        para centrar la composicion sobre el punto.
  *                        Definido en CSS; GSAP NO lo toca.
- *   .calendar-card    — composición de la fecha dentro del ancla. GSAP anima
- *                        SOLO su y durante la caída. Nada de x, left, top,
+ *   .calendar-card    — composicion de la fecha dentro del ancla. GSAP anima
+ *                        SOLO su y durante la caida. Nada de x, left, top,
  *                        rotation ni scale.
- *   .calendar-content — contenido interior (número + imagen), rotación
- *                        estática en CSS.
+ *   .calendar-content — contenido interior (numero + imagen), rotacion
+ *                        estatica en CSS.
  *
  * Cada fecha muestra: hoy-2, hoy-1 (ayer), hoy, hoy+1, hoy+2, hoy+3,
  * hoy+4 (buffer a la derecha para continuidad del desplazamiento).
@@ -68,8 +68,8 @@ import {
 import { CalendarCard, NUMBER_ROTATION_BY_INDEX } from "./CalendarCard";
 
 /**
- * Marca a nivel de módulo para evitar que React 19 StrictMode vuelva a
- * mostrar el calendario después de que ya se completó.
+ * Marca a nivel de modulo para evitar que React 19 StrictMode vuelva a
+ * mostrar el calendario despues de que ya se completo.
  */
 let introCompleted = false;
 
@@ -82,22 +82,22 @@ const FADE_IN_MS = 800;   // overlay fade-in al salir (opacity 0→1)
 const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 
 /**
- * Constantes de la animación de caída (ajustar a mano).
+ * Constantes de la animacion de caida (ajustar a mano).
  */
-const FALL_S = 0.55;               // duración de la caída de cada día (s)
-const START_ROT_DEG_MIN = 14;      // rotación inicial extra mínima (grados)
-const START_ROT_DEG_MAX = 28;      // rotación inicial extra máxima (grados)
-const SQUASH_Y = 0.88;             // escala Y en el squash de impacto (días normales)
-const SHAKE_PX = 14;               // desplazamiento máximo de shake de pantalla (px)
+const FALL_S = 0.55;               // duracion de la caida de cada dia (s)
+const START_ROT_DEG_MIN = 14;      // rotacion inicial extra minima (grados)
+const START_ROT_DEG_MAX = 28;      // rotacion inicial extra maxima (grados)
+const SQUASH_Y = 0.88;             // escala Y en el squash de impacto (dias normales)
+const SHAKE_PX = 14;               // desplazamiento maximo de shake de pantalla (px)
 const SHAKE_TODAY_PX = 5;          // desplazamiento de shake de pantalla para hoy (px)
 const ZOOM_PUNCH = 1.025;          // factor de zoom micro en el impacto
-const DUST_COUNT = 10;             // número de partículas de polvo por día
+const DUST_COUNT = 10;             // numero de particulas de polvo por dia
 
 /**
- * POSICIONES FINALES (después del desplazamiento hacia la izquierda):
+ * POSICIONES FINALES (despues del desplazamiento hacia la izquierda):
  * Hoy en el centro (x=50%), ayer a su izquierda (x=28%).
  * Coordenadas porcentuales de referencia de Persona 5, adaptables al
- * viewport (no son píxeles hardcodeados).
+ * viewport (no son pixeles hardcodeados).
  *   0 = hoy-2, 1 = hoy-1 (ayer), 2 = HOY, 3 = hoy+1, 4 = hoy+2,
  *   5 = hoy+3, 6 = hoy+4 (buffer a la derecha).
  */
@@ -137,7 +137,7 @@ const T = {
   datesStart: 0.55,
 };
 
-/** Tiempo máximo antes de forzar la salida aunque algo falle. */
+/** Tiempo maximo antes de forzar la salida aunque algo falle. */
 const SAFETY_MS = 10000;
 
 type Breakpoint = "desktop" | "tablet" | "mobile";
@@ -151,7 +151,7 @@ export function CalendarTransition() {
     [dayNight]
   );
 
-  // ---------- Estado del overlay (única capa reutilizada en ambas transiciones) ----------
+  // ---------- Estado del overlay (unica capa reutilizada en ambas transiciones) ----------
   const [overlayOpacity, setOverlayOpacity] = useState(1);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -182,7 +182,7 @@ export function CalendarTransition() {
     return "mobile";
   }, []);
 
-  /** Bloquea el scroll mientras la introducción está activa. */
+  /** Bloquea el scroll mientras la introduccion esta activa. */
   const lockScroll = useCallback((lock: boolean) => {
     if (lock) {
       document.documentElement.style.overflow = "hidden";
@@ -192,9 +192,9 @@ export function CalendarTransition() {
   }, []);
 
   /**
-   * Camino de finalización idempotente. Usado por:
-   *   - Finalización normal de la secuencia de salida (onComplete de la timeline)
-   *   - Clic / Escape / Space sobre el overlay (salto de introducción)
+   * Camino de finalizacion idempotente. Usado por:
+   *   - Finalizacion normal de la secuencia de salida (onComplete de la timeline)
+   *   - Clic / Escape / Space sobre el overlay (salto de introduccion)
    *   - Temporizador de seguridad (10 s)
    */
   const finish = useCallback(() => {
@@ -230,7 +230,7 @@ export function CalendarTransition() {
     });
   }, [lockScroll]);
 
-  // Reduced motion: mostrar estado final inmediato, sin animación.
+  // Reduced motion: mostrar estado final inmediato, sin animacion.
   useEffect(() => {
     if (reduced) {
       lockScroll(false);
@@ -255,7 +255,7 @@ export function CalendarTransition() {
     };
   }, [reduced, hidden, finish]);
 
-  // Montaje: bloquear scroll y marcar que los componentes están posicionados.
+  // Montaje: bloquear scroll y marcar que los componentes estan posicionados.
   useEffect(() => {
     if (reduced || hidden || introCompleted) return;
     lockScroll(true);
@@ -265,8 +265,8 @@ export function CalendarTransition() {
     };
   }, [reduced, hidden, lockScroll]);
 
-  // ---------- Preload de imágenes con new Image() + onload / decode() ----------
-  // El calendario no se muestra hasta que todas las imágenes estén cargadas.
+  // ---------- Preload de imagenes con new Image() + onload / decode() ----------
+  // El calendario no se muestra hasta que todas las imagenes esten cargadas.
   useEffect(() => {
     const sources: string[] = [
       calendarAsset("calendar_day.png"),
@@ -292,7 +292,7 @@ export function CalendarTransition() {
     });
   }, [dates]);
 
-  // ---------- ENTRADA: fade-out del overlay cuando las imágenes están listas ----------
+  // ---------- ENTRADA: fade-out del overlay cuando las imagenes estan listas ----------
   useEffect(() => {
     if (!imagesLoaded || reduced || introCompleted || !isPositioned) return;
 
@@ -336,7 +336,7 @@ export function CalendarTransition() {
     });
   }, []);
 
-  // ---------- Animación de caída del calendario (GSAP timeline) ----------
+  // ---------- Animacion de caida del calendario (GSAP timeline) ----------
   useEffect(() => {
     if (
       !showCalendar ||
@@ -376,15 +376,15 @@ export function CalendarTransition() {
       T.bgStart
     );
 
-    // Movimiento sutil de cámara (ken burns lento)
+    // Movimiento sutil de camara (ken burns lento)
     tl.to(
       bgRef.current,
       { scale: 1.05, duration: 4.0, ease: "sine.inOut" },
       T.bgStart + 0.4
     );
 
-    // ---------- Rotación inicial: cada día parte girado respecto a su rotación final ----------
-    // Signo alterno y valores distintos por día (14°–28°). Se endereza durante la caída.
+    // ---------- Rotacion inicial: cada dia parte girado respecto a su rotacion final ----------
+    // Signo alterno y valores distintos por dia (14°–28°). Se endereza durante la caida.
     const startRotByIndex: Record<number, number> = {};
     [0, 1, 3, 4, 5, 6, 2].forEach((i) => {
       const sign = i % 2 === 0 ? 1 : -1;
@@ -392,7 +392,7 @@ export function CalendarTransition() {
       startRotByIndex[i] = sign * spread;
     });
 
-    // ---------- Estado inicial: todos los días fuera de pantalla por arriba ----------
+    // ---------- Estado inicial: todos los dias fuera de pantalla por arriba ----------
     // GSAP anima solo y del wrapper y rotation del content. Nada de x, left, top.
     const allWrappers = visualRefs.current.filter(
       (ref): ref is HTMLDivElement => ref !== null
@@ -409,8 +409,8 @@ export function CalendarTransition() {
       }, 0);
     });
 
-    // ---------- FASE 1 — LOS 6 DÍAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
-    // Caen simultáneamente (stagger: 0), mismo instante de impacto: PUM.
+    // ---------- FASE 1 — LOS 6 DIAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
+    // Caen simultaneamente (stagger: 0), mismo instante de impacto: PUM.
     const fallStart = T.datesStart;
     const otherIndices = [0, 1, 3, 4, 5, 6];
     const impactTime = fallStart + FALL_S;
@@ -420,7 +420,7 @@ export function CalendarTransition() {
       const content = contentRefs.current[i];
       if (!wrapper || !content) return;
 
-      // Caída vertical: y + motion blur → 0. Solo y del wrapper, rotation del content.
+      // Caida vertical: y + motion blur → 0. Solo y del wrapper, rotation del content.
       tl.fromTo(
         wrapper,
         { y: -(vh + 250), filter: "blur(3px)" },
@@ -441,7 +441,7 @@ export function CalendarTransition() {
       }, fallStart);
     });
 
-    // ---------- IMPACTO de los 6 días ----------
+    // ---------- IMPACTO de los 6 dias ----------
     // Squash: scaleY 0.88 → 1 (elastic, origen en la base).
     otherIndices.forEach((i) => {
       const wrapper = visualRefs.current[i];
@@ -454,7 +454,7 @@ export function CalendarTransition() {
       tl.to(wrapper, { y: 0, duration: 0.14, ease: "power3.in" }, impactTime + 0.12);
     });
 
-    // Temblor de los números (content): rotación ±4° y y ±3px, 0.45s, vuelven EXACTAMENTE al valor final.
+    // Temblor de los numeros (content): rotacion ±4° y y ±3px, 0.45s, vuelven EXACTAMENTE al valor final.
     otherIndices.forEach((i) => {
       const content = contentRefs.current[i];
       if (!content) return;
@@ -469,7 +469,7 @@ export function CalendarTransition() {
       }, impactTime);
     });
 
-    // Shake de pantalla: contenedor raíz con decaimiento ±14px, ±6px, ±3px, 0 en 0.5s.
+    // Shake de pantalla: contenedor raiz con decaimiento ±14px, ±6px, ±3px, 0 en 0.5s.
     tl.to(containerRef.current, {
       keyframes: [
         { x: SHAKE_PX, y: SHAKE_PX * 0.5, duration: 0.125, ease: "power2.in" },
@@ -487,7 +487,7 @@ export function CalendarTransition() {
     tl.to(flashRef.current, { opacity: 0.22, duration: 0.05 }, impactTime);
     tl.to(flashRef.current, { opacity: 0, duration: 0.05 }, impactTime + 0.05);
 
-    // Polvo: partículas salen de la base de cada día en abanico y desaparecen en 0.5s.
+    // Polvo: particulas salen de la base de cada dia en abanico y desaparecen en 0.5s.
     otherIndices.forEach((i) => {
       const wrapper = visualRefs.current[i];
       const dustContainer = dustContainerRef.current;
@@ -533,7 +533,7 @@ export function CalendarTransition() {
       );
     });
 
-    // ---------- FASE 2 — HOY CAE 0.1s DESPUÉS DEL IMPACTO ----------
+    // ---------- FASE 2 — HOY CAE 0.1s DESPUES DEL IMPACTO ----------
     const hoyIndex = 2;
     const hoyWrapper = visualRefs.current[hoyIndex];
     const hoyContent = contentRefs.current[hoyIndex];
@@ -542,7 +542,7 @@ export function CalendarTransition() {
     if (hoyWrapper && hoyContent) {
       const hoyRotFinal = NUMBER_ROTATION_BY_INDEX[hoyIndex];
 
-      // Caída de hoy: misma rotación inicial extra, power4.in, FALL_S.
+      // Caida de hoy: misma rotacion inicial extra, power4.in, FALL_S.
       tl.fromTo(
         hoyWrapper,
         { y: -(vh + 250), filter: "blur(3px)" },
@@ -559,7 +559,7 @@ export function CalendarTransition() {
 
       const hoyLandTime = hoyTime + FALL_S;
 
-      // Squash más suave: 0.94.
+      // Squash mas suave: 0.94.
       tl.to(hoyWrapper, { scaleY: 0.94, transformOrigin: "50% 100%", duration: 0.06 }, hoyLandTime);
       tl.to(
         hoyWrapper,
@@ -571,7 +571,7 @@ export function CalendarTransition() {
       tl.to(hoyWrapper, { y: -7, duration: 0.12, ease: "power2.out" }, hoyLandTime);
       tl.to(hoyWrapper, { y: 0, duration: 0.14, ease: "power3.in" }, hoyLandTime + 0.12);
 
-      // Número de hoy tiembla suave ±1.5° y ±1.5px.
+      // Numero de hoy tiembla suave ±1.5° y ±1.5px.
       tl.to(hoyContent, {
         keyframes: [
           { rotation: hoyRotFinal + 1.5, y: 1.5, duration: 0.1, ease: "power2.in" },
@@ -580,7 +580,7 @@ export function CalendarTransition() {
         ],
       }, hoyLandTime);
 
-      // Los otros 6 números tiemblan solo ±1.5° y ±1.5px (0.3s), no más.
+      // Los otros 6 numeros tiemblan solo ±1.5° y ±1.5px (0.3s), no mas.
       const d2 = 0.3;
       otherIndices.forEach((i) => {
         const content = contentRefs.current[i];
@@ -612,7 +612,7 @@ export function CalendarTransition() {
       tl.to(flashRef.current, { opacity: 0.12, duration: 0.06 }, hoyLandTime);
       tl.to(flashRef.current, { opacity: 0, duration: 0.06 }, hoyLandTime + 0.06);
 
-      // Polvo hoy: 6 partículas.
+      // Polvo hoy: 6 particulas.
       const dustContainerToday = dustContainerRef.current;
       if (dustContainerToday) {
         tl.call(
@@ -685,9 +685,9 @@ export function CalendarTransition() {
       }}
       tabIndex={-1}
     >
-      {/* Overlay negro — capa única reutilizada en ambas transiciones.
+      {/* Overlay negro — capa unica reutilizada en ambas transiciones.
           Arranca con opacity:1 (montado desde el primer render).
-          pointer-events:none cuando está a opacity 0. */}
+          pointer-events:none cuando esta a opacity 0. */}
       <div
         ref={overlayRef}
         className="fixed inset-0 bg-black"
@@ -702,7 +702,7 @@ export function CalendarTransition() {
       {/* Contenido del calendario (solo visible tras el fade-out de entrada) */}
       {showCalendar && (
         <>
-          {/* Fondo ciudad — día o noche según hora local */}
+          {/* Fondo ciudad — dia o noche segun hora local */}
           <div
             ref={bgRef}
             className="absolute inset-0"
@@ -751,7 +751,7 @@ export function CalendarTransition() {
             style={{ zIndex: 50, opacity: 0, pointerEvents: "none" }}
           />
 
-          {/* Contenedor de partículas de polvo (cubre toda la pantalla)} */}
+          {/* Contenedor de particulas de polvo (cubre toda la pantalla)} */}
           <div
             ref={dustContainerRef}
             className="fixed inset-0"

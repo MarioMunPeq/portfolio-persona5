@@ -1,22 +1,22 @@
 /**
  * Sistema de fechas del calendario tipo Persona 5.
  *
- * Una sola fuente de verdad para la fecha actual, el día de la semana,
- * el día numérico, la zona horaria local y la clasificación día/noche.
+ * Una sola fuente de verdad para la fecha actual, el dia de la semana,
+ * el dia numerico, la zona horaria local y la clasificacion dia/noche.
  * Se reutiliza la misma instancia `Date` que usa TopBar (hora local del
  * visitante) para evitar divergencias entre sistemas de fecha.
  *
  * Calcula siete fechas consecutivas: hoy-2, hoy-1, hoy, hoy+1, hoy+2,
- * hoy+3, hoy+4. La última (hoy+4) es un buffer a la derecha que permite
+ * hoy+3, hoy+4. La ultima (hoy+4) es un buffer a la derecha que permite
  * el desplazamiento horizontal del calendario sin dejar huecos.
- * El constructor de `Date` con `setDate` gestiona automáticamente cambios
+ * El constructor de `Date` con `setDate` gestiona automaticamente cambios
  * de mes, año y años bisiestos.
  */
 export interface CalendarDate {
   date: Date;
-  /** Día del mes (1-31). */
+  /** Dia del mes (1-31). */
   day: number;
-  /** Índice de día de la semana (0 = domingo, 6 = sábado). */
+  /** Indice de dia de la semana (0 = domingo, 6 = sabado). */
   weekday: number;
   /** Etiqueta en español (DOMINGO, LUNES…). */
   weekdayLabel: string;
@@ -26,7 +26,7 @@ export interface CalendarDate {
   isToday: number;
 }
 
-/** Mapa de índice de día de la semana a archivo de asset. */
+/** Mapa de indice de dia de la semana a archivo de asset. */
 const WEEKDAY_FILES: Record<number, string> = {
   0: "calendar_sunday.png",
   1: "calendar_monday.png",
@@ -37,25 +37,25 @@ const WEEKDAY_FILES: Record<number, string> = {
   6: "calendar_saturday.png",
 };
 
-/** Etiquetas en español para cada día de la semana. */
+/** Etiquetas en español para cada dia de la semana. */
 const WEEKDAY_LABELS: Record<number, string> = {
   0: "DOMINGO",
   1: "LUNES",
   2: "MARTES",
-  3: "MIÉRCOLES",
+  3: "MIERCOLES",
   4: "JUEVES",
   5: "VIERNES",
-  6: "SÁBADO",
+  6: "SABADO",
 };
 
 /**
  * Calcula siete fechas consecutivas del calendario.
  *
- * Posición 0 = hoy-2, posición 1 = hoy-1 (ayer), posición 2 = hoy (activa),
- * posición 3 = hoy+1, posición 4 = hoy+2, posición 5 = hoy+3,
- * posición 6 = hoy+4 (buffer a la derecha para el desplazamiento).
+ * Posicion 0 = hoy-2, posicion 1 = hoy-1 (ayer), posicion 2 = hoy (activa),
+ * posicion 3 = hoy+1, posicion 4 = hoy+2, posicion 5 = hoy+3,
+ * posicion 6 = hoy+4 (buffer a la derecha para el desplazamiento).
  *
- * @returns Array de 7 objetos CalendarDate ordenados cronológicamente.
+ * @returns Array de 7 objetos CalendarDate ordenados cronologicamente.
  */
 export function getCalendarDates(): CalendarDate[] {
   const today = new Date();
@@ -85,16 +85,16 @@ export function getCalendarDates(): CalendarDate[] {
 
 /**
  * Devuelve la fecha activa (hoy) como CalendarDate.
- * Útil para referenciar el día central sin recorrer el array.
+ * Util para referenciar el dia central sin recorrer el array.
  */
 export function getTodayDate(): CalendarDate {
   return getCalendarDates()[2];
 }
 
 /**
- * Clasifica el momento actual como día o noche según la hora local.
+ * Clasifica el momento actual como dia o noche segun la hora local.
  *
- * Día: 07:00–18:59 | Noche: 19:00–06:59 (hora local del visitante).
+ * Dia: 07:00–18:59 | Noche: 19:00–06:59 (hora local del visitante).
  *
  * @returns "day" o "night".
  */
@@ -104,7 +104,7 @@ export function getDayNight(): "day" | "night" {
 }
 
 /**
- * Ruta pública completa para un asset del calendario.
+ * Ruta publica completa para un asset del calendario.
  */
 export function calendarAsset(name: string): string {
   return `${import.meta.env.BASE_URL}images/Calendar/${name}`;

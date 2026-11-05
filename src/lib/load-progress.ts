@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 export interface BootAssets {
   /** 0 → 1: fraccion REAL de recursos listos. */
   ratio: number;
-  /** Todos los recursos resueltos (o saltó el seguro de tiempo). */
+  /** Todos los recursos resueltos (o salto el seguro de tiempo). */
   ready: boolean;
 }
 
 /**
  * Pesos relativos de cada tarea. Las fuentes y el evento `load` de la
- * ventana son lo que más tarda en una primera visita; las imagenes del
+ * ventana son lo que mas tarda en una primera visita; las imagenes del
  * splash se descargan en paralelo y pesan menos.
  */
 const FONTS_WEIGHT = 3;
@@ -26,7 +26,7 @@ const NO_SOURCES: readonly string[] = [];
  * Mide la carga real de lo que necesita el splash: fuentes, `window.load`
  * y decode de las imagenes que se pintan en la pantalla de carga.
  *
- * El progreso es monótono (nunca retrocede) y `ready` solo se marca
+ * El progreso es monotono (nunca retrocede) y `ready` solo se marca
  * cuando todas las tareas han terminado — con un seguro de tiempo para
  * que un asset roto no deje la portada bloqueada.
  */

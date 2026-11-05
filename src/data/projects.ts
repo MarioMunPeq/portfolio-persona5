@@ -83,9 +83,9 @@ export const projects: Project[] = [
     slug: "dungeon-archive",
     name: "Dungeon Archive",
     summary:
-      "Una PWA rápida e instalable que pone la referencia de D&D 5e al alcance de la mesa sin depender de una conexión a Internet.",
+      "Una PWA rapida e instalable que pone la referencia de D&D 5e al alcance de la mesa sin depender de una conexion a Internet.",
     description:
-      "Un compañero rápido, pensado primero para móvil y diseñado para funcionar sin conexión, para las sesiones de D&D 5e. Pone toda la referencia del juego —hechizos, monstruos, equipo, condiciones, acciones, objetos mágicos y dotes— en el teléfono que ya está sobre la mesa, y mantiene el contexto esencial de la partida —tu grupo, la sesión actual y el estado del combate— a un toque de distancia. Su único propósito es reducir el tiempo muerto en la mesa: el intervalo entre que surge una pregunta y se encuentra la respuesta.",
+      "Un compañero rapido, pensado primero para movil y diseñado para funcionar sin conexion, para las sesiones de D&D 5e. Pone toda la referencia del juego —hechizos, monstruos, equipo, condiciones, acciones, objetos magicos y dotes— en el telefono que ya esta sobre la mesa, y mantiene el contexto esencial de la partida —tu grupo, la sesion actual y el estado del combate— a un toque de distancia. Su unico proposito es reducir el tiempo muerto en la mesa: el intervalo entre que surge una pregunta y se encuentra la respuesta.",
     tagline: "D&D 5e companion · Mobile-first · Offline-first",
     version: "0.1.0",
     stack: [
@@ -137,39 +137,39 @@ export const projects: Project[] = [
     ],
     features: [
       {
-        name: "Búsqueda instantánea",
+        name: "Busqueda instantanea",
         description:
-          "Una única búsqueda para todo el Compendio. Los resultados aparecen mientras escribes gracias a un índice construido previamente y mantenido en memoria, sin red ni servidor.",
+          "Una unica busqueda para todo el Compendio. Los resultados aparecen mientras escribes gracias a un indice construido previamente y mantenido en memoria, sin red ni servidor.",
       },
       {
-        name: "Compendio sin conexión",
+        name: "Compendio sin conexion",
         description:
-          "Toda la referencia del SRD de D&D 5e —hechizos, monstruos, equipo, condiciones, acciones, objetos mágicos y dotes— está integrada en la aplicación durante el proceso de compilación y disponible sin conexión.",
+          "Toda la referencia del SRD de D&D 5e —hechizos, monstruos, equipo, condiciones, acciones, objetos magicos y dotes— esta integrada en la aplicacion durante el proceso de compilacion y disponible sin conexion.",
       },
       {
         name: "Relaciones entre entidades",
         description:
-          "Las entidades están conectadas entre sí. Un hechizo muestra las condiciones relacionadas y un monstruo muestra los hechizos y el equipo que utiliza o referencia.",
+          "Las entidades estan conectadas entre si. Un hechizo muestra las condiciones relacionadas y un monstruo muestra los hechizos y el equipo que utiliza o referencia.",
       },
       {
-        name: "Gestión de personajes",
+        name: "Gestion de personajes",
         description:
-          "Hojas de referencia ligeras para jugadores: nombre, clase, nivel, características y referencias a hechizos, armas y objetos mágicos conocidos.",
+          "Hojas de referencia ligeras para jugadores: nombre, clase, nivel, caracteristicas y referencias a hechizos, armas y objetos magicos conocidos.",
       },
       {
         name: "Seguimiento de combate",
         description:
-          "Puntos de golpe por personaje con ajustes rápidos de daño y curación, panel de condiciones activables con un toque y acceso inmediato a las estadísticas de combate más consultadas.",
+          "Puntos de golpe por personaje con ajustes rapidos de daño y curacion, panel de condiciones activables con un toque y acceso inmediato a las estadisticas de combate mas consultadas.",
       },
       {
         name: "Tirada de dados",
         description:
-          "Permite lanzar cualquier dado tantas veces como sea necesario, con modificador opcional. Los dados de daño de los hechizos también pueden lanzarse directamente desde la hoja de personaje.",
+          "Permite lanzar cualquier dado tantas veces como sea necesario, con modificador opcional. Los dados de daño de los hechizos tambien pueden lanzarse directamente desde la hoja de personaje.",
       },
       {
-        name: "Marcadores de sesión",
+        name: "Marcadores de sesion",
         description:
-          "Guarda monstruos, hechizos y objetos en la sesión actual con un solo toque y permite eliminarlos todos al finalizar la sesión.",
+          "Guarda monstruos, hechizos y objetos en la sesion actual con un solo toque y permite eliminarlos todos al finalizar la sesion.",
       },
       {
         name: "Favoritos y recientes",
@@ -179,33 +179,33 @@ export const projects: Project[] = [
       {
         name: "Modo principiante",
         description:
-          "Activa consejos que explican conceptos como el d20, las pruebas de característica y qué puedes hacer durante tu turno de combate.",
+          "Activa consejos que explican conceptos como el d20, las pruebas de caracteristica y que puedes hacer durante tu turno de combate.",
       },
       {
         name: "Referencia de reglas",
         description:
-          "Una referencia integrada para turnos de combate, ataques, puntos de golpe, descansos y lanzamiento de hechizos, además de un glosario explicado en lenguaje sencillo.",
+          "Una referencia integrada para turnos de combate, ataques, puntos de golpe, descansos y lanzamiento de hechizos, ademas de un glosario explicado en lenguaje sencillo.",
       },
       {
         name: "Copia de seguridad en la nube",
         description:
-          "Inicio de sesión opcional con Google para subir y restaurar manualmente los datos locales mediante Firestore. El resto de la aplicación funciona completamente sin conexión.",
+          "Inicio de sesion opcional con Google para subir y restaurar manualmente los datos locales mediante Firestore. El resto de la aplicacion funciona completamente sin conexion.",
       },
       {
-        name: "Aplicación web progresiva",
+        name: "Aplicacion web progresiva",
         description:
-          "PWA instalable, con almacenamiento en caché sin conexión mediante un service worker. Funciona completamente offline y no requiere una cuenta.",
+          "PWA instalable, con almacenamiento en cache sin conexion mediante un service worker. Funciona completamente offline y no requiere una cuenta.",
       },
     ],
     conceptBlock: {
-      title: "¿Por qué funciona sin conexión?",
+      title: "¿Por que funciona sin conexion?",
       paragraphs: [
-        "Durante una sesión, la información suele estar repartida entre libros, PDFs y hojas de cálculo. Encontrar algo lleva tiempo y, mientras alguien busca la respuesta, la mesa espera.",
-        "Dungeon Archive incluye todo el Compendio dentro de la propia aplicación, por lo que las consultas nunca dependen de la conexión a Internet.",
+        "Durante una sesion, la informacion suele estar repartida entre libros, PDFs y hojas de calculo. Encontrar algo lleva tiempo y, mientras alguien busca la respuesta, la mesa espera.",
+        "Dungeon Archive incluye todo el Compendio dentro de la propia aplicacion, por lo que las consultas nunca dependen de la conexion a Internet.",
       ],
       highlights: [
         "Sin cuenta",
-        "Sin conexión a Internet",
+        "Sin conexion a Internet",
         "Datos almacenados localmente",
         "Copia de seguridad opcional en la nube",
       ],
@@ -213,7 +213,7 @@ export const projects: Project[] = [
     designSystem: {
       title: "Sistema de diseño",
       description:
-        "La interfaz sigue un sistema de diseño documentado en lugar de evolucionar como una colección de pantallas independientes.",
+        "La interfaz sigue un sistema de diseño documentado en lugar de evolucionar como una coleccion de pantallas independientes.",
       points: [
         "Grid de espaciado de 4 px",
         "Radios consistentes por niveles",
@@ -227,54 +227,54 @@ export const projects: Project[] = [
     architecture: {
       title: "Arquitectura",
       description:
-        "Una aplicación cliente de una sola página dividida en tres capas desacopladas.",
+        "Una aplicacion cliente de una sola pagina dividida en tres capas desacopladas.",
       layers: [
         {
           number: "01",
           title: "Compendio",
           description:
-            "Datos de referencia de D&D 5e generados durante el proceso de compilación: 7 categorías, identificadores canónicos estables e índice de relaciones entre entidades.",
+            "Datos de referencia de D&D 5e generados durante el proceso de compilacion: 7 categorias, identificadores canonicos estables e indice de relaciones entre entidades.",
         },
         {
           number: "02",
           title: "Estado del usuario",
           description:
-            "Estado local versionado y persistido en localStorage. Incluye favoritos, marcadores de sesión, hojas de personaje y preferencias.",
+            "Estado local versionado y persistido en localStorage. Incluye favoritos, marcadores de sesion, hojas de personaje y preferencias.",
         },
         {
           number: "03",
-          title: "Aplicación React",
+          title: "Aplicacion React",
           description:
-            "Páginas funcionales e interacciones coordinadas mediante React Router y construidas sobre el sistema de diseño.",
+            "Paginas funcionales e interacciones coordinadas mediante React Router y construidas sobre el sistema de diseño.",
         },
       ],
     },
     closingLine:
-      "La aplicación se consulta y después se aparta. Nunca debería ser el motivo por el que una sesión se ralentiza.",
+      "La aplicacion se consulta y despues se aparta. Nunca deberia ser el motivo por el que una sesion se ralentiza.",
     ctaLabel: "Abrir Dungeon Archive",
     ctaUrl: "https://mariomunpeq.github.io/Dungeon-Archive/",
     role: {
-      title: "Mi rol / Aportación",
+      title: "Mi rol / Aportacion",
       items: [
-        "Diseño y arquitectura completa de la aplicación, desde la estrategia offline-first hasta la estructura de componentes.",
-        "Implementación del sistema de búsqueda: índice en memoria construido en tiempo de compilación para resultados instantáneos sin servidor.",
+        "Diseño y arquitectura completa de la aplicacion, desde la estrategia offline-first hasta la estructura de componentes.",
+        "Implementacion del sistema de busqueda: indice en memoria construido en tiempo de compilacion para resultados instantaneos sin servidor.",
         "Diseño del sistema de diseño propio con grid de 4 px, temas de acento y animaciones compartidas.",
-        "Gestión del estado local con Zustand y persistencia en localStorage con versionado.",
-        "Configuración del service worker y estrategia de caché para funcionamiento completo sin conexión.",
+        "Gestion del estado local con Zustand y persistencia en localStorage con versionado.",
+        "Configuracion del service worker y estrategia de cache para funcionamiento completo sin conexion.",
       ],
     },
     challenges: {
-      title: "Retos técnicos",
+      title: "Retos tecnicos",
       items: [
         {
           label: "Offline-first",
           detail:
-            "Diseñar una arquitectura que funcione completamente sin Internet, con sincronización opcional a la nube.",
+            "Diseñar una arquitectura que funcione completamente sin Internet, con sincronizacion opcional a la nube.",
         },
         {
-          label: "Índice de búsqueda",
+          label: "Indice de busqueda",
           detail:
-            "Construir un índice en memoria durante la compilación que permita búsquedas instantáneas entre miles de entidades.",
+            "Construir un indice en memoria durante la compilacion que permita busquedas instantaneas entre miles de entidades.",
         },
         {
           label: "Persistencia local",
@@ -284,7 +284,7 @@ export const projects: Project[] = [
         {
           label: "Service worker",
           detail:
-            "Configurar una estrategia de caché que mantenga la aplicación funcional sin conexión y se actualice en segundo plano.",
+            "Configurar una estrategia de cache que mantenga la aplicacion funcional sin conexion y se actualice en segundo plano.",
         },
       ],
     },
@@ -293,9 +293,9 @@ export const projects: Project[] = [
     slug: "euromario",
     name: "Euromario",
     summary:
-      "Un radar de noticias de videojuegos que filtra el ruido, agrupa las historias duplicadas y usa IA para resumir y priorizar solo lo que importa, publicado como web estática sin infraestructura de pago.",
+      "Un radar de noticias de videojuegos que filtra el ruido, agrupa las historias duplicadas y usa IA para resumir y priorizar solo lo que importa, publicado como web estatica sin infraestructura de pago.",
     description:
-      "Un digest de noticias de videojuegos automatizado y sin infraestructura, construido como proyecto de portafolio alrededor de una pregunta: «¿Qué ha pasado en los juegos que de verdad me interesan?». Recoge continuamente noticias de publicaciones especializadas, del feed oficial de Steam y de la comunidad de Reddit; las filtra contra una lista curada de juegos seguidos; agrupa los artículos relacionados en historias; enriquece las supervivientes con IA —resumen, relevancia del 1 al 5 y categoría— y publica el resultado como un frontend vanilla alojado en GitHub Pages. El proyecto evita deliberadamente un backend, una base de datos y cualquier infraestructura de pago: el repositorio actúa como almacén de datos, GitHub Actions como programador y GitHub Pages como servidor estático.",
+      "Un digest de noticias de videojuegos automatizado y sin infraestructura, construido como proyecto de portafolio alrededor de una pregunta: «¿Que ha pasado en los juegos que de verdad me interesan?». Recoge continuamente noticias de publicaciones especializadas, del feed oficial de Steam y de la comunidad de Reddit; las filtra contra una lista curada de juegos seguidos; agrupa los articulos relacionados en historias; enriquece las supervivientes con IA —resumen, relevancia del 1 al 5 y categoria— y publica el resultado como un frontend vanilla alojado en GitHub Pages. El proyecto evita deliberadamente un backend, una base de datos y cualquier infraestructura de pago: el repositorio actua como almacen de datos, GitHub Actions como programador y GitHub Pages como servidor estatico.",
     tagline:
       "Radar de noticias de videojuegos · Sin infraestructura · Actualizado cada hora",
     stack: [
@@ -327,66 +327,66 @@ export const projects: Project[] = [
       {
         src: "/images/projects/euromario/banner.png",
         alt: "Banner de Euromario",
-        caption: "Visualización principal",
+        caption: "Visualizacion principal",
       },
     ],
     features: [
       {
-        name: "Múltiples fuentes de noticias",
+        name: "Multiples fuentes de noticias",
         description:
-          "IGN, Eurogamer, PC Gamer, Polygon y Rock Paper Shotgun vía RSS, el feed oficial de Steam a través de su API y la cobertura de la comunidad desde subreddits.",
+          "IGN, Eurogamer, PC Gamer, Polygon y Rock Paper Shotgun via RSS, el feed oficial de Steam a traves de su API y la cobertura de la comunidad desde subreddits.",
       },
       {
         name: "Filtrado de ruido",
         description:
-          "Patrones de exclusión de títulos y URLs, listas negras de juegos y emparejado con límites de palabra para evitar falsos positivos como GTA dentro de otra cadena.",
+          "Patrones de exclusion de titulos y URLs, listas negras de juegos y emparejado con limites de palabra para evitar falsos positivos como GTA dentro de otra cadena.",
       },
       {
         name: "Seguimiento curado de juegos",
         description:
-          "Cada juego seguido se configura en YAML con nombre canónico, alias, logo y plataformas. Añadir un juego no requiere tocar código Python.",
+          "Cada juego seguido se configura en YAML con nombre canonico, alias, logo y plataformas. Añadir un juego no requiere tocar codigo Python.",
       },
       {
-        name: "Agrupación de historias",
+        name: "Agrupacion de historias",
         description:
-          "Cuando varias redacciones cubren el mismo evento, el pipeline agrupa los artículos en una única historia representativa antes de pasar a la IA.",
+          "Cuando varias redacciones cubren el mismo evento, el pipeline agrupa los articulos en una unica historia representativa antes de pasar a la IA.",
       },
       {
-        name: "Resumen y puntuación con IA",
+        name: "Resumen y puntuacion con IA",
         description:
-          "Cada historia sobreviviente recibe un resumen breve, una relevancia del 1 al 5 y una categoría: lanzamiento, actualización, rumor o análisis.",
+          "Cada historia sobreviviente recibe un resumen breve, una relevancia del 1 al 5 y una categoria: lanzamiento, actualizacion, rumor o analisis.",
       },
       {
         name: "Fallos controlados de IA",
         description:
-          "La salida del modelo se valida antes de publicarse. Si Ollama falla, el pipeline cambia a Groq y reintenta sin romper la ejecución; Reddit siempre se publica como rumor sin esperar al modelo.",
+          "La salida del modelo se valida antes de publicarse. Si Ollama falla, el pipeline cambia a Groq y reintenta sin romper la ejecucion; Reddit siempre se publica como rumor sin esperar al modelo.",
       },
       {
-        name: "Límite previo a la IA",
+        name: "Limite previo a la IA",
         description:
-          "El tope de historias por juego se aplica antes y después de la inferencia: en una ejecución real redujo las llamadas de 64 a 13 sin sacrificar la selección final.",
+          "El tope de historias por juego se aplica antes y despues de la inferencia: en una ejecucion real redujo las llamadas de 64 a 13 sin sacrificar la seleccion final.",
       },
       {
-        name: "Publicación sin infraestructura",
+        name: "Publicacion sin infraestructura",
         description:
-          "Sin backend ni base de datos: el repositorio actúa como almacén, GitHub Actions como programador y GitHub Pages como hosting estático a coste cero.",
+          "Sin backend ni base de datos: el repositorio actua como almacen, GitHub Actions como programador y GitHub Pages como hosting estatico a coste cero.",
       },
       {
-        name: "Automatización por hora",
+        name: "Automatizacion por hora",
         description:
           "GitHub Actions ejecuta el pipeline cada hora, confirma los datos generados y despliega el frontend solo cuando todos los pasos han terminado correctamente.",
       },
       {
         name: "Frontend sin dependencias",
         description:
-          "HTML, CSS y JavaScript vanilla sin framework ni paso de compilación, con estados de carga, error y vacío, filtros de juego, plataforma y categoría, y sincronización de la URL.",
+          "HTML, CSS y JavaScript vanilla sin framework ni paso de compilacion, con estados de carga, error y vacio, filtros de juego, plataforma y categoria, y sincronizacion de la URL.",
       },
     ],
     conceptBlock: {
-      title: "¿Por qué sin infraestructura?",
+      title: "¿Por que sin infraestructura?",
       paragraphs: [
-        "Un digest de noticias vale por lo reciente que es: lo que tiene más de 48 horas no debería seguir ahí. Mantener un backend y una base de datos solo para servir un JSON que se renueva cada hora sería infraestructura sin sentido.",
-        "El repositorio en sí es el almacén de datos, GitHub Actions es el programador y el encargado de publicar, y GitHub Pages sirve el frontend estático. El sistema se mantiene por sí solo y no hay servidor que mantener encendido.",
+        "Un digest de noticias vale por lo reciente que es: lo que tiene mas de 48 horas no deberia seguir ahi. Mantener un backend y una base de datos solo para servir un JSON que se renueva cada hora seria infraestructura sin sentido.",
+        "El repositorio en si es el almacen de datos, GitHub Actions es el programador y el encargado de publicar, y GitHub Pages sirve el frontend estatico. El sistema se mantiene por si solo y no hay servidor que mantener encendido.",
       ],
       highlights: [
         "Sin backend",
@@ -399,13 +399,13 @@ export const projects: Project[] = [
     designSystem: {
       title: "Frontend",
       description:
-        "Una interfaz estática y ligera que carga un único JSON y se pinta en el cliente, sin framework ni paso de compilación.",
+        "Una interfaz estatica y ligera que carga un unico JSON y se pinta en el cliente, sin framework ni paso de compilacion.",
       points: [
         "HTML, CSS y JS vanilla",
         "Tema oscuro #0A0A0B",
-        "Tipografía Archivo Black",
-        "Estados de carga, error y vacío",
-        "Semántica ARIA y roles",
+        "Tipografia Archivo Black",
+        "Estados de carga, error y vacio",
+        "Semantica ARIA y roles",
         "Carousel de filtros responsive",
         "Vistas sincronizadas por URL",
       ],
@@ -413,64 +413,64 @@ export const projects: Project[] = [
     architecture: {
       title: "Arquitectura",
       description:
-        "Un pipeline Python por etapas que reduce el ruido de forma progresiva, seguido de un frontend estático que solo consume el JSON resultante.",
+        "Un pipeline Python por etapas que reduce el ruido de forma progresiva, seguido de un frontend estatico que solo consume el JSON resultante.",
       layers: [
         {
           number: "01",
-          title: "Recolección",
+          title: "Recoleccion",
           description:
-            "RSS de IGN, Eurogamer, PC Gamer, Polygon y Rock Paper Shotgun, la Steam News API y subreddits, normalizados a una representación común con límites por fuente, timeout y control de errores por servicio.",
+            "RSS de IGN, Eurogamer, PC Gamer, Polygon y Rock Paper Shotgun, la Steam News API y subreddits, normalizados a una representacion comun con limites por fuente, timeout y control de errores por servicio.",
         },
         {
           number: "02",
-          title: "Selección",
+          title: "Seleccion",
           description:
-            "Filtros de calidad, emparejado de juegos con inclusiones y exclusiones, agrupación de historias y un límite previo por juego que evita pagar inferencia por historias que se van a descartar.",
+            "Filtros de calidad, emparejado de juegos con inclusiones y exclusiones, agrupacion de historias y un limite previo por juego que evita pagar inferencia por historias que se van a descartar.",
         },
         {
           number: "03",
-          title: "Enriquecimiento y publicación",
+          title: "Enriquecimiento y publicacion",
           description:
-            "La IA resume, puntúa y categoriza lo que sobrevive; el resultado se guarda en JSON atómico, se confirma en el repositorio y se despliega como web estática.",
+            "La IA resume, puntua y categoriza lo que sobrevive; el resultado se guarda en JSON atomico, se confirma en el repositorio y se despliega como web estatica.",
         },
       ],
     },
-    closingLine: "Menos ruido. Más juegos. Fresco cada hora.",
+    closingLine: "Menos ruido. Mas juegos. Fresco cada hora.",
     ctaLabel: "Abrir Euromario",
     ctaUrl: "https://mariomunpeq.github.io/Euromario/",
     role: {
-      title: "Mi rol / Aportación",
+      title: "Mi rol / Aportacion",
       items: [
-        "Diseño y construcción completa del pipeline: recolección multi-fuente, normalización, emparejado de juegos, agrupación de historias y política de retención.",
-        "Diseño de un contrato de IA neutral entre proveedores con validación estructurada de la salida y gestión de fallos: Ollama local con respaldo en Groq.",
-        "Optimización de costes de inferencia aplicando el límite por juego antes y después de la IA, con una reducción de 64 a 13 llamadas en una ejecución real.",
-        "Frontend vanilla sin dependencias con filtros, estados visuales y sincronización de la URL.",
-        "Automatización e implementación: GitHub Actions ejecuta el pipeline cada hora, confirma los datos y despliega el frontend en GitHub Pages.",
-        "Suite de pruebas pytest de 265 casos que cubren el núcleo del pipeline.",
+        "Diseño y construccion completa del pipeline: recoleccion multi-fuente, normalizacion, emparejado de juegos, agrupacion de historias y politica de retencion.",
+        "Diseño de un contrato de IA neutral entre proveedores con validacion estructurada de la salida y gestion de fallos: Ollama local con respaldo en Groq.",
+        "Optimizacion de costes de inferencia aplicando el limite por juego antes y despues de la IA, con una reduccion de 64 a 13 llamadas en una ejecucion real.",
+        "Frontend vanilla sin dependencias con filtros, estados visuales y sincronizacion de la URL.",
+        "Automatizacion e implementacion: GitHub Actions ejecuta el pipeline cada hora, confirma los datos y despliega el frontend en GitHub Pages.",
+        "Suite de pruebas pytest de 265 casos que cubren el nucleo del pipeline.",
       ],
     },
     challenges: {
-      title: "Retos técnicos",
+      title: "Retos tecnicos",
       items: [
         {
           label: "Emparejamiento robusto",
           detail:
-            "Evitar falsos positivos de alias cortos como GTA usando límites de palabra y dando prioridad a la lista de exclusión sobre la de inclusión.",
+            "Evitar falsos positivos de alias cortos como GTA usando limites de palabra y dando prioridad a la lista de exclusion sobre la de inclusion.",
         },
         {
           label: "Coste de la IA",
           detail:
-            "Aplicar el tope por juego antes de la inferencia para no pagar llamadas que luego se descartan: de 64 a 13 en una ejecución real.",
+            "Aplicar el tope por juego antes de la inferencia para no pagar llamadas que luego se descartan: de 64 a 13 en una ejecucion real.",
         },
         {
           label: "IA impredecible",
           detail:
-            "Validar cada respuesta estructurada, reintentar salidas inválidas y cambiar de proveedor ante fallos de infraestructura sin romper el run completo.",
+            "Validar cada respuesta estructurada, reintentar salidas invalidas y cambiar de proveedor ante fallos de infraestructura sin romper el run completo.",
         },
         {
-          label: "Web estática viva",
+          label: "Web estatica viva",
           detail:
-            "Conseguir un digest que se renueva cada hora sin backend: el repositorio es el almacén, GitHub Actions es el programador.",
+            "Conseguir un digest que se renueva cada hora sin backend: el repositorio es el almacen, GitHub Actions es el programador.",
         },
       ],
     },

@@ -81,7 +81,7 @@ function DigitalClock() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Botón-placa de red social: icono + texto + tecla de mando         */
+/*  Boton-placa de red social: icono + texto + tecla de mando         */
 /* ------------------------------------------------------------------ */
 
 function SocialLink({
@@ -144,10 +144,10 @@ function TrackSelectorMenu({
 }) {
   const listRef = useRef<HTMLUListElement>(null);
 
-  /* Duraciones reales leídas de los archivos de audio (sin inventar). */
+  /* Duraciones reales leidas de los archivos de audio (sin inventar). */
   const [durations, setDurations] = useState<number[]>(TRACKS.map(() => -1));
 
-  // Animación de entrada: wipe diagonal escalonado (40ms por fila)
+  // Animacion de entrada: wipe diagonal escalonado (40ms por fila)
   useEffect(() => {
     const items = listRef.current?.querySelectorAll(".p5-track-selector__item");
     if (!items?.length) return;
@@ -264,7 +264,7 @@ function TrackSelectorMenu({
  *   [reproductor] (placa, izquierda) … [reloj HH:MM ♦] (centro absoluto)
  *   … [GitHub] [LinkedIn] (placas, derecha)
  *
- * Sin fondo sólido de barra; solo degradado negro suave (0.55 → 0) de
+ * Sin fondo solido de barra; solo degradado negro suave (0.55 → 0) de
  * ~120px. Entrada desde abajo (0.5s, ease-out, escalonado 80ms).
  *
  * Se mantiene intacta la funcionalidad del reproductor (pista, pausa,

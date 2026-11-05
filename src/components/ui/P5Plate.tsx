@@ -6,8 +6,8 @@
  *   · capa 3 (fondo): #111, inset 3px, mismo clip-path para borde uniforme.
  *
  * Sin borde CSS ni drop-shadow/filter sobre el clip-path (evitan puntos
- * rojos y blancos en las esquinas). Cada placa recibe una rotación leve
- * distinta (entre -3° y +2°) vía --p5-rot.
+ * rojos y blancos en las esquinas). Cada placa recibe una rotacion leve
+ * distinta (entre -3° y +2°) via --p5-rot.
  */
 export function P5Plate({
   children,
@@ -18,7 +18,7 @@ export function P5Plate({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** Rotación en grados (-3 a 2 recomendado). */
+  /** Rotacion en grados (-3 a 2 recomendado). */
   rot?: number;
   /** Padding CSS (usa --p5-pad por defecto). */
   pad?: string;

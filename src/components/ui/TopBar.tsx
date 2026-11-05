@@ -7,18 +7,18 @@ import { useEffect } from "react";
 /**
  * Barra superior del menu principal — estilo Persona 5.
  *
- * Sin fondo sólido de barra: solo un degradado negro suave (0.55 → 0) de
- * ~120px de alto para legibilidad sobre el vídeo.
+ * Sin fondo solido de barra: solo un degradado negro suave (0.55 → 0) de
+ * ~120px de alto para legibilidad sobre el video.
  *
- * Izquierda: botón compacto (max 16vw × 9vh):
+ * Izquierda: boton compacto (max 16vw × 9vh):
  *   • En el menu principal ("/"): "xNaque" (p5hatty) + "DESARROLLADOR"
  *     (pequeño), NO clicable.
- *   • En cualquier otra pantalla: botón de regreso con icono de casa
+ *   • En cualquier otra pantalla: boton de regreso con icono de casa
  *     y texto "menu".
  *     Click o Escape → vuelve al menu principal con fundido a negro
  *     existente. Hover: fondo rojo, placa 4px derecha, flecha 4px
- *     izquierda. Transición del texto con clip-path wipe (0.3s).
- * Centro: vacío.
+ *     izquierda. Transicion del texto con clip-path wipe (0.3s).
+ * Centro: vacio.
  * Derecha: sello de fecha inspirado en los avisos del metaverso de Persona 5.
  */
 export function TopBar() {
@@ -26,7 +26,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const isMenu = pathname === "/";
 
-  /* Si se pulsa Escape en una página interior, volver al menu. */
+  /* Si se pulsa Escape en una pagina interior, volver al menu. */
   useEffect(() => {
     if (isMenu) return;
     const onKey = (e: KeyboardEvent) => {
@@ -39,7 +39,7 @@ export function TopBar() {
   }, [isMenu, navigate]);
 
   const handleBack = () => {
-    /* Fundido a negro existente: la transición de ruta se encarga de
+    /* Fundido a negro existente: la transicion de ruta se encarga de
        cubrir la pantalla. Navegamos directamente. */
     navigate("/");
   };
@@ -51,7 +51,7 @@ export function TopBar() {
   return (
     <div className="p5-topbar">
       <div className="p5-topbar__inner">
-        {/* ── Izquierda: botón compacto ── */}
+        {/* ── Izquierda: boton compacto ── */}
         <div className="p5-topbar-left p5-enter--top" style={{ animationDelay: "0ms" }}>
           <P5Plate
             className={isMenu ? "" : "p5-plate--back"}
@@ -85,7 +85,7 @@ export function TopBar() {
           </P5Plate>
         </div>
 
-        {/* Centro: vacío intencionalmente. */}
+        {/* Centro: vacio intencionalmente. */}
 
         {/* ── Derecha: sello de fecha estilo archivo P5 ── */}
         <div

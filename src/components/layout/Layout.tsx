@@ -16,8 +16,8 @@ interface LayoutProps {
 
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas.
- * En páginas interiores (no el menu principal) se añade padding-top
- * al <main> para que el botón superior izquierdo no tape los títulos.
+ * En paginas interiores (no el menu principal) se añade padding-top
+ * al <main> para que el boton superior izquierdo no tape los titulos.
  */
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
@@ -37,7 +37,7 @@ export function Layout({ children }: LayoutProps) {
   const lenis = useLenis();
 
   /* Bloqueo de scroll solo en el menu principal: añade/quita is-main-menu
-     en <body> según la ruta activa. */
+     en <body> segun la ruta activa. */
   useEffect(() => {
     if (isMenu) {
       document.body.classList.add("is-main-menu");

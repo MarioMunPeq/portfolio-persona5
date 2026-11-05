@@ -3,10 +3,10 @@
  *
  * El PNG es horizontal: la hoja apunta a la izquierda, el mango a la
  * derecha. GSAP rota 45° en sentido horario para que la hoja clave
- * hacia abajo-izquierda (en diagonal sobre el día activo).
+ * hacia abajo-izquierda (en diagonal sobre el dia activo).
  *
  * El contenedor padre (knifeRef) es posicionado por GSAP con x/y en
- * píxeles y xPercent/yPercent: -50 para centrado. La imagen dentro
+ * pixeles y xPercent/yPercent: -50 para centrado. La imagen dentro
  * no necesita transform propio.
  */
 import { forwardRef } from "react";

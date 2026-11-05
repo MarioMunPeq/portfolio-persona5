@@ -5,17 +5,17 @@ import { useReducedMotion } from "motion/react";
  * portfolio.
  *
  * El SVG se dibuja con cuatro capas: sombra en el suelo, huecos de rueda,
- * ruedas (con neumático, banda de rodadura, llanta de cinco radios y buje
- * rojo) y carrocería recortada por una máscara que abre los pasos de
+ * ruedas (con neumatico, banda de rodadura, llanta de cinco radios y buje
+ * rojo) y carroceria recortada por una mascara que abre los pasos de
  * rueda. Todo son formas planas: paper para la chapa, ink para cristales y
- * bajos, accent para luces, faldón, línea de cintura y bujes.
+ * bajos, accent para luces, faldon, linea de cintura y bujes.
  *
- * La animación es CSS pura y solo toca transform: ruedas girando sobre su
- * centro, carrocería con un rebote de 1-2 px, estelas que salen hacia atrás
+ * La animacion es CSS pura y solo toca transform: ruedas girando sobre su
+ * centro, carroceria con un rebote de 1-2 px, estelas que salen hacia atras
  * y una calzada con dos filas de marcas a distinta velocidad (parallax).
  *
  * Con `prefers-reduced-motion` el coche queda perfectamente visible y
- * estático (sin giro, sin rebote, sin estelas ni marcas en movimiento).
+ * estatico (sin giro, sin rebote, sin estelas ni marcas en movimiento).
  */
 export function DrivingCar({ className = "" }: { className?: string }) {
   const reduced = useReducedMotion();
@@ -49,8 +49,8 @@ export function DrivingCar({ className = "" }: { className?: string }) {
             focusable="false"
           >
             <defs>
-              {/* Máscara de pasos de rueda: recorta la chapa en dos círculos
-                  para que el neumático asome por el arco. */}
+              {/* Mascara de pasos de rueda: recorta la chapa en dos circulos
+                  para que el neumatico asome por el arco. */}
               <mask
                 id="car-arch-mask"
                 maskUnits="userSpaceOnUse"
@@ -64,7 +64,7 @@ export function DrivingCar({ className = "" }: { className?: string }) {
                 <circle cx="286" cy="112" r="27" fill="#000" />
               </mask>
 
-              {/* Rueda reutilizable: neumático, banda de rodadura, llanta,
+              {/* Rueda reutilizable: neumatico, banda de rodadura, llanta,
                   cinco radios y buje rojo. */}
               <g id="car-wheel">
                 <circle cx="0" cy="0" r="22" fill="#0a0a0a" />
@@ -106,12 +106,12 @@ export function DrivingCar({ className = "" }: { className?: string }) {
               opacity="0.55"
             />
 
-            {/* Huecos oscuros: detrás de la rueda para que el arco no deje
+            {/* Huecos oscuros: detras de la rueda para que el arco no deje
                 ver la calzada. */}
             <circle cx="98" cy="112" r="27" fill="#080808" />
             <circle cx="286" cy="112" r="27" fill="#080808" />
 
-            {/* Ruedas (detrás de la chapa, asomando por los arcos). El giro
+            {/* Ruedas (detras de la chapa, asomando por los arcos). El giro
                 se aplica al <use>, cuyo origen local es el centro exacto de
                 la rueda, y no al grupo que la posiciona. */}
             <g className="car-wheel-mount" transform="translate(98 112)">
@@ -121,14 +121,14 @@ export function DrivingCar({ className = "" }: { className?: string }) {
               <use href="#car-wheel" className="car-wheel" />
             </g>
 
-            {/* Carrocería. */}
+            {/* Carroceria. */}
             <g mask="url(#car-arch-mask)">
               <path
                 d="M36 100 L36 78 Q38 68 52 64 L94 57 Q102 56 106 51 L124 32 Q129 27 138 27 L214 27 Q224 27 230 33 L254 54 Q259 58 268 60 L328 69 Q341 71 345 79 L347 88 Q348 96 341 100 Z"
                 fill="#f5f5f0"
               />
 
-              {/* Bajo sombreado + faldón rojo. */}
+              {/* Bajo sombreado + faldon rojo. */}
               <path
                 d="M38 100 L341 100 L340 92 L39 92 Z"
                 fill="#cfcfc7"
@@ -154,7 +154,7 @@ export function DrivingCar({ className = "" }: { className?: string }) {
                 opacity="0.2"
               />
 
-              {/* Línea de cintura roja, puerta y manilla. */}
+              {/* Linea de cintura roja, puerta y manilla. */}
               <path
                 d="M64 64 L326 72"
                 stroke="#e60012"

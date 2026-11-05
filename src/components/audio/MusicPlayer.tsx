@@ -102,9 +102,9 @@ function Equalizer({ analyser, isPlaying }: { analyser: AnalyserNode | null; isP
 /* ------------------------------------------------------------------ */
 /*  MusicPlayer                                                        */
 /*                                                                     */
-/* Estado único: currentIndex vive aquí. selectTrack() hace src/load/  */
-/* play dentro del mismo handler (interacción de usuario) y es el      */
-/* único punto de cambio de pista. Se expone a través de un ref para   */
+/* Estado unico: currentIndex vive aqui. selectTrack() hace src/load/  */
+/* play dentro del mismo handler (interaccion de usuario) y es el      */
+/* unico punto de cambio de pista. Se expone a traves de un ref para   */
 /* que BottomBar (menu de pistas) lo llame al hacer click en una fila. */
 /* ------------------------------------------------------------------ */
 
@@ -140,7 +140,7 @@ export const MusicPlayer = forwardRef<MusicPlayerHandle, {
     const titleRef = useRef<HTMLSpanElement>(null);
     const vinylRef = useRef<HTMLImageElement>(null);
 
-    /* Título de la pista: marquee solo cuando no cabe. */
+    /* Titulo de la pista: marquee solo cuando no cabe. */
     const [marquee, setMarquee] = useState(false);
 
     useEffect(() => {
@@ -157,7 +157,7 @@ export const MusicPlayer = forwardRef<MusicPlayerHandle, {
       return undefined;
     }, []);
 
-    /* Estado único de pista y reproducción. */
+    /* Estado unico de pista y reproduccion. */
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
@@ -341,7 +341,7 @@ export const MusicPlayer = forwardRef<MusicPlayerHandle, {
     );
     selectTrackRef.current = selectTrack;
 
-    /* Auto-play primera pista al boot (tras primera interacción). */
+    /* Auto-play primera pista al boot (tras primera interaccion). */
     useEffect(() => {
       if (sessionDispatched || !booted) return;
       sessionDispatched = true;
@@ -600,7 +600,7 @@ export const MusicPlayer = forwardRef<MusicPlayerHandle, {
                 <div className="p5-player-progress" ref={progressFillRef} />
               </div>
 
-              {/* Derecha: tiempo, ecualizador y botón lista */}
+              {/* Derecha: tiempo, ecualizador y boton lista */}
               <span className="p5-player-time" ref={timeLabelRef}>
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>

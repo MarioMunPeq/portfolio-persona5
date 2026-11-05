@@ -1,28 +1,28 @@
 /**
  * Tarjeta individual de fecha del calendario tipo Persona 5.
  *
- * Cada composición es un lockup vertical indivisible:
- *   - Wrapper exterior (position:absolute, se anima SOLO en y durante la caída).
- *   - Contenido interior (número + PNG del día de la semana): rotación ESTÁTICA
- *     en CSS, nunca se anima su rotación/x/scale/transformOrigin durante la caída.
+ * Cada composicion es un lockup vertical indivisible:
+ *   - Wrapper exterior (position:absolute, se anima SOLO en y durante la caida).
+ *   - Contenido interior (numero + PNG del dia de la semana): rotacion ESTATICA
+ *     en CSS, nunca se anima su rotacion/x/scale/transformOrigin durante la caida.
  *
- * El número usa dos capas position:absolute superpuestas con fuente p5hatty:
+ * El numero usa dos capas position:absolute superpuestas con fuente p5hatty:
  *   - Capa trasera (z-index:1): texto blanco con -webkit-text-stroke blanco grueso
  *     (0.24em) que crea un halo BLANCO PURO ancho.
- *   - Capa delantera (z-index:2): mismo texto en color según el día, con stroke fino
+ *   - Capa delantera (z-index:2): mismo texto en color segun el dia, con stroke fino
  *     (0.03em) del mismo color.
- * La imagen del día de la semana va DELANTE (z-index:3), empezando en el 85% de la
- * altura del número (tapa su ~20% inferior).
+ * La imagen del dia de la semana va DELANTE (z-index:3), empezando en el 85% de la
+ * altura del numero (tapa su ~20% inferior).
  *
  * La sombra negra (drop-shadow) se aplica sobre el contenedor de las capas del
- * número, NO sobre el texto blanco.
+ * numero, NO sobre el texto blanco.
  *
- * El color de relleno del número depende EXCLUSIVAMENTE del día de la semana:
+ * El color de relleno del numero depende EXCLUSIVAMENTE del dia de la semana:
  *   Lunes a Viernes: #111 (casi negro)
- *   Sábado: #4fb3f0 (azul claro)
+ *   Sabado: #4fb3f0 (azul claro)
  *   Domingo: #e8112d (rojo)
  *
- * La rotación del número y de la imagen es diferente por cada día.
+ * La rotacion del numero y de la imagen es diferente por cada dia.
  */
 import { forwardRef, type Ref } from "react";
 import type { CalendarDate } from "../../lib/calendar";
@@ -31,11 +31,11 @@ import { useMediaQuery } from "../../lib/use-media-query";
 
 interface CalendarCardProps {
   date: CalendarDate;
-  /** Índice dentro del array de siete fechas (0-6). */
+  /** Indice dentro del array de siete fechas (0-6). */
   index: number;
-  /** Ref al wrapper exterior (el único elemento que se anima en y durante la caída). */
+  /** Ref al wrapper exterior (el unico elemento que se anima en y durante la caida). */
   wrapperRef?: Ref<HTMLDivElement>;
-  /** Ref al contenido interior (número + imagen, rotación estática). */
+  /** Ref al contenido interior (numero + imagen, rotacion estatica). */
   contentRef?: Ref<HTMLDivElement>;
 }
 
@@ -48,29 +48,29 @@ function assignRef<T>(ref: Ref<T> | undefined, instance: T | null): void {
   }
 }
 
-/** Color de relleno del número según el día de la semana (índice JS: 0=Dom…6=Sáb). */
+/** Color de relleno del numero segun el dia de la semana (indice JS: 0=Dom…6=Sab). */
 const NUMBER_FILL_BY_WEEKDAY: Record<number, string> = {
   0: "#e8112d", // domingo → rojo
   1: "#111111", // lunes → casi negro
   2: "#111111", // martes → casi negro
-  3: "#111111", // miércoles → casi negro
+  3: "#111111", // miercoles → casi negro
   4: "#111111", // jueves → casi negro
   5: "#111111", // viernes → casi negro
-  6: "#4fb3f0", // sábado → azul claro
+  6: "#4fb3f0", // sabado → azul claro
 };
 
-/** Tamaño de fuente del número (px) — visualmente dominante. */
+/** Tamaño de fuente del numero (px) — visualmente dominante. */
 const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
   0: 105, // hoy-2
   1: 140, // ayer
-  2: 200, // HOY — el número más grande de la pantalla
+  2: 200, // HOY — el numero mas grande de la pantalla
   3: 140, // hoy+1
   4: 105, // hoy+2
   5: 80,  // hoy+3
   6: 80,  // hoy+4 (buffer)
 };
 
-/** Rotación del número por índice (grados). Cada día tiene un ángulo distinto. */
+/** Rotacion del numero por indice (grados). Cada dia tiene un angulo distinto. */
 export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
   0: -5, // hoy-2
   1: -3, // ayer
@@ -81,7 +81,7 @@ export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
   6: -2, // hoy+4
 };
 
-/** Rotación de la imagen del día por índice (grados). Cada día tiene un ángulo distinto. */
+/** Rotacion de la imagen del dia por indice (grados). Cada dia tiene un angulo distinto. */
 const WEEKDAY_ROTATION_BY_INDEX: Record<number, number> = {
   0: 3, // hoy-2
   1: 2, // ayer
@@ -92,11 +92,11 @@ const WEEKDAY_ROTATION_BY_INDEX: Record<number, number> = {
   6: 0, // hoy+4
 };
 
-/** Ancho de cada composición (px) — el número domina visualmente. */
+/** Ancho de cada composicion (px) — el numero domina visualmente. */
 const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   0: 130, // hoy-2
   1: 170, // ayer
-  2: 280, // HOY (activo, el más grande)
+  2: 280, // HOY (activo, el mas grande)
   3: 170, // hoy+1
   4: 130, // hoy+2
   5: 110, // hoy+3
@@ -117,11 +117,11 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwa
   const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
   const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
 
-  // Grosor del contorno proporcional al tamaño del número (en em).
+  // Grosor del contorno proporcional al tamaño del numero (en em).
   const backStrokeEm = 0.24;
   const frontStrokeEm = 0.03;
 
-  // La imagen empieza en el 85% de la altura del número (tapa su ~20% inferior).
+  // La imagen empieza en el 85% de la altura del numero (tapa su ~20% inferior).
   const weekdayTopPx = fontSize * 0.85;
 
   const handleWrapperRef = (el: HTMLDivElement | null) => {
@@ -150,7 +150,7 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwa
     letterSpacing: "-0.03em",
   };
 
-  // Capa delantera: relleno de color según el día (z-index:2)
+  // Capa delantera: relleno de color segun el dia (z-index:2)
   const frontStyle: React.CSSProperties = {
     position: "absolute",
     top: 0,
@@ -170,7 +170,7 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwa
     letterSpacing: "-0.03em",
   };
 
-  // Imagen del día de la semana: DELANTE de ambas capas (z-index:3)
+  // Imagen del dia de la semana: DELANTE de ambas capas (z-index:3)
   const weekdayStyle: React.CSSProperties = {
     position: "absolute",
     top: `${weekdayTopPx}px`,
@@ -191,7 +191,7 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwa
         height: "auto",
       }}
     >
-      {/* Contenido interior: rotación estática (nunca se anima durante la caída) */}
+      {/* Contenido interior: rotacion estatica (nunca se anima durante la caida) */}
       <div
         ref={contentRef}
         style={{
@@ -200,17 +200,17 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwa
           width: "100%",
         }}
       >
-        {/* Día numérico — capa trasera: halo blanco ancho (z-index:1) */}
+        {/* Dia numerico — capa trasera: halo blanco ancho (z-index:1) */}
         <span className="calendar-date-number" aria-hidden="true" style={backStyle}>
           {date.day}
         </span>
 
-        {/* Día numérico — capa delantera: relleno de color (z-index:2) */}
+        {/* Dia numerico — capa delantera: relleno de color (z-index:2) */}
         <span className="calendar-date-number" aria-hidden="true" style={frontStyle}>
           {date.day}
         </span>
 
-        {/* Imagen del día de la semana (PNG con tipografía original) — DELANTE (z-index:3) */}
+        {/* Imagen del dia de la semana (PNG con tipografia original) — DELANTE (z-index:3) */}
         <img
           src={src}
           alt=""

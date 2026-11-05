@@ -13,7 +13,7 @@ import { NotFound } from "./pages/NotFound";
 
 /**
  * La app se sirve bajo `/` (dominio personalizado mariomunpeq.is-a.dev).
- * En preview local también se sirve bajo `/`.
+ * En preview local tambien se sirve bajo `/`.
  */
 const APP_BASE = "/";
 
