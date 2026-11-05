@@ -1001,6 +1001,7 @@ html.lenis body {
   --color-bg-content-alt: #1a1a1a;
   --color-ink: #0a0a0a;
   --color-paper: #f5f5f0;
+  --bottombar-h: 120px;
 
   /* --- Layout: contenedor global de contenido --- */
   --max-w-content: 90rem;

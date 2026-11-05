@@ -553,7 +553,7 @@ export function ProjectDetail() {
         className="pointer-events-none absolute left-0 top-0 bottom-0 w-[1.5rem] bg-halftone-red opacity-10 hidden lg:block"
       />
 
-      <section className="relative px-6 py-20 md:px-10 md:py-24 pb-40">
+      <section className="relative px-6 py-20 md:px-10 md:py-24 pb-40" style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         <div className="mx-auto max-w-[var(--max-w-content)] relative z-10">
           {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">

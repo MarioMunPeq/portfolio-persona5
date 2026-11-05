@@ -30,7 +30,6 @@ export function ProjectInventory({
     const index = projects.findIndex((p) => p.slug === selected.slug);
     const direction = event.key === "ArrowDown" ? 1 : -1;
     const next = (index + direction + projects.length) % projects.length;
-    event.preventDefault();
     onSelect(projects[next]);
     itemRefs.current[next]?.focus();
   };
@@ -39,9 +38,8 @@ export function ProjectInventory({
     <nav
       aria-label="Inventario de proyectos"
       className="relative overflow-y-auto"
-      data-lenis-prevent
     >
-      <ol className="relative flex flex-col gap-2.5 max-h-[450px] overflow-y-auto overflow-x-hidden" onKeyDown={onKeyDown}>
+      <ol className="relative flex flex-col gap-2.5 overflow-y-auto overflow-x-hidden" onKeyDown={onKeyDown}>
         {projects.map((project, index) => (
           <NavRow
             key={project.slug}

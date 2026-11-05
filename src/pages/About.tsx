@@ -125,31 +125,8 @@ export function About() {
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20">
-        {/* Fondo: estrellas de contorno sutiles (mismo patron que el inventario) */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-stars opacity-70"
-        />
-
-        {/* Starbackground: textura atmosferica sutil detras de la composicion.
-            Sesgada a la derecha (zona de estadisticas), con mascara que
-            desvanece hacia la izquierda para no competir con la tarjeta
-            de perfil. Opacidad baja para mantener la legibilidad. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-20 top-0 h-full w-[75%] opacity-[0.14]"
-          style={{
-            backgroundImage: "url(/images/background/starbackground.png)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            maskImage:
-              "linear-gradient(to right, transparent 0%, black 30%, black 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 30%, black 100%)",
-          }}
-        />
-
+      <section className="relative overflow-y-auto px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
+        style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         {/* Palabra fantasma de marca */}
         <span
           aria-hidden="true"
@@ -230,12 +207,11 @@ export function About() {
 
             {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
             <div className="relative">
-              {/* Panel de fondo de la composicion: textura de estrellas en
-                  gris oscuro (sin rojo) que tapa las estrellas rojas del
-                  fondo de pagina dentro de esta zona. */}
+              {/* Panel de fondo de la composicion: color sólido oscuro que realza
+                las estadísticas sin patron de estrellas */}
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-8 bg-bg-hero bg-stars-charcoal opacity-80"
+                className="pointer-events-none absolute -inset-8 bg-bg-hero opacity-80"
               />
               <Reveal delay={0.1}>
                 <div className="relative">

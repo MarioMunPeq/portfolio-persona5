@@ -25,33 +25,15 @@ function ProjectsGraphicLayer() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
-      {/* Estrellas de contorno sutiles de fondo */}
-      <span className="absolute inset-0 bg-stars opacity-70" />
-
-      {/* Starbackground: textura atmosferica compartida con la pagina de perfil.
-          Posicionada hacia la izquierda/centro con rotacion diagonal sutil.
-          Mascara angular para crear un recorte tipo panel grafico de P5.
-          Opacidad ligeramente menor que en perfil para variedad visual. */}
+      {/* Diagonal red accents and scanlines - kept as decorative background */}
       <span
         className="absolute -left-16 top-[10%] h-[120%] w-[65%] opacity-[0.12]"
         style={{
-          backgroundImage: "url(/images/background/starbackground.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          background:
+            "linear-gradient(135deg, transparent 0%, rgba(230,0,18,0.03) 30%, rgba(230,0,18,0.02) 70%, transparent 100%)",
           transform: "rotate(-3deg)",
-          maskImage:
-            "linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)",
         }}
       />
-
-      <span
-        className="absolute right-[-3rem] top-[15%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
-        style={{ fontSize: "clamp(6rem, 13vw, 12rem)" }}
-      >
-        Inventario
-      </span>
 
       <span className="absolute -left-16 top-[46%] block h-2 w-[36rem] -rotate-[6deg] bg-accent/50" />
       <span className="absolute left-[26%] top-[72%] block h-px w-[30rem] -rotate-[3deg] bg-paper/15" />
@@ -76,7 +58,8 @@ export function Projects() {
 
   return (
     <Screen className="bg-bg-hero text-paper">
-      <section className="relative overflow-x-hidden min-h-screen">
+      <section className="relative overflow-x-hidden min-h-screen"
+        style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         <ProjectsGraphicLayer />
 
         <div
