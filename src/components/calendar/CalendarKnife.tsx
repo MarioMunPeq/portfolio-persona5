@@ -22,7 +22,14 @@ const CalendarKnife = forwardRef<HTMLImageElement, {}>((_props, ref) => {
       decoding="async"
       className="calendar-knife pointer-events-none"
       aria-hidden="true"
-      style={{ position: "absolute", left: "0%", top: "0%" }}
+      style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        zIndex: 20,
+        opacity: 0,
+        visibility: "hidden",
+      }}
     />
   );
 });

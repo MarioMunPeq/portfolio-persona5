@@ -6,9 +6,8 @@
  * Se reutiliza la misma instancia `Date` que usa TopBar (hora local del
  * visitante) para evitar divergencias entre sistemas de fecha.
  *
- * Calcula siete fechas consecutivas: hoy-2, hoy-1, hoy, hoy+1, hoy+2,
- * hoy+3, hoy+4. La ultima (hoy+4) es un buffer a la derecha que permite
- * el desplazamiento horizontal del calendario sin dejar huecos.
+ * Calcula seis fechas consecutivas: hoy-2, hoy-1, hoy, hoy+1, hoy+2,
+ * hoy+3, con el dia actual centrado entre las fechas anteriores y futuras.
  * El constructor de `Date` con `setDate` gestiona automaticamente cambios
  * de mes, año y años bisiestos.
  */
@@ -49,13 +48,12 @@ const WEEKDAY_LABELS: Record<number, string> = {
 };
 
 /**
- * Calcula siete fechas consecutivas del calendario.
+ * Calcula seis fechas consecutivas del calendario.
  *
  * Posicion 0 = hoy-2, posicion 1 = hoy-1 (ayer), posicion 2 = hoy (activa),
- * posicion 3 = hoy+1, posicion 4 = hoy+2, posicion 5 = hoy+3,
- * posicion 6 = hoy+4 (buffer a la derecha para el desplazamiento).
+ * posicion 3 = hoy+1, posicion 4 = hoy+2, posicion 5 = hoy+3.
  *
- * @returns Array de 7 objetos CalendarDate ordenados cronologicamente.
+ * @returns Array de 6 objetos CalendarDate ordenados cronologicamente.
  */
 export function getCalendarDates(): CalendarDate[] {
   const today = new Date();
@@ -63,7 +61,7 @@ export function getCalendarDates(): CalendarDate[] {
 
   const dates: CalendarDate[] = [];
 
-  for (let offset = -2; offset <= 4; offset++) {
+  for (let offset = -2; offset <= 3; offset++) {
     const d = new Date(today.getTime());
     d.setDate(today.getDate() + offset);
 

@@ -22,20 +22,16 @@
  *     dentro del ancla CSS que define su posicion final). GSAP anima SOLO
  *     la propiedad y del wrapper. Nada de x, left, top, rotation o scale.
  *   - La rotacion de cada dia va fija en el elemento interior (CSS estatico).
- *   1. Los 6 dias que NO son hoy caen TODOS A LA VEZ (stagger: 0), desde
- *      fuera de pantalla por arriba (y: -(viewport height + 200px)) hasta
- *      y: 0, duration 0.5s, ease "power4.in". Todos aterrizan al mismo
- *      instante: PUM.
- *   2. En el impacto: shake de pantalla (±8px, 0.35s, amortiguado) y los
- *      numeros de esos 6 dias tiemblan (±3px, 0.3s) sobre su contenido
- *      interior, volviendo exactamente a su posicion.
- *   3. Con el impacto (≈0.08s despues), cae HOY en el centro por su propio
- *      peso: y desde fuera de pantalla hasta 0, vertical, 0.5s,
- *      "power4.in", con un shake mas fuerte al aterrizar (±12px, 0.45s)
- *      y rebote minimo.
- *   4. onComplete de la timeline: pausa y salida a negro ya existentes.
+ *   1. Los 5 dias que NO son hoy caen a la vez y aterrizan juntos: PUM.
+ *   2. El impacto comprime las fechas y transmite una onda vertical corta
+ *      al fondo y a la pagina, sin destello ni vibracion lateral.
+ *   3. La onda desencadena la caida de HOY, que aterriza con un impacto menor.
+ *   4. Cuando todas las fechas quedan quietas, el cuchillo vuela en arco y se
+ *      clava en HOY; tras un segundo comienza la salida a negro.
+ *   5. onComplete de la timeline: salida a negro y arranque del home.
  *
- * El cuchillo esta fuera de alcance (por requisito) y no se renderiza.
+ * El cuchillo vuela desde arriba a la derecha y se clava en la fecha de hoy
+ * al aterrizar, usando el mismo impacto que remata su caida.
  *
  * Interaccion:
  *   Clic en cualquier parte del overlay, Escape o Space salta la
@@ -52,8 +48,7 @@
  *   .calendar-content — contenido interior (numero + imagen), rotacion
  *                        estatica en CSS.
  *
- * Cada fecha muestra: hoy-2, hoy-1 (ayer), hoy, hoy+1, hoy+2, hoy+3,
- * hoy+4 (buffer a la derecha para continuidad del desplazamiento).
+ * Cada fecha muestra: hoy-2, hoy-1 (ayer), hoy, hoy+1, hoy+2, hoy+3.
  */
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { gsap } from "gsap";
@@ -66,6 +61,7 @@ import {
   type CalendarDate,
 } from "../../lib/calendar";
 import { CalendarCard, NUMBER_ROTATION_BY_INDEX } from "./CalendarCard";
+import { CalendarKnife } from "./CalendarKnife";
 
 /**
  * Marca a nivel de modulo para evitar que React 19 StrictMode vuelva a
@@ -87,11 +83,10 @@ const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 const FALL_S = 0.55;               // duracion de la caida de cada dia (s)
 const START_ROT_DEG_MIN = 14;      // rotacion inicial extra minima (grados)
 const START_ROT_DEG_MAX = 28;      // rotacion inicial extra maxima (grados)
-const SQUASH_Y = 0.88;             // escala Y en el squash de impacto (dias normales)
-const SHAKE_PX = 14;               // desplazamiento maximo de shake de pantalla (px)
-const SHAKE_TODAY_PX = 5;          // desplazamiento de shake de pantalla para hoy (px)
-const ZOOM_PUNCH = 1.025;          // factor de zoom micro en el impacto
-const DUST_COUNT = 10;             // numero de particulas de polvo por dia
+const TODAY_DELAY_S = 0.24;        // la onda del primer impacto desencadena la caida de hoy
+const KNIFE_FLIGHT_S = 0.72;
+const KNIFE_SETTLE_S = 0.12;
+const KNIFE_HOLD_S = 1;
 
 /**
  * POSICIONES FINALES (despues del desplazamiento hacia la izquierda):
@@ -99,35 +94,32 @@ const DUST_COUNT = 10;             // numero de particulas de polvo por dia
  * Coordenadas porcentuales de referencia de Persona 5, adaptables al
  * viewport (no son pixeles hardcodeados).
  *   0 = hoy-2, 1 = hoy-1 (ayer), 2 = HOY, 3 = hoy+1, 4 = hoy+2,
- *   5 = hoy+3, 6 = hoy+4 (buffer a la derecha).
+ *   5 = hoy+3.
  */
-const CARD_POSITIONS: Record<string, { x: number; y: number; scale: number }[]> = {
+const CARD_POSITIONS: Record<string, { x: number; y: number }[]> = {
   desktop: [
-    { x: 8,  y: 46, scale: 0.60 },   // hoy-2
-    { x: 28, y: 55, scale: 0.75 },   // ayer
-    { x: 50, y: 59, scale: 1.00 },   // HOY (centro tras el shift)
-    { x: 64, y: 47, scale: 0.75 },   // hoy+1
-    { x: 78, y: 37, scale: 0.60 },   // hoy+2
-    { x: 91, y: 36, scale: 0.45 },   // hoy+3
-    { x: 104, y: 46, scale: 0.45 },  // hoy+4 (buffer)
+    { x: 8, y: 42 },   // hoy-2
+    { x: 28, y: 51 },  // ayer
+    { x: 50, y: 61 },  // HOY
+    { x: 67, y: 43 },  // hoy+1
+    { x: 82, y: 32 },  // hoy+2
+    { x: 93, y: 27 },  // hoy+3
   ],
   tablet: [
-    { x: 12, y: 44, scale: 0.50 },
-    { x: 30, y: 52, scale: 0.65 },
-    { x: 50, y: 56, scale: 1.00 },
-    { x: 66, y: 46, scale: 0.65 },
-    { x: 80, y: 40, scale: 0.50 },
-    { x: 90, y: 38, scale: 0.38 },
-    { x: 100, y: 44, scale: 0.38 },
+    { x: 12, y: 40 },
+    { x: 30, y: 50 },
+    { x: 50, y: 58 },
+    { x: 67, y: 43 },
+    { x: 82, y: 34 },
+    { x: 94, y: 29 },
   ],
   mobile: [
-    { x: 18, y: 42, scale: 0.42 },
-    { x: 34, y: 48, scale: 0.55 },
-    { x: 50, y: 52, scale: 1.00 },
-    { x: 66, y: 44, scale: 0.55 },
-    { x: 82, y: 40, scale: 0.42 },
-    { x: 90, y: 38, scale: 0.32 },
-    { x: 100, y: 42, scale: 0.32 },
+    { x: 18, y: 39 },
+    { x: 34, y: 47 },
+    { x: 50, y: 54 },
+    { x: 66, y: 43 },
+    { x: 82, y: 36 },
+    { x: 95, y: 32 },
   ],
 };
 
@@ -164,10 +156,9 @@ export function CalendarTransition() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const visualRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
-  const contentRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
-  const flashRef = useRef<HTMLDivElement>(null);
-  const dustContainerRef = useRef<HTMLDivElement>(null);
+  const knifeRef = useRef<HTMLImageElement>(null);
+  const visualRefs = useRef<(HTMLDivElement | null)[]>(Array(6).fill(null));
+  const contentRefs = useRef<(HTMLDivElement | null)[]>(Array(6).fill(null));
 
   const isMountedRef = useRef(false);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -271,6 +262,7 @@ export function CalendarTransition() {
     const sources: string[] = [
       calendarAsset("calendar_day.png"),
       calendarAsset("calendar_night.png"),
+      calendarAsset("calendar_knife.png"),
       ...dates.map((d) => calendarAsset(d.weekdayFile)),
     ];
 
@@ -346,6 +338,7 @@ export function CalendarTransition() {
       !isPositioned ||
       !bgRef.current ||
       !containerRef.current ||
+      !knifeRef.current ||
       visualRefs.current.some((ref) => ref === null) ||
       contentRefs.current.some((ref) => ref === null) ||
       timelineCreatedRef.current
@@ -384,22 +377,19 @@ export function CalendarTransition() {
     );
 
     // ---------- Rotacion inicial: cada dia parte girado respecto a su rotacion final ----------
-    // Signo alterno y valores distintos por dia (14°–28°). Se endereza durante la caida.
     const startRotByIndex: Record<number, number> = {};
-    [0, 1, 3, 4, 5, 6, 2].forEach((i) => {
+    [0, 1, 3, 4, 5, 2].forEach((i) => {
       const sign = i % 2 === 0 ? 1 : -1;
       const spread = START_ROT_DEG_MIN + ((i % 6) / 5) * (START_ROT_DEG_MAX - START_ROT_DEG_MIN);
       startRotByIndex[i] = sign * spread;
     });
 
-    // ---------- Estado inicial: todos los dias fuera de pantalla por arriba ----------
-    // GSAP anima solo y del wrapper y rotation del content. Nada de x, left, top.
     const allWrappers = visualRefs.current.filter(
       (ref): ref is HTMLDivElement => ref !== null
     );
     tl.set(allWrappers, { y: -(vh + 250), filter: "blur(3px)" }, 0);
 
-    [0, 1, 3, 4, 5, 6, 2].forEach((i) => {
+    [0, 1, 3, 4, 5, 2].forEach((i) => {
       const content = contentRefs.current[i];
       if (!content) return;
       const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
@@ -409,10 +399,8 @@ export function CalendarTransition() {
       }, 0);
     });
 
-    // ---------- FASE 1 — LOS 6 DIAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
-    // Caen simultaneamente (stagger: 0), mismo instante de impacto: PUM.
     const fallStart = T.datesStart;
-    const otherIndices = [0, 1, 3, 4, 5, 6];
+    const otherIndices = [0, 1, 3, 4, 5];
     const impactTime = fallStart + FALL_S;
 
     otherIndices.forEach((i) => {
@@ -420,7 +408,6 @@ export function CalendarTransition() {
       const content = contentRefs.current[i];
       if (!wrapper || !content) return;
 
-      // Caida vertical: y + motion blur → 0. Solo y del wrapper, rotation del content.
       tl.fromTo(
         wrapper,
         { y: -(vh + 250), filter: "blur(3px)" },
@@ -441,108 +428,153 @@ export function CalendarTransition() {
       }, fallStart);
     });
 
-    // ---------- IMPACTO de los 6 dias ----------
-    // Squash: scaleY 0.88 → 1 (elastic, origen en la base).
     otherIndices.forEach((i) => {
       const wrapper = visualRefs.current[i];
-      if (!wrapper) return;
-      tl.to(wrapper, { scaleY: SQUASH_Y, transformOrigin: "50% 100%", duration: 0.06 }, impactTime);
-      tl.to(wrapper, { scaleY: 1, duration: 0.35, ease: "elastic.out(1, 0.5)" }, impactTime + 0.06);
-
-      // Rebote seco en y: 0 → -14px → 0 (un solo rebote).
-      tl.to(wrapper, { y: -SHAKE_PX, duration: 0.12, ease: "power2.out" }, impactTime);
-      tl.to(wrapper, { y: 0, duration: 0.14, ease: "power3.in" }, impactTime + 0.12);
-    });
-
-    // Temblor de los numeros (content): rotacion ±4° y y ±3px, 0.45s, vuelven EXACTAMENTE al valor final.
-    otherIndices.forEach((i) => {
       const content = contentRefs.current[i];
-      if (!content) return;
+      if (!wrapper || !content) return;
       const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
-      const d = 0.45;
+
+      tl.to(wrapper, {
+        scaleY: 0.91,
+        transformOrigin: "50% 100%",
+        duration: 0.055,
+        ease: "power4.in",
+      }, impactTime);
+      tl.to(wrapper, {
+        scaleY: 1.018,
+        duration: 0.09,
+        ease: "power2.out",
+      }, impactTime + 0.055);
+      tl.to(wrapper, {
+        scaleY: 1,
+        duration: 0.17,
+        ease: "power2.out",
+      }, impactTime + 0.145);
+      tl.to(wrapper, { y: -6, duration: 0.085, ease: "power2.out" }, impactTime);
+      tl.to(wrapper, { y: 0, duration: 0.18, ease: "power3.out" }, impactTime + 0.085);
+
       tl.to(content, {
         keyframes: [
-          { rotation: rotFinal + 4, y: 3, duration: d / 3, ease: "power2.in" },
-          { rotation: rotFinal - 4, y: -3, duration: d / 3, ease: "power2.inOut" },
-          { rotation: rotFinal, y: 0, duration: d / 3, ease: "power2.out" },
+          { rotation: rotFinal + 0.65, y: -1.2, duration: 0.07, ease: "power2.in" },
+          { rotation: rotFinal - 0.35, y: 0.5, duration: 0.1, ease: "power2.inOut" },
+          { rotation: rotFinal, y: 0, duration: 0.15, ease: "power2.out" },
         ],
       }, impactTime);
     });
 
-    // Shake de pantalla: contenedor raiz con decaimiento ±14px, ±6px, ±3px, 0 en 0.5s.
-    tl.to(containerRef.current, {
+    // Onda de impacto comun: vertical, breve y amortiguada; sin flash ni vibracion lateral.
+    const impactWave = {
       keyframes: [
-        { x: SHAKE_PX, y: SHAKE_PX * 0.5, duration: 0.125, ease: "power2.in" },
-        { x: -SHAKE_PX * 0.5, y: -SHAKE_PX * 0.5, duration: 0.125, ease: "power2.inOut" },
-        { x: SHAKE_PX * 0.25, y: SHAKE_PX * 0.25, duration: 0.125, ease: "power2.inOut" },
-        { x: 0, y: 0, duration: 0.125, ease: "power2.out" },
+        { y: 2.6, duration: 0.07, ease: "power4.in" },
+        { y: -1.4, duration: 0.11, ease: "power2.out" },
+        { y: 0.45, duration: 0.12, ease: "power2.inOut" },
+        { y: 0, duration: 0.16, ease: "power2.out" },
       ],
+    };
+    tl.to(bgRef.current, impactWave, impactTime);
+    tl.to(containerRef.current, {
+      ...impactWave,
+      keyframes: impactWave.keyframes.map((frame) => ({
+        ...frame,
+        y: Number(frame.y) * 0.72,
+      })),
     }, impactTime);
 
-    // Micro zoom punch: scale 1 → 1.025 → 1 en 0.3s.
-    tl.to(containerRef.current, { scale: ZOOM_PUNCH, duration: 0.15, ease: "power2.in" }, impactTime);
-    tl.to(containerRef.current, { scale: 1, duration: 0.15, ease: "power2.out" }, impactTime + 0.15);
-
-    // Flash blanco: opacity 0.22 → 0 en 0.1s sobre toda la pantalla.
-    tl.to(flashRef.current, { opacity: 0.22, duration: 0.05 }, impactTime);
-    tl.to(flashRef.current, { opacity: 0, duration: 0.05 }, impactTime + 0.05);
-
-    // Polvo: particulas salen de la base de cada dia en abanico y desaparecen en 0.5s.
-    otherIndices.forEach((i) => {
-      const wrapper = visualRefs.current[i];
-      const dustContainer = dustContainerRef.current;
-      if (!wrapper || !dustContainer) return;
-      tl.call(
-        () => {
-          const rect = wrapper.getBoundingClientRect();
-          const baseX = rect.left + rect.width / 2;
-          const baseY = rect.bottom;
-          const count = DUST_COUNT;
-          for (let p = 0; p < count; p++) {
-            const particle = document.createElement("div");
-            const size = 6 + Math.random() * 8;
-            particle.style.position = "absolute";
-            particle.style.left = `${baseX}px`;
-            particle.style.top = `${baseY}px`;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.background = `rgba(245, 245, 240, ${0.4 + Math.random() * 0.4})`;
-            particle.style.opacity = "0.5";
-            particle.style.borderRadius = "50%";
-            particle.style.pointerEvents = "none";
-            particle.style.zIndex = "45";
-            dustContainer.appendChild(particle);
-
-            const angle = (-Math.PI / 2) + (p / count) * Math.PI * 0.6 - Math.PI * 0.3;
-            const speed = 40 + Math.random() * 60;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-
-            tl.to(particle, {
-              x: vx,
-              y: vy,
-              opacity: 0,
-              duration: 0.5,
-              ease: "power2.out",
-              onComplete: () => particle.remove(),
-            }, impactTime);
-          }
-        },
-        [],
-        impactTime
-      );
-    });
-
-    // ---------- FASE 2 — HOY CAE 0.1s DESPUES DEL IMPACTO ----------
     const hoyIndex = 2;
     const hoyWrapper = visualRefs.current[hoyIndex];
     const hoyContent = contentRefs.current[hoyIndex];
-    const hoyTime = impactTime + 0.1;
+    const knife = knifeRef.current;
+    const hoyTime = impactTime + TODAY_DELAY_S;
+    const hoyLandTime = hoyTime + FALL_S;
 
-    if (hoyWrapper && hoyContent) {
+    if (hoyWrapper && hoyContent && knife) {
       const hoyRotFinal = NUMBER_ROTATION_BY_INDEX[hoyIndex];
+      const rootRect = rootRef.current?.getBoundingClientRect();
+      const number = hoyContent.querySelector<HTMLElement>(".calendar-date-number");
+      const numberRect = number?.getBoundingClientRect();
+      const knifeRect = knife.getBoundingClientRect();
 
-      // Caida de hoy: misma rotacion inicial extra, power4.in, FALL_S.
+      if (rootRect && numberRect) {
+        const wrapperY = Number(gsap.getProperty(hoyWrapper, "y")) || 0;
+        const targetX =
+          numberRect.left + numberRect.width * 0.54 - rootRect.left;
+        const targetY =
+          numberRect.top + numberRect.height * 0.46 - rootRect.top - wrapperY;
+        const originX = knifeRect.width * 0.03;
+        const originY = knifeRect.height * 0.5;
+        const targetLeft = targetX - originX;
+        const targetTop = targetY - originY;
+        const knifeStartTime = hoyLandTime + 0.32;
+        const startX = targetX + Math.min(rootRect.width * 0.4, 560);
+        const startY = targetY - Math.min(rootRect.height * 0.58, 420);
+        const arcX = targetX + Math.min(rootRect.width * 0.2, 240);
+        const arcY = targetY - Math.min(rootRect.height * 0.28, 180);
+        const lungeX = targetX + Math.min(rootRect.width * 0.08, 92);
+        const lungeY = targetY - Math.min(rootRect.height * 0.1, 64);
+
+        tl.set(knife, {
+          x: startX - originX,
+          y: startY - originY,
+          rotation: -25,
+          rotationY: 0,
+          transformPerspective: 900,
+          transformOrigin: "3% 50%",
+          autoAlpha: 0,
+        }, 0);
+        tl.to(knife, {
+          autoAlpha: 1,
+          duration: 0.08,
+          ease: "power1.out",
+        }, knifeStartTime);
+        tl.to(knife, {
+          keyframes: [
+            {
+              x: arcX - originX,
+              y: arcY - originY,
+              rotation: 145,
+              rotationY: 48,
+              duration: 0.3,
+              ease: "power2.out",
+            },
+            {
+              x: lungeX - originX,
+              y: lungeY - originY,
+              rotation: 245,
+              rotationY: -18,
+              duration: 0.25,
+              ease: "power2.inOut",
+            },
+            {
+              x: targetLeft,
+              y: targetTop,
+              rotation: 315,
+              rotationY: 0,
+              duration: KNIFE_FLIGHT_S - 0.55,
+              ease: "power4.in",
+            },
+          ],
+        }, knifeStartTime + 0.08);
+        tl.to(knife, {
+          x: targetLeft - 4,
+          y: targetTop + 4,
+          rotation: 319,
+          duration: 0.055,
+          ease: "power4.in",
+        }, knifeStartTime + 0.08 + KNIFE_FLIGHT_S);
+        tl.to(knife, {
+          x: targetLeft - 1,
+          y: targetTop + 1,
+          rotation: 315,
+          duration: KNIFE_SETTLE_S,
+          ease: "power2.out",
+        }, knifeStartTime + 0.135 + KNIFE_FLIGHT_S);
+
+        tl.to({}, {
+          duration: KNIFE_HOLD_S,
+          onComplete: startExit,
+        }, knifeStartTime + 0.135 + KNIFE_FLIGHT_S + KNIFE_SETTLE_S);
+      }
+
       tl.fromTo(
         hoyWrapper,
         { y: -(vh + 250), filter: "blur(3px)" },
@@ -557,108 +589,57 @@ export function CalendarTransition() {
         ease: "power4.in",
       }, hoyTime);
 
-      const hoyLandTime = hoyTime + FALL_S;
-
-      // Squash mas suave: 0.94.
-      tl.to(hoyWrapper, { scaleY: 0.94, transformOrigin: "50% 100%", duration: 0.06 }, hoyLandTime);
+      tl.to(hoyWrapper, {
+        scaleY: 0.95,
+        transformOrigin: "50% 100%",
+        duration: 0.055,
+        ease: "power4.in",
+      }, hoyLandTime);
       tl.to(
         hoyWrapper,
-        { scaleY: 1, duration: 0.35, ease: "elastic.out(1, 0.5)" },
-        hoyLandTime + 0.06
+        { scaleY: 1.012, duration: 0.09, ease: "power2.out" },
+        hoyLandTime + 0.055
       );
+      tl.to(hoyWrapper, { scaleY: 1, duration: 0.15, ease: "power2.out" }, hoyLandTime + 0.145);
+      tl.to(hoyWrapper, { y: -4, duration: 0.08, ease: "power2.out" }, hoyLandTime);
+      tl.to(hoyWrapper, { y: 0, duration: 0.17, ease: "power3.out" }, hoyLandTime + 0.08);
 
-      // Rebote: -7px.
-      tl.to(hoyWrapper, { y: -7, duration: 0.12, ease: "power2.out" }, hoyLandTime);
-      tl.to(hoyWrapper, { y: 0, duration: 0.14, ease: "power3.in" }, hoyLandTime + 0.12);
-
-      // Numero de hoy tiembla suave ±1.5° y ±1.5px.
       tl.to(hoyContent, {
         keyframes: [
-          { rotation: hoyRotFinal + 1.5, y: 1.5, duration: 0.1, ease: "power2.in" },
-          { rotation: hoyRotFinal - 1.5, y: -1.5, duration: 0.1, ease: "power2.inOut" },
-          { rotation: hoyRotFinal, y: 0, duration: 0.1, ease: "power2.out" },
+          { rotation: hoyRotFinal + 0.45, y: -0.8, duration: 0.07, ease: "power2.in" },
+          { rotation: hoyRotFinal - 0.25, y: 0.3, duration: 0.1, ease: "power2.inOut" },
+          { rotation: hoyRotFinal, y: 0, duration: 0.14, ease: "power2.out" },
         ],
       }, hoyLandTime);
 
-      // Los otros 6 numeros tiemblan solo ±1.5° y ±1.5px (0.3s), no mas.
-      const d2 = 0.3;
       otherIndices.forEach((i) => {
         const content = contentRefs.current[i];
         if (!content) return;
         const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
         tl.to(content, {
           keyframes: [
-            { rotation: rotFinal + 1.5, y: 1.5, duration: d2 / 3, ease: "power2.in" },
-            { rotation: rotFinal - 1.5, y: -1.5, duration: d2 / 3, ease: "power2.inOut" },
-            { rotation: rotFinal, y: 0, duration: d2 / 3, ease: "power2.out" },
+            { rotation: rotFinal + 0.2, y: -0.4, duration: 0.08, ease: "power2.in" },
+            { rotation: rotFinal, y: 0, duration: 0.16, ease: "power2.out" },
           ],
         }, hoyLandTime);
       });
 
-      // Shake de pantalla hoy: ±5px/±2px/0 en 0.35s.
-      tl.to(containerRef.current, {
+      const hoyRipple = {
         keyframes: [
-          { x: SHAKE_TODAY_PX, y: SHAKE_TODAY_PX * 0.4, duration: 0.116, ease: "power2.in" },
-          { x: -SHAKE_TODAY_PX * 0.4, y: -SHAKE_TODAY_PX * 0.4, duration: 0.117, ease: "power2.inOut" },
-          { x: 0, y: 0, duration: 0.117, ease: "power2.out" },
+          { y: 1.1, duration: 0.07, ease: "power3.in" },
+          { y: -0.45, duration: 0.1, ease: "power2.out" },
+          { y: 0, duration: 0.14, ease: "power2.out" },
         ],
+      };
+      tl.to(bgRef.current, hoyRipple, hoyLandTime);
+      tl.to(containerRef.current, {
+        ...hoyRipple,
+        keyframes: hoyRipple.keyframes.map((frame) => ({
+          ...frame,
+          y: Number(frame.y) * 0.65,
+        })),
       }, hoyLandTime);
 
-      // Micro zoom hoy: 1.012.
-      tl.to(containerRef.current, { scale: 1.012, duration: 0.15, ease: "power2.in" }, hoyLandTime);
-      tl.to(containerRef.current, { scale: 1, duration: 0.15, ease: "power2.out" }, hoyLandTime + 0.15);
-
-      // Flash hoy: 0.12.
-      tl.to(flashRef.current, { opacity: 0.12, duration: 0.06 }, hoyLandTime);
-      tl.to(flashRef.current, { opacity: 0, duration: 0.06 }, hoyLandTime + 0.06);
-
-      // Polvo hoy: 6 particulas.
-      const dustContainerToday = dustContainerRef.current;
-      if (dustContainerToday) {
-        tl.call(
-          () => {
-            const rect = hoyWrapper.getBoundingClientRect();
-            const baseX = rect.left + rect.width / 2;
-            const baseY = rect.bottom;
-            const count = 6;
-            for (let p = 0; p < count; p++) {
-              const particle = document.createElement("div");
-              const size = 6 + Math.random() * 8;
-              particle.style.position = "absolute";
-              particle.style.left = `${baseX}px`;
-              particle.style.top = `${baseY}px`;
-              particle.style.width = `${size}px`;
-              particle.style.height = `${size}px`;
-              particle.style.background = `rgba(245, 245, 240, ${0.4 + Math.random() * 0.4})`;
-              particle.style.opacity = "0.5";
-              particle.style.borderRadius = "50%";
-              particle.style.pointerEvents = "none";
-              particle.style.zIndex = "45";
-              dustContainerToday.appendChild(particle);
-
-              const angle = (-Math.PI / 2) + (p / count) * Math.PI * 0.6 - Math.PI * 0.3;
-              const speed = 40 + Math.random() * 60;
-              const vx = Math.cos(angle) * speed;
-              const vy = Math.sin(angle) * speed;
-
-              tl.to(particle, {
-                x: vx,
-                y: vy,
-                opacity: 0,
-                duration: 0.5,
-                ease: "power2.out",
-                onComplete: () => particle.remove(),
-              }, hoyLandTime);
-            }
-          },
-          [],
-          hoyLandTime
-        );
-      }
-
-      // ---------- Final de la timeline ----------
-      // Lanza la pausa y la salida a negro (startExit).
-      tl.to({}, { duration: 0, onComplete: startExit }, hoyLandTime + 0.5);
     }
 
     return () => {
@@ -743,20 +724,7 @@ export function CalendarTransition() {
               );
             })}
           </div>
-
-          {/* Flash blanco de impacto (cubre toda la pantalla)} */}
-          <div
-            ref={flashRef}
-            className="fixed inset-0 bg-white"
-            style={{ zIndex: 50, opacity: 0, pointerEvents: "none" }}
-          />
-
-          {/* Contenedor de particulas de polvo (cubre toda la pantalla)} */}
-          <div
-            ref={dustContainerRef}
-            className="fixed inset-0"
-            style={{ zIndex: 45, pointerEvents: "none" }}
-          />
+          <CalendarKnife ref={knifeRef} />
         </>
       )}
     </div>

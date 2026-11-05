@@ -31,7 +31,7 @@ import { useMediaQuery } from "../../lib/use-media-query";
 
 interface CalendarCardProps {
   date: CalendarDate;
-  /** Indice dentro del array de siete fechas (0-6). */
+  /** Indice dentro del array de seis fechas (0-5). */
   index: number;
   /** Ref al wrapper exterior (el unico elemento que se anima en y durante la caida). */
   wrapperRef?: Ref<HTMLDivElement>;
@@ -67,7 +67,6 @@ const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
   3: 140, // hoy+1
   4: 105, // hoy+2
   5: 80,  // hoy+3
-  6: 80,  // hoy+4 (buffer)
 };
 
 /** Rotacion del numero por indice (grados). Cada dia tiene un angulo distinto. */
@@ -78,7 +77,6 @@ export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
   3: -2, // hoy+1
   4: -1, // hoy+2
   5: -3, // hoy+3
-  6: -2, // hoy+4
 };
 
 /** Rotacion de la imagen del dia por indice (grados). Cada dia tiene un angulo distinto. */
@@ -89,7 +87,6 @@ const WEEKDAY_ROTATION_BY_INDEX: Record<number, number> = {
   3: 3, // hoy+1
   4: 2, // hoy+2
   5: 1, // hoy+3
-  6: 0, // hoy+4
 };
 
 /** Ancho de cada composicion (px) — el numero domina visualmente. */
@@ -100,7 +97,6 @@ const CARD_WIDTH_BY_INDEX: Record<number, number> = {
   3: 170, // hoy+1
   4: 130, // hoy+2
   5: 110, // hoy+3
-  6: 110, // hoy+4 (buffer)
 };
 
 const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>((props, forwardedRef) => {
