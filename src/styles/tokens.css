@@ -2923,57 +2923,106 @@ html {
   outline-offset: 4px;
 }
 
-/* ── Fecha derecha (se mantiene como está) ── */
+/* ── Sello de fecha: expediente diario en capas de papel ── */
 .p5-date {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  /* Posición absoluta para asegurar que no se corte por el borde derecho */
   position: absolute;
   right: calc(var(--p5-margin) + 8px);
   top: calc(var(--p5-margin) + 8px);
   z-index: 55;
-}
-.p5-day {
-  position: relative;
-  display: inline-block;
-  text-align: center;
-  line-height: 1;
-  min-width: calc(var(--p5-title) * 1.15);
-}
-.p5-day__layer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  font-family: var(--p5-font-hatty);
-  font-weight: 400;
-  white-space: nowrap;
-  letter-spacing: -0.03em;
-  paint-order: stroke fill;
-}
-.p5-day__back {
-  z-index: 1;
-  color: #fff;
-  -webkit-text-fill-color: #fff;
-  -webkit-text-stroke: 0.28em #fff;
-  font-size: var(--p5-title);
-}
-.p5-day__front {
-  z-index: 2;
-  color: #111;
-  -webkit-text-fill-color: #111;
-  -webkit-text-stroke: 0.04em #111;
-  font-size: var(--p5-title);
-}
-.p5-day__img {
-  position: absolute;
-  top: 78%;
-  left: 0;
-  width: 100%;
-  height: auto;
-  transform: rotate(-2deg);
-  z-index: 3;
+  width: clamp(124px, 9.6vw, 144px);
+  aspect-ratio: 1.58;
   pointer-events: none;
+}
+.p5-date__plate {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  clip-path: polygon(7% 0, 100% 0, 100% 83%, 89% 100%, 0 100%, 0 11%);
+  transform: rotate(1.5deg);
+  animation: p5-date-impact 620ms 120ms cubic-bezier(0.18, 0.9, 0.28, 1.35) both;
+}
+.p5-date__plate::before {
+  position: absolute;
+  inset: 0;
+  background: var(--p5-red);
+  clip-path: inherit;
+  content: "";
+  transform: translate(6px, 6px);
+}
+.p5-date__ink {
+  position: absolute;
+  inset: 3px;
+  overflow: hidden;
+  background: #111;
+  clip-path: polygon(7% 0, 100% 0, 100% 83%, 89% 100%, 0 100%, 0 11%);
+}
+.p5-date__month {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  z-index: 3;
+  display: grid;
+  min-width: 34px;
+  height: 20px;
+  padding: 0 5px;
+  place-items: center;
+  background: var(--p5-red);
+  color: #fff;
+  font-family: var(--p5-font-sans);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  transform: skewX(-9deg) rotate(2deg);
+}
+.p5-date__day {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  z-index: 2;
+  color: #fff;
+  font-family: var(--p5-font-hatty);
+  font-size: clamp(52px, 4vw, 60px);
+  font-weight: 400;
+  letter-spacing: -0.07em;
+  line-height: 0.82;
+  -webkit-text-stroke: 1px #111;
+  paint-order: stroke fill;
+  text-shadow: 3px 4px 0 var(--p5-red);
+}
+.p5-date__weekday {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  z-index: 4;
+  width: 74%;
+  height: auto;
+  transform: rotate(-3deg);
+  filter: drop-shadow(2px 2px 0 #000);
+}
+.p5-date__slash {
+  position: absolute;
+  right: 7px;
+  bottom: 6px;
+  z-index: 1;
+  width: 4px;
+  height: 34%;
+  background: var(--p5-red);
+  transform: rotate(24deg);
+}
+@keyframes p5-date-impact {
+  0% {
+    opacity: 0;
+    transform: translateY(-18px) rotate(8deg) scale(1.12);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(2px) rotate(0deg) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(1.5deg) scale(1);
+  }
 }
 
 /* ===== BOTTOMBAR ── */
@@ -3610,9 +3659,6 @@ html {
   .p5-bb-inner {
     justify-content: center;
   }
-  .p5-date {
-    justify-content: center;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3621,6 +3667,10 @@ html {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+  .p5-date__plate {
+    animation: none;
+    transform: rotate(1.5deg);
   }
   .p5-vinyl {
     animation: none !important;

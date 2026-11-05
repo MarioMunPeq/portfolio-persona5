@@ -19,7 +19,7 @@ import { useEffect } from "react";
  *     existente. Hover: fondo rojo, placa 4px derecha, flecha 4px
  *     izquierda. Transición del texto con clip-path wipe (0.3s).
  * Centro: vacío.
- * Derecha: fecha estilo calendario del juego (se mantiene como está).
+ * Derecha: sello de fecha inspirado en los avisos del metaverso de Persona 5.
  */
 export function TopBar() {
   const { pathname } = useLocation();
@@ -87,32 +87,27 @@ export function TopBar() {
 
         {/* Centro: vacío intencionalmente. */}
 
-        {/* ── Derecha: fecha estilo calendario del juego ── */}
-        <div className="p5-date">
-          <P5Plate
-            className="p5-enter--top"
-            style={{ animationDelay: "80ms", "--p5-rot": "1deg" } as unknown as React.CSSProperties}
-            pad="clamp(6px, 0.5vw, 10px) clamp(12px, 1vw, 22px)"
-            rot={1}
-          >
-            {monthShort}
-          </P5Plate>
-
-          <div className="p5-day" aria-label={`${today.weekdayLabel} ${today.day}`}>
-            <span className="p5-day__layer p5-day__back" aria-hidden="true">
-              {dayStr}
-            </span>
-            <span className="p5-day__layer p5-day__front" aria-hidden="true">
-              {dayStr}
-            </span>
-            <img
-              src={calendarAsset(today.weekdayFile)}
-              alt=""
-              className="p5-day__img"
-              loading="eager"
-              decoding="async"
-              aria-hidden="true"
-            />
+        {/* ── Derecha: sello de fecha estilo archivo P5 ── */}
+        <div
+          className="p5-date p5-enter--top"
+          style={{ animationDelay: "80ms" }}
+          role="img"
+          aria-label={`${today.weekdayLabel}, ${today.day} de ${today.date.toLocaleString("es-ES", { month: "long" })}`}
+        >
+        <div className="p5-date__plate">
+          <div className="p5-date__ink" aria-hidden="true">
+            <span className="p5-date__month">{monthShort}</span>
+            <span className="p5-date__day">{dayStr}</span>
+              <img
+                src={calendarAsset(today.weekdayFile)}
+                alt=""
+                className="p5-date__weekday"
+                loading="eager"
+                decoding="async"
+                aria-hidden="true"
+              />
+              <span className="p5-date__slash" />
+            </div>
           </div>
         </div>
       </div>
