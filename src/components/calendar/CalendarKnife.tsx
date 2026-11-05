@@ -2,8 +2,8 @@
  * Cuchillo del calendario tipo Persona 5.
  *
  * El PNG es horizontal: la hoja apunta a la izquierda, el mango a la
- * derecha. GSAP rota 45° en sentido horario para que la hoja clave
- * hacia abajo-izquierda (en diagonal sobre el dia activo).
+ * derecha. GSAP lo lanza desde arriba a la derecha con un giro limpio de
+ * media vuelta; la punta llega al dia activo y queda orientada abajo-izquierda.
  *
  * El contenedor padre (knifeRef) es posicionado por GSAP con x/y en
  * pixeles y xPercent/yPercent: -50 para centrado. La imagen dentro

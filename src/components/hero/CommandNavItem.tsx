@@ -26,7 +26,7 @@ interface CommandNavItemProps {
   widthPx?: number;
   index: number;
   selected: boolean;
-  onSelect: (index: number) => void;
+  onSelect: (index: number | null) => void;
   setButtonRef: (index: number, element: HTMLButtonElement | null) => void;
 }
 
@@ -107,6 +107,11 @@ export function CommandNavItem({
           }}
           type="button"
           onPointerEnter={() => onSelect(index)}
+          onPointerLeave={() => {
+            if (!buttonRef.current?.matches(":focus-visible")) {
+              onSelect(null);
+            }
+          }}
           onFocus={() => onSelect(index)}
           onClick={() => void handleNav()}
           data-cursor="open"

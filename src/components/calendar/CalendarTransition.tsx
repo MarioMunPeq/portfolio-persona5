@@ -85,9 +85,10 @@ const FALL_S = 0.55; // duracion de la caida de cada dia (s)
 const START_ROT_DEG_MIN = 14; // rotacion inicial extra minima (grados)
 const START_ROT_DEG_MAX = 28; // rotacion inicial extra maxima (grados)
 const TODAY_DELAY_S = 0.24; // la onda del primer impacto desencadena la caida de hoy
-const KNIFE_FLIGHT_S = 0.72;
-const KNIFE_SETTLE_S = 0.12;
+const KNIFE_FLIGHT_S = 0.42;
+const KNIFE_SETTLE_S = 0.08;
 const KNIFE_HOLD_S = 1;
+const KNIFE_LANDED_ROTATION = 315;
 
 /**
  * POSICIONES FINALES (despues del desplazamiento hacia la izquierda):
@@ -568,89 +569,62 @@ export function CalendarTransition() {
         const originY = knifeRect.height * 0.5;
         const targetLeft = targetX - originX;
         const targetTop = targetY - originY;
-        const knifeStartTime = hoyLandTime + 0.32;
+        const knifeStartTime = hoyLandTime + 0.28;
         const startX = targetX + Math.min(rootRect.width * 0.4, 560);
-        const startY = targetY - Math.min(rootRect.height * 0.58, 420);
-        const arcX = targetX + Math.min(rootRect.width * 0.2, 240);
-        const arcY = targetY - Math.min(rootRect.height * 0.28, 180);
-        const lungeX = targetX + Math.min(rootRect.width * 0.08, 92);
-        const lungeY = targetY - Math.min(rootRect.height * 0.1, 64);
+        const startY = targetY - Math.min(rootRect.height * 0.34, 260);
 
         tl.set(
           knife,
           {
             x: startX - originX,
             y: startY - originY,
-            rotation: -25,
-            rotationY: 0,
-            transformPerspective: 900,
+            rotation: KNIFE_LANDED_ROTATION - 180,
             transformOrigin: "3% 50%",
             autoAlpha: 0,
           },
           0,
         );
+        tl.set(knife, { autoAlpha: 1 }, knifeStartTime);
         tl.to(
           knife,
           {
-            autoAlpha: 1,
-            duration: 0.08,
-            ease: "power1.out",
+            x: targetLeft,
+            y: targetTop,
+            duration: KNIFE_FLIGHT_S,
+            ease: "power2.in",
           },
           knifeStartTime,
         );
         tl.to(
           knife,
           {
-            keyframes: [
-              {
-                x: arcX - originX,
-                y: arcY - originY,
-                rotation: 145,
-                rotationY: 48,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              {
-                x: lungeX - originX,
-                y: lungeY - originY,
-                rotation: 245,
-                rotationY: -18,
-                duration: 0.25,
-                ease: "power2.inOut",
-              },
-              {
-                x: targetLeft,
-                y: targetTop,
-                rotation: 315,
-                rotationY: 0,
-                duration: KNIFE_FLIGHT_S - 0.55,
-                ease: "power4.in",
-              },
-            ],
+            rotation: KNIFE_LANDED_ROTATION,
+            duration: KNIFE_FLIGHT_S,
+            ease: "none",
           },
-          knifeStartTime + 0.08,
+          knifeStartTime,
         );
         tl.to(
           knife,
           {
             x: targetLeft - 4,
             y: targetTop + 4,
-            rotation: 319,
+            rotation: KNIFE_LANDED_ROTATION + 4,
             duration: 0.055,
             ease: "power4.in",
           },
-          knifeStartTime + 0.08 + KNIFE_FLIGHT_S,
+          knifeStartTime + KNIFE_FLIGHT_S,
         );
         tl.to(
           knife,
           {
             x: targetLeft - 1,
             y: targetTop + 1,
-            rotation: 315,
+            rotation: KNIFE_LANDED_ROTATION,
             duration: KNIFE_SETTLE_S,
             ease: "power2.out",
           },
-          knifeStartTime + 0.135 + KNIFE_FLIGHT_S,
+          knifeStartTime + KNIFE_FLIGHT_S + 0.055,
         );
 
         tl.to(
@@ -659,7 +633,7 @@ export function CalendarTransition() {
             duration: KNIFE_HOLD_S,
             onComplete: startExit,
           },
-          knifeStartTime + 0.135 + KNIFE_FLIGHT_S + KNIFE_SETTLE_S,
+          knifeStartTime + KNIFE_FLIGHT_S + 0.055 + KNIFE_SETTLE_S,
         );
       }
 
