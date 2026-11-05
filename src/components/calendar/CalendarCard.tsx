@@ -71,7 +71,7 @@ const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
 };
 
 /** Rotación del número por índice (grados). Cada día tiene un ángulo distinto. */
-const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
+export const NUMBER_ROTATION_BY_INDEX: Record<number, number> = {
   0: -5, // hoy-2
   1: -3, // ayer
   2: -4, // HOY

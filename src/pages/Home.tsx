@@ -53,7 +53,7 @@ export function Home() {
           loop
           playsInline
           preload="auto"
-          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+          className="pointer-events-none fixed inset-0 z-0 w-[100vw] h-[100dvh] object-cover object-[center_center]"
           aria-hidden="true"
         >
           <source

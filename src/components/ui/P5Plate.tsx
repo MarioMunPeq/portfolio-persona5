@@ -1,12 +1,13 @@
 /**
- * Placa angular reutilizable — técnica EXACTAMENTE igual que los botones
- * del menú principal (Perfil, Inventario…): clip-path poligonal con esquinas
- * cortadas en diagonal, borde blanco (capa exterior #fff + capa interior #111
- * con el mismo clip-path a inset 3px), fondo #111 y sombra roja desplazada
- * en el wrapper padre.
+ * Placa angular reutilizable — 3 capas apiladas con el MISMO clip-path
+ * (esquinas cortadas en diagonal):
+ *   · capa 1 (sombra roja): #e8112d, translate(6px, 6px)
+ *   · capa 2 (borde): #fff, tamaño completo
+ *   · capa 3 (fondo): #111, inset 3px, mismo clip-path para borde uniforme.
  *
- * Cada placa recibe una rotación distinta pequeña (entre -3° y +2°) vía
- * --p5-rot, y el contenido se contra-inclina para que se lea recto.
+ * Sin borde CSS ni drop-shadow/filter sobre el clip-path (evitan puntos
+ * rojos y blancos en las esquinas). Cada placa recibe una rotación leve
+ * distinta (entre -3° y +2°) vía --p5-rot.
  */
 export function P5Plate({
   children,
@@ -30,6 +31,8 @@ export function P5Plate({
       aria-hidden="true"
     >
       <div className="p5-plate">
+        <div className="p5-plate__shadow" />
+        <div className="p5-plate__border" />
         <div className="p5-plate__fill" />
         <div className="p5-plate__inner" style={{ padding: pad || "var(--p5-pad)" }}>
           {children}

@@ -1,53 +1,101 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { P5Plate } from "./P5Plate";
 import { profile } from "../../data/profile";
 import { getTodayDate, calendarAsset } from "../../lib/calendar";
+import { useEffect } from "react";
 
 /**
  * Barra superior del menú principal — estilo Persona 5.
  *
  * Sin fondo sólido de barra: solo un degradado negro suave (0.55 → 0) de
- * ~120px de alto para legibilidad sobre el vídeo. Las piezas son placas
- * independientes flotando, con entrada desde arriba (0.5s, ease-out,
- * escalonado 80ms).
+ * ~120px de alto para legibilidad sobre el vídeo.
  *
- *   [MMP · MENU PRINCIPAL] (placa, izquierda) … centro vacío …
- *   [placa mini NOV] [número halo blanco + imagen del día] (derecha)
+ * Izquierda: botón compacto (max 16vw × 9vh):
+ *   • En el menú principal ("/"): "xNaque" (p5hatty) + "DESARROLLADOR"
+ *     (pequeño), NO clicable.
+ *   • En cualquier otra pantalla: "← MENÚ" con icono ○ (círculo
+ *     PlayStation, rojo) a la izquierda, texto "MENÚ" en p5hatty.
+ *     Click o Escape → vuelve al menú principal con fundido a negro
+ *     existente. Hover: fondo rojo, placa 4px derecha, flecha 4px
+ *     izquierda. Transición del texto con clip-path wipe (0.3s).
+ * Centro: vacío.
+ * Derecha: fecha estilo calendario del juego (se mantiene como está).
  */
 export function TopBar() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const isMenu = pathname === "/";
+
+  /* Si se pulsa Escape en una página interior, volver al menú. */
+  useEffect(() => {
+    if (isMenu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        navigate("/");
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isMenu, navigate]);
+
+  const handleBack = () => {
+    /* Fundido a negro existente: la transición de ruta se encarga de
+       cubrir la pantalla. Navegamos directamente. */
+    navigate("/");
+  };
+
   const today = getTodayDate();
   const dayStr = String(today.day).padStart(2, "0");
-  const monthShort = today.date.toLocaleString("es-ES", { month: "short" }).toUpperCase(); // "nov"
+  const monthShort = today.date.toLocaleString("es-ES", { month: "short" }).toUpperCase();
 
   return (
     <div className="p5-topbar">
       <div className="p5-topbar__inner">
-        {/* ── Izquierda: MMP en placa inclinada ── */}
-        <P5Plate
-          className="p5-enter--top"
-          style={{ animationDelay: "0ms", "--p5-rot": "-2deg" } as unknown as React.CSSProperties}
-        >
-          <span className="p5-mm" aria-label={profile.branding.system}>
-            MMP
-          </span>
-          <span className="p5-mm-sub">
-            {profile.branding.system.toUpperCase()}
-          </span>
-        </P5Plate>
+        {/* ── Izquierda: botón compacto ── */}
+        <div className="p5-topbar-left p5-enter--top" style={{ animationDelay: "0ms" }}>
+          <P5Plate
+            className={isMenu ? "" : "p5-plate--back"}
+            rot={-2}
+            style={{ "--p5-rot": "-2deg" } as unknown as React.CSSProperties}
+          >
+            {isMenu ? (
+              <>
+                <span className="p5-topbar-brand" aria-label={profile.branding.system}>
+                  xNaque
+                </span>
+                <span className="p5-topbar-brand-sub">
+                  DESARROLLADOR
+                </span>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="p5-topbar-back"
+                onClick={handleBack}
+                aria-label="Volver al menú principal"
+              >
+                <span className="p5-topbar-back__icon" aria-hidden="true">
+                  ○
+                </span>
+                <span className="p5-topbar-back__label">MENÚ</span>
+              </button>
+            )}
+          </P5Plate>
+        </div>
 
         {/* Centro: vacío intencionalmente. */}
 
         {/* ── Derecha: fecha estilo calendario del juego ── */}
         <div className="p5-date">
-          {/* Mini placa con el mes (sin solapar nada). */}
           <P5Plate
             className="p5-enter--top"
             style={{ animationDelay: "80ms", "--p5-rot": "1deg" } as unknown as React.CSSProperties}
             pad="clamp(6px, 0.5vw, 10px) clamp(12px, 1vw, 22px)"
+            rot={1}
           >
             {monthShort}
           </P5Plate>
 
-          {/* Número grande con halo blanco (técnica CalendarCard). */}
           <div className="p5-day" aria-label={`${today.weekdayLabel} ${today.day}`}>
             <span className="p5-day__layer p5-day__back" aria-hidden="true">
               {dayStr}
@@ -55,7 +103,6 @@ export function TopBar() {
             <span className="p5-day__layer p5-day__front" aria-hidden="true">
               {dayStr}
             </span>
-            {/* Imagen del día de la semana solapando el número. */}
             <img
               src={calendarAsset(today.weekdayFile)}
               alt=""

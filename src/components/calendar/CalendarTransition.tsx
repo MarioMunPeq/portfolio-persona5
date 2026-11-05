@@ -65,7 +65,7 @@ import {
   calendarAsset,
   type CalendarDate,
 } from "../../lib/calendar";
-import { CalendarCard } from "./CalendarCard";
+import { CalendarCard, NUMBER_ROTATION_BY_INDEX } from "./CalendarCard";
 
 /**
  * Marca a nivel de módulo para evitar que React 19 StrictMode vuelva a
@@ -84,10 +84,14 @@ const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 /**
  * Constantes de la animación de caída (ajustar a mano).
  */
-const FALL_MS = 500;      // duración de la caída de cada día (ms)
-const SHAKE_PX = 8;       // desplazamiento de temblor de pantalla normal (px)
-const SHAKE_TODAY_PX = 12; // desplazamiento de temblor de pantalla para hoy (px)
-const SHAKE_MS = 350;     // duración del temblor (ms)
+const FALL_S = 0.55;               // duración de la caída de cada día (s)
+const START_ROT_DEG_MIN = 14;      // rotación inicial extra mínima (grados)
+const START_ROT_DEG_MAX = 28;      // rotación inicial extra máxima (grados)
+const SQUASH_Y = 0.88;             // escala Y en el squash de impacto (días normales)
+const SHAKE_PX = 14;               // desplazamiento máximo de shake de pantalla (px)
+const SHAKE_TODAY_PX = 5;          // desplazamiento de shake de pantalla para hoy (px)
+const ZOOM_PUNCH = 1.025;          // factor de zoom micro en el impacto
+const DUST_COUNT = 10;             // número de partículas de polvo por día
 
 /**
  * POSICIONES FINALES (después del desplazamiento hacia la izquierda):
@@ -162,6 +166,8 @@ export function CalendarTransition() {
   const containerRef = useRef<HTMLDivElement>(null);
   const visualRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
   const contentRefs = useRef<(HTMLDivElement | null)[]>(Array(7).fill(null));
+  const flashRef = useRef<HTMLDivElement>(null);
+  const dustContainerRef = useRef<HTMLDivElement>(null);
 
   const isMountedRef = useRef(false);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -377,118 +383,282 @@ export function CalendarTransition() {
       T.bgStart + 0.4
     );
 
+    // ---------- Rotación inicial: cada día parte girado respecto a su rotación final ----------
+    // Signo alterno y valores distintos por día (14°–28°). Se endereza durante la caída.
+    const startRotByIndex: Record<number, number> = {};
+    [0, 1, 3, 4, 5, 6, 2].forEach((i) => {
+      const sign = i % 2 === 0 ? 1 : -1;
+      const spread = START_ROT_DEG_MIN + ((i % 6) / 5) * (START_ROT_DEG_MAX - START_ROT_DEG_MIN);
+      startRotByIndex[i] = sign * spread;
+    });
+
     // ---------- Estado inicial: todos los días fuera de pantalla por arriba ----------
-    // GSAP solo toca la y de cada wrapper; así no hay destello de días ya en su sitio.
+    // GSAP anima solo y del wrapper y rotation del content. Nada de x, left, top.
     const allWrappers = visualRefs.current.filter(
       (ref): ref is HTMLDivElement => ref !== null
     );
-    tl.set(allWrappers, { y: -(vh + 200) }, 0);
+    tl.set(allWrappers, { y: -(vh + 250), filter: "blur(3px)" }, 0);
 
-    // ---------- ACT 2 — LOS 6 DÍAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
-    // Caen simultáneamente (sin stagger) desde fuera de pantalla, solo en y,
-    // hasta su posición final fija en CSS. PUM: aterrizan al mismo instante.
-    const fallDuration = FALL_MS / 1000;
-    const otherIndices = [0, 1, 3, 4, 5, 6];
+    [0, 1, 3, 4, 5, 6, 2].forEach((i) => {
+      const content = contentRefs.current[i];
+      if (!content) return;
+      const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
+      tl.set(content, {
+        rotation: rotFinal + startRotByIndex[i],
+        transformOrigin: "50% 50%",
+      }, 0);
+    });
+
+    // ---------- FASE 1 — LOS 6 DÍAS QUE NO SON HOY CAEN TODOS A LA VEZ ----------
+    // Caen simultáneamente (stagger: 0), mismo instante de impacto: PUM.
     const fallStart = T.datesStart;
+    const otherIndices = [0, 1, 3, 4, 5, 6];
+    const impactTime = fallStart + FALL_S;
 
     otherIndices.forEach((i) => {
       const wrapper = visualRefs.current[i];
-      if (!wrapper) return;
+      const content = contentRefs.current[i];
+      if (!wrapper || !content) return;
 
-      // Caída vertical desde fuera de pantalla hasta y: 0 (posición final en CSS).
+      // Caída vertical: y + motion blur → 0. Solo y del wrapper, rotation del content.
       tl.fromTo(
         wrapper,
-        { y: -(vh + 200) },
-        { y: 0, duration: fallDuration, ease: "power4.in" },
+        { y: -(vh + 250), filter: "blur(3px)" },
+        {
+          y: 0,
+          filter: "blur(0px)",
+          duration: FALL_S,
+          ease: "power4.in",
+        },
         fallStart
       );
+
+      tl.to(content, {
+        rotation: NUMBER_ROTATION_BY_INDEX[i],
+        transformOrigin: "50% 50%",
+        duration: FALL_S,
+        ease: "power4.in",
+      }, fallStart);
     });
 
-    // Momento del impacto (todas las caídas terminan al mismo instante).
-    const impactTime = fallStart + fallDuration;
+    // ---------- IMPACTO de los 6 días ----------
+    // Squash: scaleY 0.88 → 1 (elastic, origen en la base).
+    otherIndices.forEach((i) => {
+      const wrapper = visualRefs.current[i];
+      if (!wrapper) return;
+      tl.to(wrapper, { scaleY: SQUASH_Y, transformOrigin: "50% 100%", duration: 0.06 }, impactTime);
+      tl.to(wrapper, { scaleY: 1, duration: 0.35, ease: "elastic.out(1, 0.5)" }, impactTime + 0.06);
 
-    // ---------- Temblor tras el impacto ----------
-    // Pantalla: ±SHAKE_PX durante SHAKE_MS (0.35s), amortiguado, vuelve a 0.
-    const shakeThird = SHAKE_MS / 3 / 1000;
-    tl.to(containerRef.current, {
-      keyframes: [
-        { x: SHAKE_PX, duration: shakeThird, ease: "power2.in" },
-        { x: -SHAKE_PX, duration: shakeThird, ease: "power2.inOut" },
-        { x: 0, duration: shakeThird, ease: "power2.out" },
-      ],
-    }, impactTime);
+      // Rebote seco en y: 0 → -14px → 0 (un solo rebote).
+      tl.to(wrapper, { y: -SHAKE_PX, duration: 0.12, ease: "power2.out" }, impactTime);
+      tl.to(wrapper, { y: 0, duration: 0.14, ease: "power3.in" }, impactTime + 0.12);
+    });
 
-    // Números de los 6 días: ±3px durante 0.3s sobre el contenido interior,
-    // volviendo exactamente a su posición (x: 0). GSAP no toca rotación del
-    // contenido: solo tiembla en su lugar.
-    const trembleDur = 0.3;
-    const trembleThird = trembleDur / 3;
+    // Temblor de los números (content): rotación ±4° y y ±3px, 0.45s, vuelven EXACTAMENTE al valor final.
     otherIndices.forEach((i) => {
       const content = contentRefs.current[i];
       if (!content) return;
+      const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
+      const d = 0.45;
       tl.to(content, {
         keyframes: [
-          { x: 3, duration: trembleThird, ease: "power2.in" },
-          { x: -3, duration: trembleThird, ease: "power2.inOut" },
-          { x: 0, duration: trembleThird, ease: "power2.out" },
+          { rotation: rotFinal + 4, y: 3, duration: d / 3, ease: "power2.in" },
+          { rotation: rotFinal - 4, y: -3, duration: d / 3, ease: "power2.inOut" },
+          { rotation: rotFinal, y: 0, duration: d / 3, ease: "power2.out" },
         ],
       }, impactTime);
     });
 
-    // ---------- ACT 3 — HOY CAE ÚLTIMO ----------
-    // ≈0.08s después del impacto, hoy cae en el centro por su propio peso.
+    // Shake de pantalla: contenedor raíz con decaimiento ±14px, ±6px, ±3px, 0 en 0.5s.
+    tl.to(containerRef.current, {
+      keyframes: [
+        { x: SHAKE_PX, y: SHAKE_PX * 0.5, duration: 0.125, ease: "power2.in" },
+        { x: -SHAKE_PX * 0.5, y: -SHAKE_PX * 0.5, duration: 0.125, ease: "power2.inOut" },
+        { x: SHAKE_PX * 0.25, y: SHAKE_PX * 0.25, duration: 0.125, ease: "power2.inOut" },
+        { x: 0, y: 0, duration: 0.125, ease: "power2.out" },
+      ],
+    }, impactTime);
+
+    // Micro zoom punch: scale 1 → 1.025 → 1 en 0.3s.
+    tl.to(containerRef.current, { scale: ZOOM_PUNCH, duration: 0.15, ease: "power2.in" }, impactTime);
+    tl.to(containerRef.current, { scale: 1, duration: 0.15, ease: "power2.out" }, impactTime + 0.15);
+
+    // Flash blanco: opacity 0.22 → 0 en 0.1s sobre toda la pantalla.
+    tl.to(flashRef.current, { opacity: 0.22, duration: 0.05 }, impactTime);
+    tl.to(flashRef.current, { opacity: 0, duration: 0.05 }, impactTime + 0.05);
+
+    // Polvo: partículas salen de la base de cada día en abanico y desaparecen en 0.5s.
+    otherIndices.forEach((i) => {
+      const wrapper = visualRefs.current[i];
+      const dustContainer = dustContainerRef.current;
+      if (!wrapper || !dustContainer) return;
+      tl.call(
+        () => {
+          const rect = wrapper.getBoundingClientRect();
+          const baseX = rect.left + rect.width / 2;
+          const baseY = rect.bottom;
+          const count = DUST_COUNT;
+          for (let p = 0; p < count; p++) {
+            const particle = document.createElement("div");
+            const size = 6 + Math.random() * 8;
+            particle.style.position = "absolute";
+            particle.style.left = `${baseX}px`;
+            particle.style.top = `${baseY}px`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.background = `rgba(245, 245, 240, ${0.4 + Math.random() * 0.4})`;
+            particle.style.opacity = "0.5";
+            particle.style.borderRadius = "50%";
+            particle.style.pointerEvents = "none";
+            particle.style.zIndex = "45";
+            dustContainer.appendChild(particle);
+
+            const angle = (-Math.PI / 2) + (p / count) * Math.PI * 0.6 - Math.PI * 0.3;
+            const speed = 40 + Math.random() * 60;
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+
+            tl.to(particle, {
+              x: vx,
+              y: vy,
+              opacity: 0,
+              duration: 0.5,
+              ease: "power2.out",
+              onComplete: () => particle.remove(),
+            }, impactTime);
+          }
+        },
+        [],
+        impactTime
+      );
+    });
+
+    // ---------- FASE 2 — HOY CAE 0.1s DESPUÉS DEL IMPACTO ----------
     const hoyIndex = 2;
     const hoyWrapper = visualRefs.current[hoyIndex];
     const hoyContent = contentRefs.current[hoyIndex];
-    const hoyFallDuration = fallDuration;
-    const hoyTime = impactTime + 0.08;
+    const hoyTime = impactTime + 0.1;
 
-    if (hoyWrapper) {
-      // Caída de hoy: solo en y, desde fuera de pantalla hasta 0.
+    if (hoyWrapper && hoyContent) {
+      const hoyRotFinal = NUMBER_ROTATION_BY_INDEX[hoyIndex];
+
+      // Caída de hoy: misma rotación inicial extra, power4.in, FALL_S.
       tl.fromTo(
         hoyWrapper,
-        { y: -(vh + 200) },
-        { y: 0, duration: hoyFallDuration, ease: "power4.in" },
+        { y: -(vh + 250), filter: "blur(3px)" },
+        { y: 0, filter: "blur(0px)", duration: FALL_S, ease: "power4.in" },
         hoyTime
       );
 
-      // Rebote mínimo al llegar.
-      const reboundPx = 4;
-      const reboundDur = 0.08;
-      const hoyLandTime = hoyTime + hoyFallDuration;
-      tl.to(hoyWrapper, { y: reboundPx, duration: reboundDur, ease: "power2.in" }, hoyLandTime);
+      tl.to(hoyContent, {
+        rotation: hoyRotFinal,
+        transformOrigin: "50% 50%",
+        duration: FALL_S,
+        ease: "power4.in",
+      }, hoyTime);
+
+      const hoyLandTime = hoyTime + FALL_S;
+
+      // Squash más suave: 0.94.
+      tl.to(hoyWrapper, { scaleY: 0.94, transformOrigin: "50% 100%", duration: 0.06 }, hoyLandTime);
       tl.to(
         hoyWrapper,
-        { y: 0, duration: reboundDur, ease: "power2.out" },
-        hoyLandTime + reboundDur
+        { scaleY: 1, duration: 0.35, ease: "elastic.out(1, 0.5)" },
+        hoyLandTime + 0.06
       );
 
-      // ---------- Segundo temblor al aterrizar hoy ----------
-      // Pantalla más fuerte (±SHAKE_TODAY_PX, 0.45s) y su número (±3px, 0.3s).
-      const hoyFinalTime = hoyLandTime + reboundDur + reboundDur;
-      const todayShakeThird = 0.45 / 3;
+      // Rebote: -7px.
+      tl.to(hoyWrapper, { y: -7, duration: 0.12, ease: "power2.out" }, hoyLandTime);
+      tl.to(hoyWrapper, { y: 0, duration: 0.14, ease: "power3.in" }, hoyLandTime + 0.12);
 
+      // Número de hoy tiembla suave ±1.5° y ±1.5px.
+      tl.to(hoyContent, {
+        keyframes: [
+          { rotation: hoyRotFinal + 1.5, y: 1.5, duration: 0.1, ease: "power2.in" },
+          { rotation: hoyRotFinal - 1.5, y: -1.5, duration: 0.1, ease: "power2.inOut" },
+          { rotation: hoyRotFinal, y: 0, duration: 0.1, ease: "power2.out" },
+        ],
+      }, hoyLandTime);
+
+      // Los otros 6 números tiemblan solo ±1.5° y ±1.5px (0.3s), no más.
+      const d2 = 0.3;
+      otherIndices.forEach((i) => {
+        const content = contentRefs.current[i];
+        if (!content) return;
+        const rotFinal = NUMBER_ROTATION_BY_INDEX[i];
+        tl.to(content, {
+          keyframes: [
+            { rotation: rotFinal + 1.5, y: 1.5, duration: d2 / 3, ease: "power2.in" },
+            { rotation: rotFinal - 1.5, y: -1.5, duration: d2 / 3, ease: "power2.inOut" },
+            { rotation: rotFinal, y: 0, duration: d2 / 3, ease: "power2.out" },
+          ],
+        }, hoyLandTime);
+      });
+
+      // Shake de pantalla hoy: ±5px/±2px/0 en 0.35s.
       tl.to(containerRef.current, {
         keyframes: [
-          { x: SHAKE_TODAY_PX, duration: todayShakeThird, ease: "power2.in" },
-          { x: -SHAKE_TODAY_PX, duration: todayShakeThird, ease: "power2.inOut" },
-          { x: 0, duration: todayShakeThird, ease: "power2.out" },
+          { x: SHAKE_TODAY_PX, y: SHAKE_TODAY_PX * 0.4, duration: 0.116, ease: "power2.in" },
+          { x: -SHAKE_TODAY_PX * 0.4, y: -SHAKE_TODAY_PX * 0.4, duration: 0.117, ease: "power2.inOut" },
+          { x: 0, y: 0, duration: 0.117, ease: "power2.out" },
         ],
-      }, hoyFinalTime);
+      }, hoyLandTime);
 
-      if (hoyContent) {
-        tl.to(hoyContent, {
-          keyframes: [
-            { x: 3, duration: trembleThird, ease: "power2.in" },
-            { x: -3, duration: trembleThird, ease: "power2.inOut" },
-            { x: 0, duration: trembleThird, ease: "power2.out" },
-          ],
-        }, hoyFinalTime);
+      // Micro zoom hoy: 1.012.
+      tl.to(containerRef.current, { scale: 1.012, duration: 0.15, ease: "power2.in" }, hoyLandTime);
+      tl.to(containerRef.current, { scale: 1, duration: 0.15, ease: "power2.out" }, hoyLandTime + 0.15);
+
+      // Flash hoy: 0.12.
+      tl.to(flashRef.current, { opacity: 0.12, duration: 0.06 }, hoyLandTime);
+      tl.to(flashRef.current, { opacity: 0, duration: 0.06 }, hoyLandTime + 0.06);
+
+      // Polvo hoy: 6 partículas.
+      const dustContainerToday = dustContainerRef.current;
+      if (dustContainerToday) {
+        tl.call(
+          () => {
+            const rect = hoyWrapper.getBoundingClientRect();
+            const baseX = rect.left + rect.width / 2;
+            const baseY = rect.bottom;
+            const count = 6;
+            for (let p = 0; p < count; p++) {
+              const particle = document.createElement("div");
+              const size = 6 + Math.random() * 8;
+              particle.style.position = "absolute";
+              particle.style.left = `${baseX}px`;
+              particle.style.top = `${baseY}px`;
+              particle.style.width = `${size}px`;
+              particle.style.height = `${size}px`;
+              particle.style.background = `rgba(245, 245, 240, ${0.4 + Math.random() * 0.4})`;
+              particle.style.opacity = "0.5";
+              particle.style.borderRadius = "50%";
+              particle.style.pointerEvents = "none";
+              particle.style.zIndex = "45";
+              dustContainerToday.appendChild(particle);
+
+              const angle = (-Math.PI / 2) + (p / count) * Math.PI * 0.6 - Math.PI * 0.3;
+              const speed = 40 + Math.random() * 60;
+              const vx = Math.cos(angle) * speed;
+              const vy = Math.sin(angle) * speed;
+
+              tl.to(particle, {
+                x: vx,
+                y: vy,
+                opacity: 0,
+                duration: 0.5,
+                ease: "power2.out",
+                onComplete: () => particle.remove(),
+              }, hoyLandTime);
+            }
+          },
+          [],
+          hoyLandTime
+        );
       }
 
       // ---------- Final de la timeline ----------
       // Lanza la pausa y la salida a negro (startExit).
-      tl.to({}, { duration: 0, onComplete: startExit }, hoyFinalTime + todayShakeThird * 3);
+      tl.to({}, { duration: 0, onComplete: startExit }, hoyLandTime + 0.5);
     }
 
     return () => {
@@ -573,6 +743,20 @@ export function CalendarTransition() {
               );
             })}
           </div>
+
+          {/* Flash blanco de impacto (cubre toda la pantalla)} */}
+          <div
+            ref={flashRef}
+            className="fixed inset-0 bg-white"
+            style={{ zIndex: 50, opacity: 0, pointerEvents: "none" }}
+          />
+
+          {/* Contenedor de partículas de polvo (cubre toda la pantalla)} */}
+          <div
+            ref={dustContainerRef}
+            className="fixed inset-0"
+            style={{ zIndex: 45, pointerEvents: "none" }}
+          />
         </>
       )}
     </div>
