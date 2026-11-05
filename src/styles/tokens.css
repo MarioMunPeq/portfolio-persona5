@@ -658,284 +658,389 @@ html.lenis body {
 }
 
 /* ============================================================
-   Skill Menu — entradas de menu estilo Persona 5
+   Persona profile: facet chart + skill cards
    ============================================================ */
 
-/* ============================================================
-   SKILL CARD DECK — Persona 5 inspired compact card deck
-   ============================================================ */
+.profile-star-stage {
+  isolation: isolate;
+}
+
+.profile-star-stage__star {
+  overflow: visible;
+  filter: drop-shadow(0 18px 0 rgb(0 0 0 / 48%));
+  animation: profile-star-arrive 720ms cubic-bezier(0.2, 1.3, 0.35, 1) both;
+}
+
+.profile-stat {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: min(15rem, 42vw);
+  filter: drop-shadow(4px 5px 0 #090909);
+  transform-origin: center;
+  animation: profile-stat-arrive 420ms cubic-bezier(0.2, 1.3, 0.35, 1) both;
+}
+
+.profile-stat__plate {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.28rem 0.55rem 0.34rem 0.35rem;
+  background: #080808;
+  color: #ffe021;
+  box-shadow: inset 0 0 0 2px #ffe021;
+  clip-path: polygon(0 0, 94% 0, 100% 100%, 5% 100%);
+  transform: skewX(-5deg);
+}
+
+.profile-stat__rank {
+  display: grid;
+  width: 1.45rem;
+  height: 1.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  background: #e60012;
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1;
+  transform: skewX(-4deg) rotate(-5deg);
+}
+
+.profile-stat__label {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.45vw, 1.4rem);
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.profile-stat__descriptor {
+  display: block;
+  margin: 0.22rem 0 0 1.85rem;
+  color: #ffe021;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 1px 2px 0 #090909;
+}
+
+@keyframes profile-star-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.78) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes profile-stat-arrive {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
 
 .sdeck {
-  padding: clamp(1.5rem, 4vw, 3rem) 0;
+  padding: clamp(2.5rem, 6vw, 5rem) 0 1rem;
 }
 
-/* ── Header ── */
 .sdeck__header {
-  margin-bottom: clamp(1rem, 2.5vw, 2rem);
-}
-
-.sdeck__header-rule {
-  height: 2px;
-  background: var(--color-paper);
-}
-
-.sdeck__header-row {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem 0;
+  align-items: center;
+  gap: clamp(0.8rem, 2vw, 1.5rem);
+  margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+  padding: 0.7rem 0;
+}
+
+.sdeck__header-mark {
+  display: grid;
+  width: clamp(2.5rem, 5vw, 4.5rem);
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  place-items: center;
+  background: #ffe021;
+  color: #0a0a0a;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  transform: rotate(-7deg);
 }
 
 .sdeck__header-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  position: relative;
   margin: 0;
-  color: var(--color-paper);
-}
-
-.sdeck__header-meta {
-  font-family: var(--font-sans);
-  font-size: clamp(0.5rem, 0.8vw, 0.6rem);
-  letter-spacing: 0.2em;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 0.82;
   text-transform: uppercase;
-  color: var(--color-paper);
-  opacity: 0.4;
-  white-space: nowrap;
+  text-shadow: 5px 5px 0 #080808, 8px 8px 0 #e60012;
+  transform: rotate(-2deg);
 }
 
-/* ── Category ── */
 .sdeck__cat {
-  margin-bottom: clamp(1rem, 2vw, 1.8rem);
-}
-
-.sdeck__cat:last-child {
-  margin-bottom: 0;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .sdeck__cat-head {
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
 }
 
 .sdeck__cat-suit {
-  font-size: clamp(1rem, 1.5vw, 1.3rem);
-  color: var(--color-accent);
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  background: #e60012;
+  color: white;
+  font-size: 1.3rem;
   line-height: 1;
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 0 86%);
+  transform: rotate(-5deg);
 }
 
 .sdeck__cat-label {
+  color: #fff;
   font-family: var(--font-display);
-  font-size: clamp(0.7rem, 1.1vw, 0.9rem);
-  letter-spacing: 0.15em;
+  font-size: clamp(1.15rem, 2vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  line-height: 1;
   text-transform: uppercase;
-  color: var(--color-paper);
+  text-shadow: 3px 3px 0 #080808;
 }
 
-.sdeck__cat-count {
-  font-family: var(--font-sans);
-  font-size: 0.5rem;
-  letter-spacing: 0.15em;
-  color: var(--color-paper);
-  opacity: 0.3;
-  margin-left: auto;
-}
-
-/* ── Card grid ── */
 .sdeck__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  justify-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.6vw, 1.3rem);
 }
 
 @media (min-width: 640px) {
   .sdeck__grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .sdeck__grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 
-/* ── Card ── */
 .sdeck__card {
-  --red: #c0392b;
-  aspect-ratio: 5 / 7;
-  width: 100%;
-  max-width: 140px;
-  background: linear-gradient(155deg, #1e1e1e 0%, #161616 55%, #101010 100%);
-  border-radius: 14px;
-  padding: 8px;
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.55),
-    0 2px 4px rgba(0, 0, 0, 0.4);
-  transform: rotate(-2deg);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-  cursor: default;
   position: relative;
+  justify-self: center;
+  width: min(100%, 136px);
+  min-width: 0;
+  aspect-ratio: 0.7;
+  padding: 0.38rem;
+  background: #f2efeb;
+  clip-path: polygon(0 0, 93% 0, 100% 7%, 100% 100%, 7% 100%, 0 93%);
+  filter: drop-shadow(5px 6px 0 rgb(0 0 0 / 68%));
+  transform: rotate(calc((var(--card-index, 0) - 2) * 0.55deg));
+  transition:
+    transform 220ms cubic-bezier(0.2, 1.2, 0.35, 1),
+    filter 220ms ease;
+  animation: skill-card-arrive 450ms cubic-bezier(0.2, 1.3, 0.35, 1) both;
+  animation-delay: calc(var(--card-index, 0) * 35ms);
 }
 
-.sdeck__card:hover {
-  transform: rotate(0deg) scale(1.04);
-  box-shadow:
-    0 18px 35px rgba(0, 0, 0, 0.6),
-    0 4px 8px rgba(0, 0, 0, 0.5);
+.sdeck__card::before {
+  position: absolute;
+  inset: 0.38rem;
+  background: var(--card-accent, #e60012);
+  content: "";
+  clip-path: polygon(0 0, 100% 0, 100% 48%, 0 64%);
+  opacity: 0.94;
+  transition: clip-path 220ms ease;
+}
+
+.sdeck__card:hover,
+.sdeck__card:focus-within {
+  z-index: 2;
+  filter: drop-shadow(8px 10px 0 rgb(0 0 0 / 75%));
+  transform: translateY(-7px) rotate(0) scale(1.035);
+}
+
+.sdeck__card:hover::before,
+.sdeck__card:focus-within::before {
+  clip-path: polygon(0 0, 100% 0, 100% 58%, 0 74%);
 }
 
 .sdeck__card-inner {
-  height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 8px;
-  outline: 1px solid var(--red);
-  outline-offset: -5px;
+  position: relative;
   display: flex;
+  height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
   overflow: hidden;
-  transition: border-color 0.25s ease;
+  padding: 0.7rem 0.55rem;
+  background: #171719;
+  color: #fff;
+  clip-path: polygon(0 0, 93% 0, 100% 7%, 100% 100%, 7% 100%, 0 93%);
 }
 
-.sdeck__card:hover .sdeck__card-inner {
-  border-color: var(--red);
-}
-
-/* Diagonal texture overlay */
-.sdeck__card-inner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.015) 0 2px,
-    transparent 2px 6px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ── Corner (top-left / bottom-right) ── */
 .sdeck__corner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-family: var(--font-expose);
+  font-size: 1.25rem;
   line-height: 1;
-  color: #f2f2f2;
-  z-index: 2;
-  transition: color 0.25s ease;
-}
-
-.sdeck__corner--tl {
-  align-self: flex-start;
-  padding: 8px 0 0 10px;
+  text-shadow: 2px 2px 0 #080808;
 }
 
 .sdeck__corner--br {
   align-self: flex-end;
-  padding: 8px 0 0 10px;
   transform: rotate(180deg);
 }
 
-.sdeck__corner-rank {
-  font-size: 15px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  transition: color 0.25s ease;
-}
-
-.sdeck__card:hover .sdeck__corner-rank {
-  color: var(--red);
-}
-
-.sdeck__corner-suit {
-  font-size: 13px;
-  color: var(--red);
-  margin-top: 2px;
-  transition: color 0.25s ease;
-}
-
-/* ── Center ── */
 .sdeck__center {
-  flex: 1;
+  position: relative;
+  z-index: 1;
   display: flex;
+  min-height: 0;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  z-index: 2;
+  gap: clamp(0.5rem, 1vw, 0.85rem);
+  padding: 0.35rem 0;
 }
 
-/* ── Icon ── */
 .sdeck__icon-wrap {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  width: clamp(2.7rem, 4.8vw, 4.5rem);
+  aspect-ratio: 1;
+  place-items: center;
+  background: #e60012;
+  color: #fff;
+  clip-path: polygon(8% 0, 100% 0, 90% 100%, 0 88%);
+  transition: transform 220ms cubic-bezier(0.2, 1.2, 0.35, 1);
+}
+
+.sdeck__card:hover .sdeck__icon-wrap {
+  transform: rotate(-8deg) scale(1.1);
 }
 
 .sdeck__card-icon {
-  width: 100%;
-  height: 100%;
-  fill: #f2f2f2;
-  transition: fill 0.25s ease;
+  width: 58%;
+  height: 58%;
+  fill: currentColor;
 }
 
-.sdeck__card:hover .sdeck__card-icon {
-  fill: var(--red);
-}
-
-/* ── Label ── */
 .sdeck__label {
+  width: 100%;
+  color: #fff;
   font-family: var(--font-sans);
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #f2f2f2;
-  font-weight: bold;
-  transition: color 0.25s ease;
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
   text-align: center;
-  max-width: 100%;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.sdeck__card:hover .sdeck__label {
-  color: var(--red);
-}
-
-/* ── Category divider ── */
 .sdeck__cat-divider {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: clamp(0.8rem, 1.5vw, 1.2rem) 0;
+  justify-content: center;
+  margin: clamp(1.4rem, 3vw, 2.2rem) 0 0;
 }
 
-.sdeck__cat-divider-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(245, 245, 240, 0.12),
-    transparent
-  );
+.sdeck__cat-divider-mark {
+  color: #ffe021;
+  font-size: 1.15rem;
+  text-shadow: 3px 3px 0 #080808;
 }
 
-.sdeck__cat-divider-diamond {
-  font-size: 0.35rem;
-  color: var(--color-accent);
-  opacity: 0.5;
+@keyframes skill-card-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(calc((var(--card-index, 0) - 2) * 0.55deg));
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .sdeck__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sdeck__card {
+    aspect-ratio: 0.72;
+  }
+}
+
+@media (max-width: 639px) {
+  .sdeck__header-title {
+    font-size: clamp(2.6rem, 13vw, 4rem);
+  }
+
+  .sdeck__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .sdeck__card {
+    aspect-ratio: 0.72;
+  }
+
+  .profile-stat {
+    max-width: 10rem;
+  }
+
+  .profile-stat__plate {
+    gap: 0.28rem;
+    padding: 0.22rem 0.4rem 0.26rem 0.28rem;
+  }
+
+  .profile-stat__rank {
+    width: 1.1rem;
+    height: 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  .profile-stat__label {
+    font-size: 0.77rem;
+  }
+
+  .profile-stat__descriptor {
+    margin-left: 1.4rem;
+    font-size: 0.58rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-star-stage__star,
+  .profile-stat,
+  .sdeck__card {
+    animation: none;
+  }
+
+  .sdeck__card,
+  .sdeck__card:hover,
+  .sdeck__card:focus-within {
+    transform: none;
+  }
 }
 
 /* ============================================================
@@ -1073,7 +1178,7 @@ html {
     min-height: 100dvh;
   }
 
-  /* Bloqueo de scroll SOLO en el menú principal (clase añadida por Layout). */
+  /* Bloqueo de scroll SOLO en el menu principal (clase añadida por Layout). */
   body.is-main-menu {
     overflow: hidden;
   }
@@ -2221,85 +2326,66 @@ html {
     ================================================================ */
 
 /* ================================================================
-    SAKURA — global atmospheric layer (cherry blossom petals + flowers)
+    SAKURA — global atmospheric layer (falling cherry blossom petals)
     ================================================================ */
 
 .sakura-bg {
   z-index: 0;
+  perspective: 500px;
 }
 
-/* ── Individual petal silhouette ── */
+/* ── Individual sakura petal; curved, tapered silhouette and fine vein ── */
 .sakura-petal {
-  background-color: #ff688d;
-  clip-path: ellipse(40% 50% at 50% 50%);
+  position: absolute;
+  background-color: var(--petal-color, #ff9cb5);
+  border-radius: 100% 0 100% 0;
+  filter: blur(var(--petal-blur, 0px));
+  box-shadow: inset 1px 0 0 rgb(255 255 255 / 28%);
   transform-origin: 50% 50%;
   will-change: transform, opacity;
 }
 
-/* ── Flower group: positioned container for 5 radial petals ── */
-.sakura-flower-group {
-  transform-origin: 50% 50%;
-  will-change: transform, opacity;
-}
-
-.sakura-flower-petal {
+.sakura-petal::after {
   position: absolute;
+  top: 15%;
   left: 50%;
-  top: 50%;
-  width: 40%;
-  height: 50%;
-  margin-left: -20%;
-  margin-top: -25%;
-  background-color: #ff688d;
-  clip-path: ellipse(45% 50% at 50% 50%);
-  transform-origin: 50% 100%;
-}
-
-.sakura-flower-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 18%;
-  height: 18%;
-  margin-left: -9%;
-  margin-top: -9%;
+  width: 1px;
+  height: 68%;
   border-radius: 50%;
-  background-color: #d4527a;
+  background: rgb(255 255 255 / 34%);
+  content: "";
+  transform: rotate(45deg);
 }
 
-/* ── Multi-point sway keyframes ── */
+/* Wind carries petals in long, varied arcs; spin adds a brief flutter. */
 @keyframes sakura-fall {
   0% {
-    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    transform: translate3d(0, -8vh, 0) rotate(var(--rot1, 0deg)) scale(0.82);
     opacity: 0;
   }
 
-  8% {
+  10% {
     opacity: var(--petal-opacity, 0.5);
   }
 
   25% {
     transform: translate3d(var(--sway1, 10px), 25vh, 0)
-      rotate(var(--rot1, 60deg));
+      rotate(var(--rot2, 60deg)) rotateX(38deg) scale(0.92);
   }
 
   50% {
     transform: translate3d(var(--sway2, -15px), 52vh, 0)
-      rotate(var(--rot2, 150deg));
+      rotate(var(--rot3, 150deg)) rotateX(-52deg) scale(0.78);
   }
 
   75% {
     transform: translate3d(var(--sway3, 8px), 78vh, 0)
-      rotate(var(--rot3, 250deg));
-  }
-
-  85% {
-    opacity: var(--petal-opacity, 0.5);
+      rotate(var(--rot4, 250deg)) rotateX(34deg) scale(0.96);
   }
 
   100% {
     transform: translate3d(var(--sway4, -5px), 108vh, 0)
-      rotate(var(--rot4, 360deg));
+      rotate(calc(var(--rot1, 0deg) + 360deg)) rotateX(-28deg) scale(0.8);
     opacity: 0;
   }
 }
@@ -2321,20 +2407,20 @@ html {
   top: 0%;
 }
 .stat-tag--1 {
-  left: 88%;
-  top: 28%;
+  left: 86%;
+  top: 25%;
 }
 .stat-tag--2 {
-  left: 88%;
-  top: 90%;
+  left: 86%;
+  top: 83%;
 }
 .stat-tag--3 {
-  left: 10%;
-  top: 90%;
+  left: 14%;
+  top: 83%;
 }
 .stat-tag--4 {
-  left: 12%;
-  top: 28%;
+  left: 14%;
+  top: 25%;
 }
 
 @media (max-width: 1023px) {
@@ -2343,20 +2429,20 @@ html {
     top: 4%;
   }
   .stat-tag--1 {
-    left: 80%;
-    top: 24%;
+    left: 76%;
+    top: 29%;
   }
   .stat-tag--2 {
-    left: 80%;
+    left: 76%;
     top: 76%;
   }
   .stat-tag--3 {
-    left: 20%;
+    left: 24%;
     top: 76%;
   }
   .stat-tag--4 {
-    left: 20%;
-    top: 24%;
+    left: 24%;
+    top: 29%;
   }
 }
 
@@ -2672,7 +2758,7 @@ html {
 }
 
 /* ================================================================
-   TOPBAR / BOTTOMBAR — Persona 5 (menú principal)
+   TOPBAR / BOTTOMBAR — Persona 5 (menu principal)
    Rediseño completo con estética P5, GSAP para micro-animaciones.
    Placas .p5-plate: clip-path poligonal, borde blanco (doble capa
    #fff exterior + #111 interior), sombra roja desplazada en wrapper
@@ -2844,7 +2930,7 @@ html {
   gap: 4px;
 }
 
-/* Versión menú principal: "xNaque" + "DESARROLLADOR" (no clicable). */
+/* Versión menu principal: "xNaque" + "DESARROLLADOR" (no clicable). */
 .p5-topbar-brand {
   font-family: var(--p5-font-hatty);
   font-size: clamp(36px, 3vw, 64px);
@@ -2864,7 +2950,7 @@ html {
   white-space: nowrap;
 }
 
-/* Versión otras pantallas: casa roja y etiqueta MENÚ en placa P5. */
+/* Versión otras pantallas: casa roja y etiqueta menu en placa P5. */
 .p5-topbar-back {
   display: inline-flex;
   align-items: center;
@@ -3144,7 +3230,7 @@ html {
   100% { transform: scale(1); }
   100% { transform: scale(1); }
 }
-/* ── Menú de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
+/* ── menu de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
 .p5-track-selector-wrap {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -3516,7 +3602,7 @@ html {
   transform: scale(1.15);
 }
 
-/* ── Menú de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
+/* ── menu de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
 .p5-track-selector-wrap {
   position: absolute;
   bottom: calc(100% + 14px); /* hueco de 14px sobre la placa, nunca solapa */

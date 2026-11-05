@@ -128,7 +128,7 @@ function SocialLink({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Menú de pistas — se despliega HACIA ARRIBA, anclado a la placa    */
+/*  menu de pistas — se despliega HACIA ARRIBA, anclado a la placa    */
 /*  del reproductor. Se renderiza fuera del .p5-plate para que el     */
 /*  clip-path no lo recorte.                                          */
 /* ------------------------------------------------------------------ */
@@ -255,11 +255,11 @@ function TrackSelectorMenu({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Barra inferior del menú principal                                 */
+/*  Barra inferior del menu principal                                 */
 /* ------------------------------------------------------------------ */
 
 /**
- * Barra inferior del menú principal — estilo Persona 5.
+ * Barra inferior del menu principal — estilo Persona 5.
  *
  *   [reproductor] (placa, izquierda) … [reloj HH:MM ♦] (centro absoluto)
  *   … [GitHub] [LinkedIn] (placas, derecha)
@@ -305,7 +305,7 @@ export function BottomBar() {
             onSelectorToggle={() => setSelectorOpen((v) => !v)}
           />
 
-          {/* Menú de pistas (hermano del reproductor, NO dentro: evita recorte por clip-path) */}
+          {/* menu de pistas (hermano del reproductor, NO dentro: evita recorte por clip-path) */}
           {selectorOpen && (
             <div className="p5-track-selector-position">
               <TrackSelectorMenu

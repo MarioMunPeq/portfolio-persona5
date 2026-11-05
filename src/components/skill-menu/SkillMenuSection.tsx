@@ -20,6 +20,7 @@ import {
   faUnity,
   faFigma,
 } from "@fortawesome/free-brands-svg-icons";
+import type { CSSProperties } from "react";
 import { Reveal } from "../primitives/Reveal";
 import type { ProfileSkills } from "../../data/profile";
 
@@ -86,28 +87,34 @@ export function SkillMenuSection({ skills }: Props) {
     <Reveal delay={0.16}>
       <div className="sdeck">
         <div className="sdeck__header">
-          <div className="sdeck__header-rule" />
-          <div className="sdeck__header-row">
-            <span className="sdeck__header-meta">SKILL DECK</span>
-            <h2 className="sdeck__header-title">HABILIDADES</h2>
-            <span className="sdeck__header-meta">4 SUITS · 18 CARDS</span>
-          </div>
-          <div className="sdeck__header-rule" />
+          <span aria-hidden="true" className="sdeck__header-mark">
+            ✦
+          </span>
+          <h2 className="sdeck__header-title">Habilidades</h2>
         </div>
 
         {CATEGORIES.map((cat, ci) => (
           <div key={cat.label} className="sdeck__cat">
             <div className="sdeck__cat-head">
-              <span className="sdeck__cat-suit">{cat.suit}</span>
+              <span className="sdeck__cat-suit" aria-hidden="true">
+                {cat.suit}
+              </span>
               <span className="sdeck__cat-label">{cat.label}</span>
-              <span className="sdeck__cat-count">{cat.items.length}</span>
             </div>
             <div className="sdeck__grid">
-              {cat.items.map((item) => (
-                <div key={item} className="sdeck__card">
+              {cat.items.map((item, index) => (
+                <article
+                  key={item}
+                  className="sdeck__card"
+                  style={
+                    {
+                      "--card-index": index,
+                      "--card-accent": "#E60012",
+                    } as CSSProperties
+                  }
+                >
                   <div className="sdeck__card-inner">
                     <div className="sdeck__corner sdeck__corner--tl">
-                      <span className="sdeck__corner-rank">A</span>
                       <span className="sdeck__corner-suit">{cat.suit}</span>
                     </div>
 
@@ -119,18 +126,15 @@ export function SkillMenuSection({ skills }: Props) {
                     </div>
 
                     <div className="sdeck__corner sdeck__corner--br">
-                      <span className="sdeck__corner-rank">A</span>
                       <span className="sdeck__corner-suit">{cat.suit}</span>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
             {ci < CATEGORIES.length - 1 && (
               <div className="sdeck__cat-divider">
-                <span className="sdeck__cat-divider-line" />
-                <span className="sdeck__cat-divider-diamond">◆</span>
-                <span className="sdeck__cat-divider-line" />
+                <span className="sdeck__cat-divider-mark">✦</span>
               </div>
             )}
           </div>

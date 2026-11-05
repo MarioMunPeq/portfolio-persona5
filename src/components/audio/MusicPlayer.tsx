@@ -105,7 +105,7 @@ function Equalizer({ analyser, isPlaying }: { analyser: AnalyserNode | null; isP
 /* Estado único: currentIndex vive aquí. selectTrack() hace src/load/  */
 /* play dentro del mismo handler (interacción de usuario) y es el      */
 /* único punto de cambio de pista. Se expone a través de un ref para   */
-/* que BottomBar (menú de pistas) lo llame al hacer click en una fila. */
+/* que BottomBar (menu de pistas) lo llame al hacer click en una fila. */
 /* ------------------------------------------------------------------ */
 
 export interface MusicPlayerHandle {

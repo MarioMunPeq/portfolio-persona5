@@ -319,7 +319,7 @@ export function CalendarTransition() {
         setShowCalendar(false);
         markBooted();
 
-        // Pequeña pausa en negro, luego fade-out revelando el menú
+        // Pequeña pausa en negro, luego fade-out revelando el menu
         setTimeout(() => {
           gsap.to(overlayRef.current, {
             opacity: 0,

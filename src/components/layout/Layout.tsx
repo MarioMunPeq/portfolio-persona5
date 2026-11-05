@@ -16,12 +16,13 @@ interface LayoutProps {
 
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas.
- * En páginas interiores (no el menú principal) se añade padding-top
+ * En páginas interiores (no el menu principal) se añade padding-top
  * al <main> para que el botón superior izquierdo no tape los títulos.
  */
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
   const isMenu = pathname === "/";
+  const isExperiencePage = pathname === "/experience";
   const isDocumentScrollPage =
     pathname === "/about" ||
     pathname === "/projects" ||
@@ -35,7 +36,7 @@ export function Layout({ children }: LayoutProps) {
   const backgroundVariant = pathname === "/about" ? "profile" : "projects";
   const lenis = useLenis();
 
-  /* Bloqueo de scroll solo en el menú principal: añade/quita is-main-menu
+  /* Bloqueo de scroll solo en el menu principal: añade/quita is-main-menu
      en <body> según la ruta activa. */
   useEffect(() => {
     if (isMenu) {
@@ -60,7 +61,13 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`min-h-dvh text-paper ${hasPageBackground ? "bg-transparent" : "bg-bg-hero"}`}
+      className={`min-h-dvh text-paper ${
+        isExperiencePage
+          ? "bg-[#a40001]"
+          : hasPageBackground
+            ? "bg-transparent"
+            : "bg-bg-hero"
+      }`}
     >
       {hasPageBackground && (
         <PageBackground variant={backgroundVariant} />

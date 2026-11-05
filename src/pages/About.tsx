@@ -94,13 +94,12 @@ function PortraitSlot() {
 
 function StatStar() {
   return (
-    /* `lg:pt-8 lg:-mt-4` amplía la caja de recorte 16 px hacia arriba y
-       compensa con margen negativo: la etiqueta superior (centrada en
-       top: 0% y con media altura fuera del cuadrado) deja de cortarse
-       sin mover la estrella ni el resto de etiquetas. */
-    <div className="relative w-full overflow-hidden pt-4 pb-4 lg:-mt-4 lg:pt-8">
-      <div className="relative aspect-square w-full max-w-[280px] mx-auto lg:max-w-[34rem] lg:ml-auto lg:overflow-visible">
-        <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
+    <div className="relative w-full overflow-hidden py-4 lg:-mt-4 lg:overflow-visible lg:pt-8">
+      <div className="profile-star-stage relative mx-auto aspect-square w-full max-w-[300px] lg:ml-auto lg:max-w-[36rem]">
+        <SocialStar
+          values={STATS.map(({ value }) => value)}
+          className="profile-star-stage__star absolute inset-0 h-full w-full"
+        />
 
         {STATS.map(({ label, value, descriptor }, i) => {
           return (
@@ -109,6 +108,7 @@ function StatStar() {
               className={`stat-tag stat-tag--${i}`}
               style={{
                 transform: `translate(-50%,-50%) rotate(${LABEL_ROTATIONS[i]}deg)`,
+                animationDelay: `${i * 75}ms`,
               }}
             >
               <StatTag label={label} rank={value} descriptor={descriptor} />
@@ -206,19 +206,11 @@ export function About() {
             </Reveal>
 
             {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
-            <div className="relative">
-              <Reveal delay={0.1}>
-                <div className="relative">
-                  <Tag
-                    font="sans"
-                    className="absolute right-2 top-0 z-10 -rotate-3"
-                  >
-                    Estadisticas sociales
-                  </Tag>
+              <div className="relative">
+                <Reveal delay={0.1}>
                   <StatStar />
-                </div>
-              </Reveal>
-            </div>
+                </Reveal>
+              </div>
           </div>
 
           {/* ===== Contenido: Bio ===== */}

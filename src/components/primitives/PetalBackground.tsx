@@ -21,12 +21,13 @@ function randRange(rng: () => number, min: number, max: number) {
 
 interface Petal {
   id: string;
-  type: "petal";
   left: number;
   w: number;
   h: number;
+  color: string;
   delay: number;
   duration: number;
+  blur: number;
   sway1: number;
   sway2: number;
   sway3: number;
@@ -38,168 +39,70 @@ interface Petal {
   opacity: number;
 }
 
-interface Flower {
-  id: string;
-  type: "flower";
-  left: number;
-  size: number;
-  delay: number;
-  duration: number;
-  sway1: number;
-  sway2: number;
-  sway3: number;
-  sway4: number;
-  rot1: number;
-  rot2: number;
-  rot3: number;
-  rot4: number;
-  opacity: number;
-}
+const PETAL_COUNT = 30;
+const PETAL_COLORS = ["#ffdce5", "#ffb3c5", "#ff8eaa", "#f47798"];
 
-type Particle = Petal | Flower;
-
-const PETAL_COUNT = 24;
-const FLOWER_COUNT = 5;
-
-function generateParticles(): Particle[] {
+function generateParticles(): Petal[] {
   const rng = mulberry32(42);
-  const particles: Particle[] = [];
+  const petals: Petal[] = [];
 
-  /* ── Individual petals ── */
   for (let i = 0; i < PETAL_COUNT; i++) {
-    const baseW = randRange(rng, 6, 18);
-    const baseH = baseW * randRange(rng, 1.2, 2.0);
-    particles.push({
+    const baseW = randRange(rng, 10, 20);
+    const baseH = baseW * randRange(rng, 1.25, 1.75);
+    petals.push({
       id: `p${i}`,
-      type: "petal",
       left: randRange(rng, -5, 105),
       w: baseW,
       h: baseH,
-      delay: -randRange(rng, 0, 20),
-      duration: randRange(rng, 5, 18),
-      sway1: randRange(rng, -30, 30),
-      sway2: randRange(rng, -50, 50),
-      sway3: randRange(rng, -40, 40),
-      sway4: randRange(rng, -25, 25),
+      color: PETAL_COLORS[Math.floor(rng() * PETAL_COLORS.length)],
+      delay: -randRange(rng, 0, 28),
+      duration: randRange(rng, 13, 26),
+      blur: randRange(rng, 0, 0.7),
+      sway1: randRange(rng, -60, 60),
+      sway2: randRange(rng, -90, 90),
+      sway3: randRange(rng, -70, 70),
+      sway4: randRange(rng, -50, 50),
       rot1: randRange(rng, 0, 360),
       rot2: randRange(rng, 0, 360),
       rot3: randRange(rng, 0, 360),
       rot4: randRange(rng, 0, 360),
-      opacity: randRange(rng, 0.2, 0.75),
+      opacity: randRange(rng, 0.24, 0.48),
     });
   }
 
-  /* ── Complete sakura flowers — significantly larger, fully independent positions ── */
-  for (let i = 0; i < FLOWER_COUNT; i++) {
-    particles.push({
-      id: `f${i}`,
-      type: "flower",
-      left: randRange(rng, 2, 98),
-      size: randRange(rng, 32, 56),
-      delay: -randRange(rng, 0, 24),
-      duration: randRange(rng, 10, 26),
-      sway1: randRange(rng, -40, 40),
-      sway2: randRange(rng, -60, 60),
-      sway3: randRange(rng, -50, 50),
-      sway4: randRange(rng, -35, 35),
-      rot1: randRange(rng, 0, 360),
-      rot2: randRange(rng, 0, 360),
-      rot3: randRange(rng, 0, 360),
-      rot4: randRange(rng, 0, 360),
-      opacity: randRange(rng, 0.25, 0.65),
-    });
-  }
-
-  return particles;
+  return petals;
 }
 
-/* ── Single petal silhouette ────────────────────────────── */
-
-function PetalSpan({ p, reduced }: { p: Petal; reduced: boolean }) {
+function PetalSpan({ petal, reduced }: { petal: Petal; reduced: boolean }) {
   return (
     <span
       className="sakura-petal absolute"
       style={
         {
-          left: `${p.left}%`,
-          width: `${p.w}px`,
-          height: `${p.h}px`,
+          left: `${petal.left}%`,
+          width: `${petal.w}px`,
+          height: `${petal.h}px`,
           opacity: reduced ? 0.2 : undefined,
-          "--sway1": `${p.sway1}px`,
-          "--sway2": `${p.sway2}px`,
-          "--sway3": `${p.sway3}px`,
-          "--sway4": `${p.sway4}px`,
-          "--rot1": `${p.rot1}deg`,
-          "--rot2": `${p.rot2}deg`,
-          "--rot3": `${p.rot3}deg`,
-          "--rot4": `${p.rot4}deg`,
-          "--petal-opacity": p.opacity,
+          "--petal-color": petal.color,
+          "--petal-blur": `${petal.blur}px`,
+          "--sway1": `${petal.sway1}px`,
+          "--sway2": `${petal.sway2}px`,
+          "--sway3": `${petal.sway3}px`,
+          "--sway4": `${petal.sway4}px`,
+          "--rot1": `${petal.rot1}deg`,
+          "--rot2": `${petal.rot2}deg`,
+          "--rot3": `${petal.rot3}deg`,
+          "--rot4": `${petal.rot4}deg`,
+          "--petal-opacity": petal.opacity,
           animation: reduced
             ? "none"
-            : `sakura-fall ${p.duration}s ease-in-out ${p.delay}s infinite`,
+            : `sakura-fall ${petal.duration}s linear ${petal.delay}s infinite`,
           transform: reduced
-            ? `translateY(${15 + ((p.id.charCodeAt(1) * 137) % 70)}vh) rotate(${p.rot1}deg)`
+            ? `translateY(${12 + ((petal.id.charCodeAt(1) * 137) % 76)}vh) rotate(${petal.rot1}deg)`
             : undefined,
         } as React.CSSProperties
       }
     />
-  );
-}
-
-/* ── Complete 5-petal sakura blossom ────────────────────── */
-
-function FlowerSpan({ p, reduced }: { p: Flower; reduced: boolean }) {
-  return (
-    <span
-      className="sakura-flower-group absolute"
-      style={
-        {
-          left: `${p.left}%`,
-          width: `${p.size}px`,
-          height: `${p.size}px`,
-          opacity: reduced ? 0.2 : undefined,
-          "--sway1": `${p.sway1}px`,
-          "--sway2": `${p.sway2}px`,
-          "--sway3": `${p.sway3}px`,
-          "--sway4": `${p.sway4}px`,
-          "--rot1": `${p.rot1}deg`,
-          "--rot2": `${p.rot2}deg`,
-          "--rot3": `${p.rot3}deg`,
-          "--rot4": `${p.rot4}deg`,
-          "--petal-opacity": p.opacity,
-          animation: reduced
-            ? "none"
-            : `sakura-fall ${p.duration}s ease-in-out ${p.delay}s infinite`,
-          transform: reduced
-            ? `translateY(${15 + ((p.id.charCodeAt(1) * 137) % 70)}vh) rotate(${p.rot1}deg)`
-            : undefined,
-        } as React.CSSProperties
-      }
-      aria-hidden="true"
-    >
-      {/* 5 petals arranged radially around center */}
-      <span
-        className="sakura-flower-petal"
-        style={{ transform: "rotate(0deg) translateY(-30%)" }}
-      />
-      <span
-        className="sakura-flower-petal"
-        style={{ transform: "rotate(72deg) translateY(-30%)" }}
-      />
-      <span
-        className="sakura-flower-petal"
-        style={{ transform: "rotate(144deg) translateY(-30%)" }}
-      />
-      <span
-        className="sakura-flower-petal"
-        style={{ transform: "rotate(216deg) translateY(-30%)" }}
-      />
-      <span
-        className="sakura-flower-petal"
-        style={{ transform: "rotate(288deg) translateY(-30%)" }}
-      />
-      <span className="sakura-flower-center" />
-    </span>
   );
 }
 
@@ -215,13 +118,9 @@ export function PetalBackground() {
       className="sakura-bg pointer-events-none fixed inset-0 overflow-hidden"
       style={{ zIndex: 0 }}
     >
-      {particles.map((p) =>
-        p.type === "petal" ? (
-          <PetalSpan key={p.id} p={p} reduced={reduced} />
-        ) : (
-          <FlowerSpan key={p.id} p={p as Flower} reduced={reduced} />
-        ),
-      )}
+      {particles.map((petal) => (
+        <PetalSpan key={petal.id} petal={petal} reduced={reduced} />
+      ))}
     </div>
   );
 }

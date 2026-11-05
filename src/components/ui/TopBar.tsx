@@ -5,17 +5,17 @@ import { getTodayDate, calendarAsset } from "../../lib/calendar";
 import { useEffect } from "react";
 
 /**
- * Barra superior del menú principal — estilo Persona 5.
+ * Barra superior del menu principal — estilo Persona 5.
  *
  * Sin fondo sólido de barra: solo un degradado negro suave (0.55 → 0) de
  * ~120px de alto para legibilidad sobre el vídeo.
  *
  * Izquierda: botón compacto (max 16vw × 9vh):
- *   • En el menú principal ("/"): "xNaque" (p5hatty) + "DESARROLLADOR"
+ *   • En el menu principal ("/"): "xNaque" (p5hatty) + "DESARROLLADOR"
  *     (pequeño), NO clicable.
  *   • En cualquier otra pantalla: botón de regreso con icono de casa
- *     y texto "MENÚ".
- *     Click o Escape → vuelve al menú principal con fundido a negro
+ *     y texto "menu".
+ *     Click o Escape → vuelve al menu principal con fundido a negro
  *     existente. Hover: fondo rojo, placa 4px derecha, flecha 4px
  *     izquierda. Transición del texto con clip-path wipe (0.3s).
  * Centro: vacío.
@@ -26,7 +26,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const isMenu = pathname === "/";
 
-  /* Si se pulsa Escape en una página interior, volver al menú. */
+  /* Si se pulsa Escape en una página interior, volver al menu. */
   useEffect(() => {
     if (isMenu) return;
     const onKey = (e: KeyboardEvent) => {
@@ -72,14 +72,14 @@ export function TopBar() {
                 type="button"
                 className="p5-topbar-back"
                 onClick={handleBack}
-                aria-label="Volver al menú principal"
+                aria-label="Volver al menu principal"
               >
                 <span className="p5-topbar-back__icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none">
                     <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" />
                   </svg>
                 </span>
-                <span className="p5-topbar-back__label">MENÚ</span>
+                <span className="p5-topbar-back__label">menu</span>
               </button>
             )}
           </P5Plate>

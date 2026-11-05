@@ -24,6 +24,40 @@ const BUBBLE_LEFT =
 const BUBBLE_RIGHT =
   "polygon(1.5rem 0, 100% 0, 100% calc(100% - 1.5rem), calc(100% - 1.5rem) 100%, 0 100%, 0 1.5rem)";
 
+const MESSAGE_VARIANTS = {
+  hidden: (right: boolean) => ({
+    opacity: 0,
+    x: right ? 42 : -42,
+    y: 18,
+    rotate: right ? 1.5 : -1.5,
+    scale: 0.96,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: 0,
+    scale: 1,
+    transition: {
+      type: "spring" as const,
+      stiffness: 190,
+      damping: 22,
+      mass: 0.85,
+      staggerChildren: 0.055,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const MESSAGE_ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 9 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.28, ease: EASE },
+  },
+};
+
 // Ritmo visual por mensaje.
 interface CardLayout {
   wrap: string;
@@ -219,9 +253,11 @@ function CompanyLogo({ company }: { company: string }) {
 function SpeakerAvatar({
   entry,
   right,
+  reduced,
 }: {
   entry: ExperienceEntry;
   right: boolean;
+  reduced: boolean;
 }) {
   return (
     <div
@@ -231,14 +267,30 @@ function SpeakerAvatar({
           ? "left-3 -top-6 md:left-auto md:-right-[4.5rem] md:top-7"
           : "right-3 -top-6 md:right-auto md:-left-[4.5rem] md:top-7"
       }`}
-      style={{ transform: right ? "rotate(3deg)" : "rotate(-3deg)" }}
     >
-      <div
+      <motion.div
         className="h-full w-full border-[3px] border-black bg-white"
         style={{ boxShadow: "0 0 0 2px #B80404, 6px 6px 0 #000" }}
+        initial={
+          reduced
+            ? { opacity: 1, scale: 1, rotate: right ? 3 : -3 }
+            : { opacity: 0, scale: 0.55, rotate: right ? 13 : -13 }
+        }
+        whileInView={{
+          opacity: 1,
+          scale: 1,
+          rotate: right ? 3 : -3,
+        }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 17,
+          delay: 0.16,
+        }}
       >
         <CompanyLogo company={entry.company} />
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -249,7 +301,8 @@ function SpeakerAvatar({
 
 function RoleRibbon({ role }: { role: string }) {
   return (
-    <span
+    <motion.span
+      variants={MESSAGE_ITEM_VARIANTS}
       className="mt-5 inline-block bg-white px-3.5 py-1.5 text-label font-bold uppercase tracking-[0.22em] text-black"
       style={
         {
@@ -258,7 +311,7 @@ function RoleRibbon({ role }: { role: string }) {
       }
     >
       {role}
-    </span>
+    </motion.span>
   );
 }
 
@@ -268,21 +321,21 @@ function RoleRibbon({ role }: { role: string }) {
 
 function TechStamp({ tech }: { tech: string }) {
   return (
-    <span
-      className="inline-flex items-center bg-[#1a1a1a] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/90"
+    <motion.span
+      variants={MESSAGE_ITEM_VARIANTS}
+      className="inline-flex items-center bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-black"
       style={
         {
           clipPath: "polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)",
-          boxShadow: "2px 2px 0 rgba(0,0,0,0.15)",
         } as CSSProperties
       }
     >
       <span
         aria-hidden="true"
-        className="mr-1.5 inline-block h-[4px] w-[4px] bg-[#B80404]"
+        className="mr-1.5 inline-block h-[5px] w-[5px] bg-[#B80404]"
       />
       {tech}
-    </span>
+    </motion.span>
   );
 }
 
@@ -293,17 +346,26 @@ function TechStamp({ tech }: { tech: string }) {
 function OpenMessage({ entry }: { entry: ExperienceEntry }) {
   const isActive = entry.period?.toLowerCase().includes("actualidad") ?? false;
   return (
-    <div className="px-6 py-8 md:px-10 md:py-9">
+    <motion.div
+      className="experience-message__body px-6 py-8 md:px-10 md:py-9"
+      variants={{
+        visible: {
+          transition: { staggerChildren: 0.055, delayChildren: 0.08 },
+        },
+      }}
+    >
       {/* Empresa — elemento dominante */}
-      <h3
-        className="font-display uppercase leading-[0.9] text-black"
+      <motion.h3
+        variants={MESSAGE_ITEM_VARIANTS}
+        className="font-display uppercase leading-[0.9] text-white"
         style={{ fontSize: "clamp(1.7rem, 2.6vw, 2.6rem)" }}
       >
         {entry.company}
-      </h3>
+      </motion.h3>
 
       {/* Linea roja bajo empresa */}
-      <span
+      <motion.span
+        variants={MESSAGE_ITEM_VARIANTS}
         aria-hidden="true"
         className="mt-3 block h-[5px] w-16 -skew-x-12 bg-[#B80404] transition-all duration-200 group-hover:w-28"
       />
@@ -312,7 +374,10 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
       <RoleRibbon role={entry.role} />
 
       {/* Fechas / ubicacion / meta */}
-      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-black/55">
+      <motion.div
+        variants={MESSAGE_ITEM_VARIANTS}
+        className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/70"
+      >
         {entry.period && (
           <span className="flex items-center gap-2">
             <span
@@ -340,20 +405,26 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
             {entry.meta}
           </span>
         )}
-      </div>
+      </motion.div>
 
       {/* Descripcion */}
-      <p className="mt-5 font-sans text-[15px] leading-relaxed text-black/80">
+      <motion.p
+        variants={MESSAGE_ITEM_VARIANTS}
+        className="mt-5 font-sans text-[15px] leading-relaxed text-white/90"
+      >
         {entry.summary}
-      </p>
+      </motion.p>
 
       {/* Highlights */}
       {entry.highlights.length > 0 && (
-        <ul className="mt-5 space-y-2 border-l-[2px] border-black/15 pl-4">
+        <motion.ul
+          variants={MESSAGE_ITEM_VARIANTS}
+          className="mt-5 space-y-2 border-l-[2px] border-white/25 pl-4"
+        >
           {entry.highlights.map((highlight) => (
             <li
               key={highlight}
-              className="flex gap-2.5 text-[13px] leading-snug text-black/80"
+              className="flex gap-2.5 text-[13px] leading-snug text-white/90"
             >
               <span
                 aria-hidden="true"
@@ -362,37 +433,43 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
               {highlight}
             </li>
           ))}
-        </ul>
+        </motion.ul>
       )}
 
       {/* Tech stamps */}
       {entry.tech && entry.tech.length > 0 && (
-        <div className="mt-5 flex flex-wrap gap-2">
+        <motion.div
+          variants={MESSAGE_ITEM_VARIANTS}
+          className="mt-5 flex flex-wrap gap-2"
+        >
           {entry.tech.map((tech) => (
             <TechStamp key={tech} tech={tech} />
           ))}
-        </div>
+        </motion.div>
       )}
 
       {/* Footer — contextual status */}
-      <div className="mt-7 flex items-center justify-end border-t border-black/10 pt-3">
+      <motion.div
+        variants={MESSAGE_ITEM_VARIANTS}
+        className="mt-7 flex items-center justify-end border-t border-white/20 pt-3"
+      >
         {isActive ? (
           <span className="flex items-center gap-2">
             <ActiveDot />
-            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/70">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">
               Activo
             </span>
           </span>
         ) : (
           <span className="flex items-center gap-2">
-            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-[#B80404]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/80">
               Leido
             </span>
             <ReadChecks />
           </span>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -407,7 +484,7 @@ function MessageBlock({
   entry: ExperienceEntry;
   index: number;
 }) {
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotion() ?? false;
   const right = index % 2 === 1;
   const poly = right ? BUBBLE_RIGHT : BUBBLE_LEFT;
   const layout = LAYOUTS[index % LAYOUTS.length];
@@ -432,7 +509,7 @@ function MessageBlock({
         <div className="relative h-14 md:h-56" aria-hidden="true">
           {/* Mobile connector — near-center, small skew */}
           <div
-            className="absolute z-10 bg-black md:hidden"
+            className="absolute z-10 bg-black shadow-[3px_4px_0_rgba(0,0,0,0.35)] md:hidden"
             style={
               {
                 top: "-3rem",
@@ -446,7 +523,7 @@ function MessageBlock({
           />
           {/* Desktop connector — original positioning, hidden on mobile */}
           <div
-            className="absolute z-10 hidden bg-black md:block"
+            className="absolute z-10 hidden bg-black shadow-[3px_4px_0_rgba(0,0,0,0.35)] md:block"
             style={
               {
                 top: "-4rem",
@@ -464,19 +541,11 @@ function MessageBlock({
       <motion.div
         className="relative z-20"
         style={{ y: parallaxY }}
-        initial={
-          reduced
-            ? false
-            : {
-                opacity: 0,
-                x: right ? 72 : -72,
-                rotate: right ? 2.5 : -2.5,
-                scale: 0.97,
-              }
-        }
-        whileInView={{ opacity: 1, x: 0, rotate: 0, scale: 1 }}
+        custom={right}
+        variants={MESSAGE_VARIANTS}
+        initial={reduced ? "visible" : "hidden"}
+        whileInView="visible"
         viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.45, ease: EASE }}
       >
         <div className={`${layout.maxW} ${layout.wrap} ${layout.rot}`}>
           <div className="relative">
@@ -493,19 +562,19 @@ function MessageBlock({
               }
             />
 
-            {/* Panel: borde blanco + interior blanco + acento rojo */}
+            {/* Marco blanco, conversacion oscura y acento rojo */}
             <div
-              className="relative bg-white p-[6px] md:p-[7px]"
+              className="relative bg-white p-[5px] md:p-[6px]"
               style={{ clipPath: poly }}
             >
-              <div className="relative bg-white transition-[filter] duration-200 group-hover:brightness-[1.03]">
+              <div className="relative bg-[#111] transition-colors duration-200 group-hover:bg-[#191919]">
                 <div className="h-[3px] w-full bg-[#B80404]" />
                 <OpenMessage entry={entry} />
               </div>
             </div>
 
             {/* Avatar */}
-            <SpeakerAvatar entry={entry} right={right} />
+            <SpeakerAvatar entry={entry} right={right} reduced={reduced} />
           </div>
         </div>
       </motion.div>
@@ -519,7 +588,7 @@ function MessageBlock({
 
 export function Experience() {
   return (
-    <Screen className="min-h-dvh bg-[#B80404] text-white">
+    <Screen className="min-h-dvh bg-[#a40001] text-white">
       <PetalBackground />
       <section className="relative min-h-dvh overflow-x-clip pt-11 md:pt-12">
         <BackgroundDecorations />
