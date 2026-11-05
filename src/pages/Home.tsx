@@ -5,6 +5,7 @@ import { Screen } from "../components/transition/Screen";
 import { CommandNavItem } from "../components/hero/CommandNavItem";
 import { HERO_COMMANDS } from "../components/hero/hero-commands";
 import { useBooted } from "../lib/boot";
+import { useMediaQuery } from "../lib/use-media-query";
 
 const MENU_CHAOS = [
   { rotation: -2, offsetX: 10, widthPx: 400 },
@@ -22,6 +23,7 @@ export function Home() {
   const booted = useBooted();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const reducedMotion = useReducedMotion();
+  const isPhone = useMediaQuery("(max-width: 639px)");
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -84,11 +86,17 @@ export function Home() {
       const plate = item.querySelector<HTMLElement>(".hero-cmd");
       tweens.push(
         gsap.to(item, {
-          "--menu-shift-x": selected ? "14px" : "0px",
+          "--menu-shift-x": selected ? (isPhone ? "6px" : "14px") : "0px",
           "--menu-angle": selected
             ? "0deg"
             : `${MENU_CHAOS[index]?.rotation ?? 0}deg`,
-          "--menu-scale": selected ? 1.06 : selectedIndex === null ? 1 : 0.97,
+          "--menu-scale": selected
+            ? isPhone
+              ? 1.03
+              : 1.06
+            : selectedIndex === null
+              ? 1
+              : 0.97,
           opacity: selectedIndex === null || selected ? 1 : 0.55,
           duration: reducedMotion ? 0 : 0.18,
           ease: "back.out(2)",
@@ -109,7 +117,7 @@ export function Home() {
       }
     });
     return () => tweens.forEach((tween) => tween.kill());
-  }, [selectedIndex, reducedMotion]);
+  }, [selectedIndex, reducedMotion, isPhone]);
 
   /* Keyboard shortcuts and selection navigation for the four menu entries. */
   useEffect(() => {

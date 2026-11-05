@@ -262,7 +262,7 @@ function SpeakerAvatar({
   return (
     <div
       aria-hidden="true"
-      className={`absolute z-30 h-16 w-16 md:h-[4.5rem] md:w-[4.5rem] ${
+      className={`experience-message__avatar absolute z-30 h-16 w-16 md:h-[4.5rem] md:w-[4.5rem] ${
         right
           ? "left-3 -top-6 md:left-auto md:-right-[4.5rem] md:top-7"
           : "right-3 -top-6 md:right-auto md:-left-[4.5rem] md:top-7"
@@ -503,7 +503,7 @@ function MessageBlock({
   );
 
   return (
-    <div className="group" ref={cardRef}>
+    <div className="experience-message group" ref={cardRef}>
       {/* Conector angular entre mensajes */}
       {conn && (
         <div className="relative h-14 md:h-56" aria-hidden="true">
@@ -547,7 +547,7 @@ function MessageBlock({
         whileInView="visible"
         viewport={{ once: true, amount: 0.15 }}
       >
-        <div className={`${layout.maxW} ${layout.wrap} ${layout.rot}`}>
+        <div className={`experience-message__card ${layout.maxW} ${layout.wrap} ${layout.rot}`}>
           <div className="relative">
             {/* Sombra dura offset */}
             <div
@@ -590,7 +590,7 @@ export function Experience() {
   return (
     <Screen className="min-h-dvh bg-[#a40001] text-white">
       <PetalBackground />
-      <section className="relative min-h-dvh overflow-x-clip pt-11 md:pt-12">
+      <section className="experience-screen relative min-h-dvh overflow-x-clip pt-11 md:pt-12">
         <BackgroundDecorations />
         <PageTitleBar />
 

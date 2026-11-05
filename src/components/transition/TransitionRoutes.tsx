@@ -55,9 +55,7 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
 
     /* Mobile / tablet: no transition video — instant swap. */
     if (!isDesktop) {
-      flushSync(() => {
-        setDisplayed(location);
-      });
+      setDisplayed(location);
       resetScroll();
       return;
     }

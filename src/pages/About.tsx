@@ -27,10 +27,10 @@ const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-acc
 // aproximados y honestos, sin presentarse como datos objetivos.
 const STATS = [
   { label: "PROGRAMACIoN", value: 4, descriptor: "DESARROLLO" },
-  { label: "CREATIVIDAD", value: 3, descriptor: "DISEÑO" },
+  { label: "CREATIVIDAD", value: 4, descriptor: "DISEÑO" },
   { label: "CARISMA", value: 3, descriptor: "SOCIAL" },
   { label: "CURIOSIDAD", value: 5, descriptor: "INVESTIGACIoN" },
-  { label: "RESOLUCIoN", value: 4, descriptor: "LoGICA" },
+  { label: "RESOLUCIoN", value: 5, descriptor: "LoGICA" },
 ] as const;
 
 // Posiciones de las etiquetas y sus inclinaciones suaves (casi horizontales).
@@ -125,7 +125,7 @@ export function About() {
 
   return (
     <Screen className="min-h-dvh text-paper">
-      <section className="relative overflow-x-clip px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
+      <section className="about-screen relative overflow-x-clip px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20"
         style={{ paddingBottom: `calc(var(--bottombar-h) + 24px)` }}>
         {/* Palabra fantasma de marca */}
         <span
@@ -146,7 +146,7 @@ export function About() {
             {/* ===== Columna izquierda: identidad ===== */}
             <Reveal>
               <div className="relative">
-                <div className="relative z-10 mx-auto w-[min(22rem,95%)] -rotate-2">
+                <div className="about-portrait relative z-10 mx-auto w-[min(22rem,95%)] -rotate-2">
                   <PortraitSlot />
                   <span
                     aria-hidden="true"

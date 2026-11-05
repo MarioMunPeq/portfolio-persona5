@@ -48,6 +48,7 @@ export function CommandNavItem({
   const navigating = useRef(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isPhone = useMediaQuery("(max-width: 639px)");
   const reducedMotion = useReducedMotion();
   const clampedWidth = Math.max(400, Math.min(550, widthPx));
 
@@ -94,7 +95,7 @@ export function CommandNavItem({
           "--menu-shift-x": "0px",
           "--menu-angle": `${rotation}deg`,
           "--menu-scale": 1,
-          width: `${clampedWidth}px`,
+          width: isPhone ? "100%" : `${clampedWidth}px`,
         } as CSSProperties
       }
     >

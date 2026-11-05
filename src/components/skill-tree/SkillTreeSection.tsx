@@ -732,7 +732,7 @@ function DetailPanel({ node }: { node: SkillNode }) {
 
   return (
     <div
-      className="relative border border-paper/15 bg-bg-content-alt p-5 md:p-6"
+      className="skill-tree-detail relative border border-paper/15 bg-bg-content-alt p-5 md:p-6"
       style={{
         clipPath:
           "polygon(0 0, calc(100% - 1.2rem) 0, 100% 1.2rem, 100% 100%, 0 100%)",
@@ -824,7 +824,7 @@ export function SkillTreeSection() {
   }, []);
 
   return (
-    <div className="mt-6">
+    <div className="skill-tree-section mt-6">
       <div className="mx-auto mb-4 max-w-4xl">
         <ProgressCounter />
       </div>
@@ -835,7 +835,7 @@ export function SkillTreeSection() {
           (treeRef as React.MutableRefObject<HTMLDivElement | null>).current =
             el;
         }}
-        className="relative mx-auto h-[22rem] max-w-4xl sm:h-[24rem] lg:h-[26rem]"
+        className="skill-tree-stage relative mx-auto h-[22rem] max-w-4xl sm:h-[24rem] lg:h-[26rem]"
       >
         {/* Side label — UI chrome density */}
         <span

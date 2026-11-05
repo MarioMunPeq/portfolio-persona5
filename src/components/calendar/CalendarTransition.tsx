@@ -48,7 +48,7 @@
  *   .calendar-content — contenido interior (numero + imagen), rotacion
  *                        estatica en CSS.
  *
- * Cada fecha muestra: hoy-2, hoy-1 (ayer), hoy, hoy+1, hoy+2, hoy+3.
+ * En escritorio muestra seis fechas; en telefono, ayer, hoy y mañana.
  */
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { gsap } from "gsap";
@@ -96,7 +96,7 @@ const KNIFE_HOLD_S = 1;
  *   0 = hoy-2, 1 = hoy-1 (ayer), 2 = HOY, 3 = hoy+1, 4 = hoy+2,
  *   5 = hoy+3.
  */
-const CARD_POSITIONS: Record<string, { x: number; y: number }[]> = {
+const CARD_POSITIONS: Record<Breakpoint, { x: number; y: number }[]> = {
   desktop: [
     { x: 8, y: 42 },   // hoy-2
     { x: 28, y: 51 },  // ayer
@@ -114,12 +114,9 @@ const CARD_POSITIONS: Record<string, { x: number; y: number }[]> = {
     { x: 94, y: 29 },
   ],
   mobile: [
-    { x: 18, y: 39 },
-    { x: 34, y: 47 },
-    { x: 50, y: 54 },
-    { x: 66, y: 43 },
-    { x: 82, y: 36 },
-    { x: 95, y: 32 },
+    { x: 20, y: 49 },
+    { x: 50, y: 60 },
+    { x: 80, y: 49 },
   ],
 };
 
@@ -136,7 +133,23 @@ type Breakpoint = "desktop" | "tablet" | "mobile";
 
 export function CalendarTransition() {
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const isMobile = useMediaQuery("(max-width: 639px)");
+  const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   const dates: CalendarDate[] = useMemo(() => getCalendarDates(), []);
+  const breakpoint: Breakpoint = isMobile ? "mobile" : isTablet ? "tablet" : "desktop";
+  const visibleDates = useMemo(
+    () =>
+      (isMobile ? dates.slice(1, 4) : dates).map((date, visibleIndex) => ({
+        date,
+        sourceIndex: isMobile ? visibleIndex + 1 : visibleIndex,
+        positionIndex: visibleIndex,
+      })),
+    [dates, isMobile],
+  );
+  const visibleIndices = useMemo(
+    () => visibleDates.map(({ sourceIndex }) => sourceIndex),
+    [visibleDates],
+  );
   const dayNight = useMemo(() => getDayNight(), []);
   const bgSrc = useMemo(
     () => calendarAsset(dayNight === "day" ? "calendar_day.png" : "calendar_night.png"),
@@ -165,13 +178,6 @@ export function CalendarTransition() {
   const safetyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finishedRef = useRef(false);
   const timelineCreatedRef = useRef(false);
-
-  const breakpoint = useMemo<Breakpoint>(() => {
-    const w = window.innerWidth;
-    if (w >= 1024) return "desktop";
-    if (w >= 640) return "tablet";
-    return "mobile";
-  }, []);
 
   /** Bloquea el scroll mientras la introduccion esta activa. */
   const lockScroll = useCallback((lock: boolean) => {
@@ -339,8 +345,8 @@ export function CalendarTransition() {
       !bgRef.current ||
       !containerRef.current ||
       !knifeRef.current ||
-      visualRefs.current.some((ref) => ref === null) ||
-      contentRefs.current.some((ref) => ref === null) ||
+      visibleIndices.some((index) => visualRefs.current[index] === null) ||
+      visibleIndices.some((index) => contentRefs.current[index] === null) ||
       timelineCreatedRef.current
     ) {
       return;
@@ -400,7 +406,7 @@ export function CalendarTransition() {
     });
 
     const fallStart = T.datesStart;
-    const otherIndices = [0, 1, 3, 4, 5];
+    const otherIndices = isMobile ? [1, 3] : [0, 1, 3, 4, 5];
     const impactTime = fallStart + FALL_S;
 
     otherIndices.forEach((i) => {
@@ -650,7 +656,7 @@ export function CalendarTransition() {
       }
       tlRef.current = null;
     };
-  }, [showCalendar, hidden, reduced, introCompleted, isPositioned, breakpoint, startExit]);
+  }, [showCalendar, hidden, reduced, introCompleted, isPositioned, breakpoint, isMobile, visibleIndices, startExit]);
 
   if (hidden || exitComplete || introCompleted) return null;
 
@@ -697,11 +703,11 @@ export function CalendarTransition() {
 
           {/* Contenedor de anclas del calendario (cubre el viewport) */}
           <div ref={containerRef} className="absolute inset-0">
-            {dates.map((date, index) => {
-              const pos = CARD_POSITIONS[breakpoint][index];
+            {visibleDates.map(({ date, sourceIndex, positionIndex }) => {
+              const pos = CARD_POSITIONS[breakpoint][positionIndex];
               return (
                 <div
-                  key={index}
+                  key={sourceIndex}
                   className="calendar-ancla"
                   style={{
                     position: "absolute",
@@ -712,12 +718,12 @@ export function CalendarTransition() {
                 >
                   <CalendarCard
                     date={date}
-                    index={index}
+                    index={sourceIndex}
                     wrapperRef={(el: HTMLDivElement | null) => {
-                      visualRefs.current[index] = el;
+                      visualRefs.current[sourceIndex] = el;
                     }}
                     contentRef={(el: HTMLDivElement | null) => {
-                      contentRefs.current[index] = el;
+                      contentRefs.current[sourceIndex] = el;
                     }}
                   />
                 </div>

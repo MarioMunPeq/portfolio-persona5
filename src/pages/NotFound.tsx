@@ -4,7 +4,7 @@ import { Screen } from "../components/transition/Screen";
 export function NotFound() {
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative flex min-h-dvh flex-col items-start justify-center overflow-hidden px-6 py-12">
+      <section className="not-found-screen relative flex min-h-dvh flex-col items-start justify-center overflow-hidden px-6 py-12">
         <p className="text-label uppercase tracking-[0.3em] text-paper/60">
           ERROR 404
         </p>

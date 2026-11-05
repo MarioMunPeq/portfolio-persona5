@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import type { Project } from "../../data/projects";
 import { NavRow } from "../ui/NavRow";
+import { useMediaQuery } from "../../lib/use-media-query";
 
 interface ProjectInventoryProps {
   projects: Project[];
@@ -19,6 +20,7 @@ export function ProjectInventory({
   selected,
   onSelect,
 }: ProjectInventoryProps) {
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const isScrolling = useRef(false);
   const scrollTimeout = useRef<number | null>(null);
@@ -64,7 +66,7 @@ export function ProjectInventory({
     <nav
       aria-label="Inventario de proyectos"
       className="project-inventory-list relative"
-      data-lenis-prevent
+      data-lenis-prevent={isMobile ? undefined : ""}
       onWheelCapture={pauseHoverSelection}
       onTouchMoveCapture={pauseHoverSelection}
       onScroll={pauseHoverSelection}

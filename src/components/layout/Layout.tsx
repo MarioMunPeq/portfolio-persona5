@@ -23,6 +23,7 @@ export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
   const isMenu = pathname === "/";
   const isExperiencePage = pathname === "/experience";
+  const isEducationPage = pathname === "/education";
   const isDocumentScrollPage =
     pathname === "/about" ||
     pathname === "/projects" ||
@@ -87,10 +88,10 @@ export function Layout({ children }: LayoutProps) {
         id="main"
         className={
           isProjectInventoryPage
-            ? "relative z-[1] h-dvh overflow-hidden pt-20"
+            ? "project-inventory-main relative z-[1] h-dvh overflow-hidden pt-20"
             : isDocumentScrollPage
             ? "relative z-[1] min-h-dvh pt-20"
-            : `h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"}`
+            : `h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"} ${isEducationPage ? "education-main" : ""}`
         }
       >
         {children}

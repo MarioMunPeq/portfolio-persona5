@@ -17,7 +17,7 @@ import { SkillTreeSection } from "../components/skill-tree/SkillTreeSection";
 export function Education() {
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative min-h-dvh overflow-hidden px-6 pt-14 pb-20 md:px-10 md:pt-16 md:pb-24">
+      <section className="education-screen relative min-h-dvh overflow-hidden px-6 pt-14 pb-20 md:px-10 md:pt-16 md:pb-24">
         {/* ═══ BASE: warm charcoal + subtle tonal variation ═══ */}
         <span
           aria-hidden="true"
