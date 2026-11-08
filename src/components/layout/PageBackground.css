@@ -46,6 +46,19 @@
     no-repeat;
 }
 
+/* Móvil: solo imagen estática, el vídeo nunca se monta en esta vista. */
+.page-background__mobile-img {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  z-index: 0;
+  display: block;
+}
+
 .page-background__overlay {
   background: var(--bg-overlay);
 }
