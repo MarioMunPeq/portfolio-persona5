@@ -59,6 +59,14 @@
   display: block;
 }
 
+.page-background--education {
+  --bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.62),
+    rgba(10, 10, 10, 0.45)
+  );
+}
+
 .page-background__overlay {
   background: var(--bg-overlay);
 }

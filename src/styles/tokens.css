@@ -1,13 +1,13 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ============================================================
    Tipografia fan de Persona 5 (archivos locales en public/fonts)
    - "P5 Menu": letras de menu recortadas (estilo comic). Incluye
-     minusculas; los acentos españoles (a e i o u ñ ¿ ¡) NO estan en
+     minusculas; los acentos espaÃ±oles (a e i o u Ã± Â¿ Â¡) NO estan en
      la fuente y los aporta el fallback del stack (per-glyph).
    - unicode-range restringe cada fuente al Basic Latin (ASCII). Cualquier
-     caracter fuera de ese rango (acentos, ¿ ¡ · …) el navegador lo resuelve
-     con el siguiente font del stack (Anton → Arial Narrow → sans-serif),
+     caracter fuera de ese rango (acentos, Â¿ Â¡ Â· â€¦) el navegador lo resuelve
+     con el siguiente font del stack (Anton â†’ Arial Narrow â†’ sans-serif),
      que si tiene esos glifos. Esto es GLOBAL: este stylesheet lo carga
      toda la app desde main.tsx, asi que vale para todas las paginas.
    ============================================================ */
@@ -18,9 +18,9 @@
   unicode-range: U+0000-007F;
 }
 
-/* P5 Hatty: manuscrita de Persona 5 para etiquetas y anotaciones pequeñas
+/* P5 Hatty: manuscrita de Persona 5 para etiquetas y anotaciones pequeÃ±as
    (pagina de Habilidades). Igual que P5 Menu/Expose, NO incluye los acentos
-   españoles (a e i o u ñ ¿ ¡): los aporta el fallback del stack (per-glyph). */
+   espaÃ±oles (a e i o u Ã± Â¿ Â¡): los aporta el fallback del stack (per-glyph). */
 @font-face {
   font-family: "P5 Hatty";
   src: url("/fonts/p5hatty.ttf") format("truetype");
@@ -30,7 +30,7 @@
 
 /* Expose: fuente display para encabezados y etiquetas del inventario y
    de las fichas de proyecto. IMPORTANTE: NO incluye los acentos
-   españoles (a e i o u ñ ¿ ¡): los aporta el fallback del stack
+   espaÃ±oles (a e i o u Ã± Â¿ Â¡): los aporta el fallback del stack
    (per-glyph), igual que P5 Menu. */
 @font-face {
   font-family: "Expose";
@@ -58,7 +58,7 @@
 }
 
 /* ============================================================
-   Lenguaje visual Persona 5 — tramas de puntos, rayas y ruido
+   Lenguaje visual Persona 5 â€” tramas de puntos, rayas y ruido
    ============================================================ */
 
 /* Trama de puntos: rojo con puntos papel (firma visual del sistema) */
@@ -109,7 +109,7 @@
 }
 
 /* Estrellas de contorno para fondos (Inventario): tesela SVG data-URI con
-   estrellas de trazo (no rellenas) de tamaños variados en papel tenue y
+   estrellas de trazo (no rellenas) de tamaÃ±os variados en papel tenue y
    un par de acentos rojos, sutiles para no entorpecer el contenido. */
 @utility bg-stars {
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='240'%20height='240'%20viewBox='0%200%20240%20240'%3E%3Cpolygon%20points='38.0,33.0%2040.4,38.7%2046.6,39.2%2041.9,43.3%2043.3,49.3%2038.0,46.0%2032.7,49.3%2034.1,43.3%2029.4,39.2%2035.6,38.7'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='152.0,15.0%20155.4,23.3%20164.4,24.0%20157.6,29.8%20159.6,38.5%20152.0,33.9%20144.4,38.5%20146.4,29.8%20139.6,24.0%20148.6,23.3'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='212.0,85.0%20213.9,89.5%20218.7,89.8%20215.0,93.0%20216.1,97.7%20212.0,95.2%20207.9,97.7%20209.0,93.0%20205.3,89.8%20210.1,89.5'%20fill='none'%20stroke='rgba(230,0,18,0.5)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='28.0,153.0%2032.0,162.5%2042.3,163.4%2034.4,170.1%2036.8,180.1%2028.0,174.8%2019.2,180.1%2021.6,170.1%2013.7,163.4%2024.0,162.5'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='118.0,122.0%20119.6,125.8%20123.7,126.1%20120.6,128.8%20121.5,132.9%20118.0,130.7%20114.5,132.9%20115.4,128.8%20112.3,126.1%20116.4,125.8'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='192.0,186.0%20194.6,192.4%20201.5,192.9%20196.3,197.4%20197.9,204.1%20192.0,200.5%20186.1,204.1%20187.7,197.4%20182.5,192.9%20189.4,192.4'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='78.0,214.0%2080.1,219.1%2085.6,219.5%2081.4,223.1%2082.7,228.5%2078.0,225.6%2073.3,228.5%2074.6,223.1%2070.4,219.5%2075.9,219.1'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='110.0,205.0%20111.3,208.2%20114.8,208.5%20112.1,210.7%20112.9,214.0%20110.0,212.3%20107.1,214.0%20107.9,210.7%20105.2,208.5%20108.7,208.2'%20fill='none'%20stroke='rgba(230,0,18,0.5)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='210.0,172.0%20211.6,175.8%20215.7,176.1%20212.6,178.8%20213.5,182.9%20210.0,180.7%20206.5,182.9%20207.4,178.8%20204.3,176.1%20208.4,175.8'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3C/svg%3E");
@@ -128,11 +128,11 @@
 }
 
 /* ============================================================
-   Cortes angulares de panel (viñeta de comic)
+   Cortes angulares de panel (viÃ±eta de comic)
    ============================================================ */
 
 /* ============================================================
-   Menu principal (hero) — tarjeta de comando con glitch-slice
+   Menu principal (hero) â€” tarjeta de comando con glitch-slice
    ============================================================ */
 
 /* Slice de glitch que cruza la tarjeta al hacer hover: banda fina baja
@@ -280,7 +280,7 @@
   z-index: 1;
 }
 
-/* ── Mobile hero commands — dedicated composition ≤639px ───────── */
+/* â”€â”€ Mobile hero commands â€” dedicated composition â‰¤639px â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 639px) {
   .hero-command-item {
     --off: 0px !important;
@@ -309,10 +309,10 @@
 
 /* Sello de estrella por categoria (pantalla de carga): pasa de estrella
    hueca (contorno) a estrella dorada rellena segun el estado de cada
-   categoria. Solo dos estados (empty → full) con transicion limpia; sin
+   categoria. Solo dos estados (empty â†’ full) con transicion limpia; sin
    estados intermedios. */
 /* ============================================================
-   Inventario de proyectos — haz de seleccion por colision de vigas
+   Inventario de proyectos â€” haz de seleccion por colision de vigas
    ============================================================ */
 
 /* La fila seleccionada NO tiene un banner solido debajo: todo el color
@@ -389,7 +389,7 @@
   transform: translate(9px, -2px) skew(2deg);
 }
 
-/* Marco de la gran captura del inventario: esquinas cortadas (viñeta
+/* Marco de la gran captura del inventario: esquinas cortadas (viÃ±eta
    de comic) para que el bloque de imagen no lea como una tarjeta
    rectangular convencional. */
 .proj-frame {
@@ -404,7 +404,7 @@
 }
 
 /* ============================================================
-   Barra de carga — pulso de brillo/glow (no glitch)
+   Barra de carga â€” pulso de brillo/glow (no glitch)
    ============================================================ */
 
 /* El relleno rojo de la barra respira: un pulso continuo y ritmico de
@@ -459,7 +459,7 @@
 }
 
 /* ============================================================
-   Inventario — deformacion continua de las vigas (loops infinite)
+   Inventario â€” deformacion continua de las vigas (loops infinite)
    ============================================================ */
 
 /* La colision de vigas se mantiene en movimiento perpetuo mientras la
@@ -565,7 +565,7 @@
 }
 
 /* ============================================================
-   Inventario — filas de texto plano (solo la seleccionada lleva
+   Inventario â€” filas de texto plano (solo la seleccionada lleva
    la colision de vigas)
    ============================================================ */
 
@@ -1006,12 +1006,12 @@ html.lenis body {
 }
 
 /* ============================================================
-   Sistema de tokens — Tailwind CSS 4 (CSS-first)
-   Ver PROJECT_PHILOSOPHY.md §Design system
+   Sistema de tokens â€” Tailwind CSS 4 (CSS-first)
+   Ver PROJECT_PHILOSOPHY.md Â§Design system
    ============================================================ */
 
 @theme {
-  /* --- Color: acento + superficies + tinta (spec §4) --- */
+  /* --- Color: acento + superficies + tinta (spec Â§4) --- */
   --color-accent: #e60012;
   --color-accent-alt: #ff0000;
   /* Rojo profundo para sombras/offsets del acento (sombras de texto y cajas) */
@@ -1027,7 +1027,7 @@ html.lenis body {
   /* --- Layout: contenedor global de contenido --- */
   --max-w-content: 90rem;
 
-  /* --- Iconografia tipo boton de mando (△ □ ○ ✕ ※) --- */
+  /* --- Iconografia tipo boton de mando (â–³ â–¡ â—‹ âœ• â€») --- */
   --color-face-tri: #5ad1ff;
   --color-face-sq: #ff5ac8;
   --color-face-cir: #ff4d4d;
@@ -1046,11 +1046,11 @@ html.lenis body {
      composicion (Q, pregunta y %) con la fuente original. */
   --font-anton: "Anton", "Arial Narrow", sans-serif;
   /* Expose: display de encabezados/etiquetas del inventario y de las
-     fichas de proyecto (Rounds posteriores). Sin acentos españoles:
+     fichas de proyecto (Rounds posteriores). Sin acentos espaÃ±oles:
      el fallback los aporta por glifo. */
   --font-expose: "Expose", "Anton", "Arial Narrow", sans-serif;
-  /* P5 Hatty: manuscrita para etiquetas y anotaciones pequeñas de la pagina
-     de Habilidades. Sin acentos españoles: el fallback los aporta por glifo. */
+  /* P5 Hatty: manuscrita para etiquetas y anotaciones pequeÃ±as de la pagina
+     de Habilidades. Sin acentos espaÃ±oles: el fallback los aporta por glifo. */
   --font-hatty: "P5 Hatty", "Anton", "Arial Narrow", sans-serif;
   /* Share Tech Mono: reloj digital LCD/segmentos del footer. */
   --font-digital: "Share Tech Mono", monospace;
@@ -1140,7 +1140,7 @@ html {
     min-height: 100dvh;
   }
 
-  /* Bloqueo de scroll SOLO en el menu principal (clase añadida por Layout). */
+  /* Bloqueo de scroll SOLO en el menu principal (clase aÃ±adida por Layout). */
   body.is-main-menu {
     overflow: hidden;
   }
@@ -1178,7 +1178,7 @@ html {
 }
 
 /* ============================================================
-   LoadScreen — piezas atmosfericas compartidas
+   LoadScreen â€” piezas atmosfericas compartidas
    (anillos del antifaz; el resto de la coreografia vive en GSAP)
    ============================================================ */
 
@@ -1218,8 +1218,8 @@ html {
 }
 
 /* ------------------------------------------------------------
-   LoadScreen v3 — el antifaz se dibuja
-   GSAP dirige la coreografia (trazo → relleno → glitch → corte
+   LoadScreen v3 â€” el antifaz se dibuja
+   GSAP dirige la coreografia (trazo â†’ relleno â†’ glitch â†’ corte
    diagonal); aqui viven solo las geometrias y los estados base.
    ------------------------------------------------------------ */
 
@@ -1256,7 +1256,7 @@ html {
   will-change: opacity;
 }
 
-/* TRAZO — silueta de tinta: el PNG recortado por su propio alfa y
+/* TRAZO â€” silueta de tinta: el PNG recortado por su propio alfa y
    tenido de rojo. Va ligeramente crecida (1.02) para que el rojo asome
    como contorno alrededor del relleno: lectura de tinta + linea. */
 .load-mask-ink {
@@ -1274,7 +1274,7 @@ html {
   will-change: clip-path;
 }
 
-/* RELLENO — la imagen real, 13 uds. por detras del trazo. */
+/* RELLENO â€” la imagen real, 13 uds. por detras del trazo. */
 .load-mask-fill {
   position: absolute;
   inset: 0;
@@ -1553,7 +1553,7 @@ html {
   opacity: 0.55;
 }
 
-/* aRBOL DE HABILIDADES — entrada del contenido del panel de detalle al
+/* aRBOL DE HABILIDADES â€” entrada del contenido del panel de detalle al
    cambiar de nodo: fundido + deslizamiento corto. Se re-dispara al cambiar
    la key (nodo seleccionado). reduced-motion lo colapsa via la regla global. */
 @keyframes skill-panel-in {
@@ -1572,7 +1572,7 @@ html {
 }
 
 /* ============================================================
-   Skill Tree — Persona 5 visual identity overhaul
+   Skill Tree â€” Persona 5 visual identity overhaul
    ============================================================ */
 
 /* Node selection: hard-cut glitch flash (no easing, persona 5 cuts) */
@@ -1684,7 +1684,7 @@ html {
     var(--connector-delay, 0s) both;
 }
 
-/* Pipe glow breathing — subtle pulse along active pipes */
+/* Pipe glow breathing â€” subtle pulse along active pipes */
 @keyframes pipe-glow-pulse {
   0%,
   100% {
@@ -1709,7 +1709,7 @@ html {
 }
 
 /* ================================================================
-   MUSIC PLAYER — Persona 5 BGM System
+   MUSIC PLAYER â€” Persona 5 BGM System
    ================================================================ */
 
 /* --- Wrapper (inside BottomBar, relative for panel positioning) --- */
@@ -1736,7 +1736,7 @@ html {
 }
 
 /* ================================================================
-   COMPACT BAR — System dock inside BottomBar
+   COMPACT BAR â€” System dock inside BottomBar
    ================================================================ */
 
 .bgm-bar {
@@ -1857,7 +1857,7 @@ html {
 }
 
 /* ================================================================
-   EXPANDED PANEL — BGM System interface
+   EXPANDED PANEL â€” BGM System interface
    ================================================================ */
 
 .bgm-panel {
@@ -1979,7 +1979,7 @@ html {
 }
 
 /* ================================================================
-   TRANSPORT CONTROLS — Angular buttons
+   TRANSPORT CONTROLS â€” Angular buttons
    ================================================================ */
 
 .bgm-panel__controls {
@@ -2107,7 +2107,7 @@ html {
 }
 
 /* ================================================================
-   VOLUME CONTROL — Always visible
+   VOLUME CONTROL â€” Always visible
    ================================================================ */
 
 .bgm-vol {
@@ -2183,7 +2183,7 @@ html {
 }
 
 /* ================================================================
-   VISUALIZER — 6 red bars
+   VISUALIZER â€” 6 red bars
    ================================================================ */
 
 .bgm-viz {
@@ -2202,7 +2202,7 @@ html {
 }
 
 /* ================================================================
-   TRACK SELECTOR — Dropdown list
+   TRACK SELECTOR â€” Dropdown list
    ================================================================ */
 
 .bgm-selector {
@@ -2288,7 +2288,7 @@ html {
     ================================================================ */
 
 /* ================================================================
-    SAKURA — global atmospheric layer (falling cherry blossom petals)
+    SAKURA â€” global atmospheric layer (falling cherry blossom petals)
     ================================================================ */
 
 .sakura-bg {
@@ -2296,7 +2296,7 @@ html {
   perspective: 500px;
 }
 
-/* ── Individual sakura petal; curved, tapered silhouette and fine vein ── */
+/* â”€â”€ Individual sakura petal; curved, tapered silhouette and fine vein â”€â”€ */
 .sakura-petal {
   position: absolute;
   background-color: var(--petal-color, #ff9cb5);
@@ -2408,7 +2408,7 @@ html {
   }
 }
 
-/* --- Titulos de seccion: tamaño base (default) --- */
+/* --- Titulos de seccion: tamaÃ±o base (default) --- */
 .section-title__h1 {
   font-size: clamp(2.75rem, 6.5vw, 5.5rem);
 }
@@ -2632,7 +2632,7 @@ html {
   }
 }
 
-/* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */
+/* --- Reduced motion: eliminar movimiento no esencial (spec Â§9) --- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -2647,7 +2647,7 @@ html {
 }
 
 /* ================================================================
-   CALENDAR TRANSITION — Pantalla de introduccion tipo Persona 5
+   CALENDAR TRANSITION â€” Pantalla de introduccion tipo Persona 5
    ================================================================
 
    ARQUITECTURA DE POSICIONAMIENTO (robusta, sin lucha de transform):
@@ -2671,14 +2671,14 @@ html {
   position: absolute;
   z-index: 10;
   /* Centra la composicion sobre el punto (left, top). Porcentaje relativo
-     al propio tamaño del ancla, asi funciona con cualquier ancho de fecha. */
+     al propio tamaÃ±o del ancla, asi funciona con cualquier ancho de fecha. */
   transform: translate(-50%, -50%);
 }
 
 /* Envoltorio interior animado por GSAP. Su transform es independiente del
    translate(-50%, -50%) del ancla (elemento distinto, no hay lucha).
    Empieza oculto (opacity: 0) para que no haya destello al montar; GSAP
-   lo revela (autoAlpha: 0 → 1) durante la caida de cada fecha. */
+   lo revela (autoAlpha: 0 â†’ 1) durante la caida de cada fecha. */
 .calendar-visual {
   position: relative;
   opacity: 0;
@@ -2693,8 +2693,8 @@ html {
   width: 100%;
 }
 
-/* Dia numerico — estilo gestionado en CalendarCard.tsx (fuente p5hatty, contorno, rotacion, capas). */
-/* Imagen del dia de la semana — estilo gestionado en CalendarCard.tsx (z-index, rotacion, margin-top). */
+/* Dia numerico â€” estilo gestionado en CalendarCard.tsx (fuente p5hatty, contorno, rotacion, capas). */
+/* Imagen del dia de la semana â€” estilo gestionado en CalendarCard.tsx (z-index, rotacion, margin-top). */
 
 /* Cuchillo: rotacion gestionada por GSAP.
    El PNG es horizontal (hoja a la izquierda, mango a la derecha). */
@@ -2706,7 +2706,7 @@ html {
   will-change: transform;
 }
 
-/* Responsive: ajuste de tamaño del cuchillo por breakpoint. */
+/* Responsive: ajuste de tamaÃ±o del cuchillo por breakpoint. */
 @media (max-width: 1023px) {
   .calendar-knife {
     width: 160px;
@@ -2726,12 +2726,12 @@ html {
 }
 
 /* ================================================================
-   TOPBAR / BOTTOMBAR — Persona 5 (menu principal)
-   Rediseño completo con estetica P5, GSAP para micro-animaciones.
+   TOPBAR / BOTTOMBAR â€” Persona 5 (menu principal)
+   RediseÃ±o completo con estetica P5, GSAP para micro-animaciones.
    Placas .p5-plate: clip-path poligonal, borde blanco (doble capa
    #fff exterior + #111 interior), sombra roja desplazada en wrapper
    padre, rotacion por pieza. Sin fondo solido; solo degradado negro
-   suave 0.55→0. Todas las medidas en clamp().
+   suave 0.55â†’0. Todas las medidas en clamp().
    ================================================================ */
 
 :root {
@@ -2755,22 +2755,22 @@ html {
   --p5-player-h: clamp(92px, 10.5vh, 124px);
   /* Disco: 118% del alto de la placa */
   --p5-disc-d: clamp(109px, 12.4vh, 146px);
-  /* Reloj (mas pequeño) */
+  /* Reloj (mas pequeÃ±o) */
   --p5-clock-size: clamp(30px, 2.3vw, 52px);
-  /* Redes sociales (mas pequeñas) */
+  /* Redes sociales (mas pequeÃ±as) */
   --p5-social-text: clamp(12px, 0.85vw, 17px);
   --p5-social-icon: 1.2em;
   --p5-social-key: 1.3em;
 }
 
-/* ── Wrapper: sin filtro ni sombra (la sombra es ahora una capa de la placa) ── */
+/* â”€â”€ Wrapper: sin filtro ni sombra (la sombra es ahora una capa de la placa) â”€â”€ */
 .p5-plate-wrap {
   display: inline-flex;
   position: relative;
 }
 
-/* ── Placa .p5-plate: 3 capas apiladas con el mismo clip-path.
-    Sin borde CSS ni drop-shadow/filter sobre el clip-path (evitan puntos rojos/blancos). ── */
+/* â”€â”€ Placa .p5-plate: 3 capas apiladas con el mismo clip-path.
+    Sin borde CSS ni drop-shadow/filter sobre el clip-path (evitan puntos rojos/blancos). â”€â”€ */
 .p5-plate {
   position: relative;
   display: inline-flex;
@@ -2790,7 +2790,7 @@ html {
   z-index: 0;
 }
 
-/* Capa 2: borde blanco, tamaño completo. */
+/* Capa 2: borde blanco, tamaÃ±o completo. */
 .p5-plate__border {
   position: absolute;
   inset: 0;
@@ -2816,7 +2816,7 @@ html {
   clip-path: var(--p5-cut);
 }
 
-/* ── Contenedores de barra ── */
+/* â”€â”€ Contenedores de barra â”€â”€ */
 .p5-topbar {
   position: fixed;
   left: 0;
@@ -2862,7 +2862,7 @@ html {
   width: 100%;
 }
 
-/* ── Entrada/salida: deslizamiento 0.5s ease-out, escalonado 80ms ── */
+/* â”€â”€ Entrada/salida: deslizamiento 0.5s ease-out, escalonado 80ms â”€â”€ */
 @keyframes p5-slide-down {
   from {
     opacity: 0;
@@ -2890,7 +2890,7 @@ html {
   animation: p5-slide-up 0.5s ease-out both;
 }
 
-/* ===== TOPBAR — boton izquierdo ===== */
+/* ===== TOPBAR â€” boton izquierdo ===== */
 /* Placa compacta: max 16vw de ancho, max 9vh de alto.
    Se deja margen extra (8px) para que la sombra roja desplazada
    (5px 5px) no se corte por el borde de la pantalla. */
@@ -3005,7 +3005,7 @@ html {
   outline-offset: 4px;
 }
 
-/* ── Sello de fecha: expediente diario en capas de papel ── */
+/* â”€â”€ Sello de fecha: expediente diario en capas de papel â”€â”€ */
 .p5-date {
   position: absolute;
   right: calc(var(--p5-margin) + 8px);
@@ -3107,8 +3107,8 @@ html {
   }
 }
 
-/* ===== BOTTOMBAR ── */
-/* Reloj: cifras p5hatty mas pequeñas, centrado horizontalmente y alineado con
+/* ===== BOTTOMBAR â”€â”€ */
+/* Reloj: cifras p5hatty mas pequeÃ±as, centrado horizontalmente y alineado con
    el centro del reproductor. Dos rombos parpadean como un separador digital. */
 .p5-bb-clock {
   position: relative;
@@ -3154,7 +3154,7 @@ html {
 
 /* Redes sociales: placas reales con esquinas cortadas (misma construccion de
    3 capas que .p5-plate: sombra roja 4px 4px, borde blanco 2px, fondo #1a1a1a
-   con inset 2px). Rotacion distinta por boton (-1.5° y +1° via --p5-rot). */
+   con inset 2px). Rotacion distinta por boton (-1.5Â° y +1Â° via --p5-rot). */
 .p5-bb-social {
   display: flex;
   align-items: center;
@@ -3241,7 +3241,7 @@ html {
     transform: scale(1);
   }
 }
-/* ── menu de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
+/* â”€â”€ menu de pistas â€” se despliega HACIA ARRIBA, anclado a la placa â”€â”€ */
 .p5-track-selector-wrap {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -3310,7 +3310,7 @@ html {
   );
 }
 .p5-track-selector__item--active::before {
-  content: "♦";
+  content: "â™¦";
   color: #fff;
   margin-right: 8px;
   font-family: var(--p5-font-hatty);
@@ -3341,7 +3341,7 @@ html {
   flex-shrink: 0;
 }
 
-/* ── Reproductor (placa horizontal, grid dentro de la placa) ── */
+/* â”€â”€ Reproductor (placa horizontal, grid dentro de la placa) â”€â”€ */
 /* Filas del grid de contenido: [ahora/contador] [titulo] [controles | progreso | tiempo/eq/lista] */
 .p5-player-root {
   position: relative;
@@ -3493,7 +3493,7 @@ html {
   }
 }
 
-/* Fila 3: controles (izquierda) | progreso (centro) | tiempo + ecualizador + ≡ (derecha). */
+/* Fila 3: controles (izquierda) | progreso (centro) | tiempo + ecualizador + â‰¡ (derecha). */
 .p5-player-footer {
   display: flex;
   align-items: center;
@@ -3563,7 +3563,7 @@ html {
   transition: width 0.1s linear;
 }
 
-/* Tiempo pequeño, ecualizador y boton lista (derecha de la fila 3). */
+/* Tiempo pequeÃ±o, ecualizador y boton lista (derecha de la fila 3). */
 .p5-player-time {
   font-family: var(--p5-font-sans);
   font-size: clamp(11px, 0.6vw, 14px);
@@ -3623,7 +3623,7 @@ html {
   }
 }
 
-/* Boton lista ≡ (24px). */
+/* Boton lista â‰¡ (24px). */
 .p5-list-btn-cell {
   display: flex;
   align-items: center;
@@ -3648,7 +3648,7 @@ html {
   transform: scale(1.15);
 }
 
-/* ── menu de pistas — se despliega HACIA ARRIBA, anclado a la placa ── */
+/* â”€â”€ menu de pistas â€” se despliega HACIA ARRIBA, anclado a la placa â”€â”€ */
 .p5-track-selector-wrap {
   position: absolute;
   bottom: calc(100% + 14px); /* hueco de 14px sobre la placa, nunca solapa */
@@ -3714,13 +3714,13 @@ html {
   flex-shrink: 0;
 }
 .p5-track-selector__item--active {
-  /* Banda solida roja recortada en diagonal (lado derecho), texto blanco, ♦ blanco */
+  /* Banda solida roja recortada en diagonal (lado derecho), texto blanco, â™¦ blanco */
   background-color: var(--p5-red);
   clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
   color: #fff;
 }
 .p5-track-selector__item--active::before {
-  content: "♦";
+  content: "â™¦";
   width: auto;
   height: auto;
   background: transparent;
@@ -3757,7 +3757,7 @@ html {
   flex-shrink: 0;
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 899px) {
   .p5-bb-clock {
     display: none !important;
@@ -3822,7 +3822,7 @@ html {
   }
 }
 
-/* ── Inventario: pantalla contenida, lista como unico scroller ── */
+/* â”€â”€ Inventario: pantalla contenida, lista como unico scroller â”€â”€ */
 .projects-screen {
   height: 100%;
 }
@@ -4095,7 +4095,7 @@ html {
 }
 
 /* ================================================================
-   MUSIC PLAYER — modo placa (flat) para BottomBar
+   MUSIC PLAYER â€” modo placa (flat) para BottomBar
    ================================================================ */
 
 .bgm-player {
@@ -4130,7 +4130,7 @@ html {
   color: #fff;
 }
 
-/* Icono ♪ rojo */
+/* Icono â™ª rojo */
 .bgm-bar__label {
   color: var(--p5-red);
   font-size: clamp(36px, 3vw, 64px);
@@ -4170,7 +4170,7 @@ html {
   outline-offset: 2px;
 }
 
-/* ── Phone layouts: purpose-built, with desktop rules left untouched ── */
+/* â”€â”€ Phone layouts: purpose-built, with desktop rules left untouched â”€â”€ */
 @media (max-width: 767px) {
   :root {
     --p5-margin: 10px;
@@ -4350,11 +4350,6 @@ html {
     min-height: 100dvh;
     overflow: visible !important;
   }
-  #main.education-main {
-    height: auto !important;
-    min-height: 100dvh;
-    overflow: visible !important;
-  }
   .project-inventory-screen {
     overflow: visible;
     padding: 14px 14px calc(var(--bottombar-h) + 28px);
@@ -4497,12 +4492,6 @@ html {
     text-align: center;
   }
 
-  .education-screen {
-    padding: 5.5rem 14px calc(var(--bottombar-h) + 28px) !important;
-  }
-  .education-screen > div.mx-auto {
-    width: 100%;
-  }
   .skill-tree-section > div.mx-auto.mb-4 {
     font-size: 0.75rem;
     letter-spacing: 0.08em;
@@ -4594,9 +4583,6 @@ html {
     margin-top: 3rem;
   }
 
-  .education-screen .skill-tree-detail > div > div:first-child {
-    align-items: flex-start;
-  }
 }
 
 @media (max-width: 360px) {
@@ -4617,8 +4603,7 @@ html {
     margin-left: 20px;
   }
   .project-inventory-screen,
-  .project-detail-screen,
-  .education-screen {
+  .project-detail-screen {
     padding-inline: 12px !important;
   }
 }

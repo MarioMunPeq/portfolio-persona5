@@ -1,6 +1,7 @@
 import { BrowserRouter, Route } from "react-router-dom";
 import { TransitionRoutes } from "./components/transition/TransitionRoutes";
 import { VideoTransition } from "./components/transition/VideoTransition";
+import { FadeTransition } from "./components/transition/FadeTransition";
 import { Layout } from "./components/layout/Layout";
 import { ScrollProvider } from "./components/layout/ScrollProvider";
 import { Home } from "./pages/Home";
@@ -36,6 +37,7 @@ function App() {
           </TransitionRoutes>
         </Layout>
         <VideoTransition />
+        <FadeTransition />
       </ScrollProvider>
     </BrowserRouter>
   );

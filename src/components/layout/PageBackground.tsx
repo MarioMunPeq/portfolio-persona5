@@ -7,7 +7,7 @@ const mp4FallbackSource =
 const MOBILE_QUERY = "(max-width: 767px), (hover: none) and (pointer: coarse)";
 
 interface PageBackgroundProps {
-  variant: "profile" | "projects";
+  variant: "profile" | "projects" | "education";
 }
 
 function isMobileMatch() {

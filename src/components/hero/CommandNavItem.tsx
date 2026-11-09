@@ -4,6 +4,8 @@ import { useReducedMotion } from "motion/react";
 import { gsap } from "gsap";
 import { useMediaQuery } from "../../lib/use-media-query";
 import { transitionBus } from "../transition/transition-bus";
+import { routeTransitionType } from "../transition/route-transitions";
+import { animateFade } from "../transition/FadeTransition";
 
 export type HeroIcon = "triangle" | "square" | "circle" | "cross" | "asterisk";
 
@@ -80,6 +82,16 @@ export function CommandNavItem({
       navigate(path);
       return;
     }
+
+    const type = routeTransitionType(path);
+
+    if (type === "fade") {
+      transitionBus.markExternallyStarted();
+      await animateFade("in");
+      navigate(path);
+      return;
+    }
+
     transitionBus.markExternallyStarted();
     await transitionBus.playUntilCovered();
     navigate(path);

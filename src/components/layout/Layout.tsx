@@ -28,13 +28,20 @@ export function Layout({ children }: LayoutProps) {
     pathname === "/about" ||
     pathname === "/projects" ||
     pathname === "/experience" ||
+    pathname === "/education" ||
     pathname.startsWith("/proyectos/");
   const hasPageBackground =
     pathname === "/about" ||
     pathname === "/projects" ||
+    pathname === "/education" ||
     pathname.startsWith("/proyectos/");
   const isProjectInventoryPage = pathname === "/projects";
-  const backgroundVariant = pathname === "/about" ? "profile" : "projects";
+  const backgroundVariant =
+    pathname === "/about"
+      ? "profile"
+      : pathname === "/education"
+        ? "education"
+        : "projects";
   const lenis = useLenis();
 
   /* Bloqueo de scroll solo en el menu principal: añade/quita is-main-menu
@@ -90,7 +97,7 @@ export function Layout({ children }: LayoutProps) {
           isProjectInventoryPage
             ? "project-inventory-main relative z-[1] h-dvh overflow-hidden pt-20"
             : isDocumentScrollPage
-            ? "relative z-[1] min-h-dvh pt-20"
+            ? `relative z-[1] min-h-dvh pt-20 ${isEducationPage ? "education-main" : ""}`
             : `h-dvh overflow-y-auto ${isMenu ? "pt-0" : "pt-20"} ${isEducationPage ? "education-main" : ""}`
         }
       >

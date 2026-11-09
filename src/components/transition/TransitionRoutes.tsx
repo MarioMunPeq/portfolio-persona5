@@ -5,6 +5,8 @@ import { Routes, useLocation } from "react-router-dom";
 import { useLenis } from "lenis/react";
 import { useMediaQuery } from "../../lib/use-media-query";
 import { transitionBus } from "./transition-bus";
+import { routeTransitionType } from "./route-transitions";
+import { animateFade } from "./FadeTransition";
 
 interface TransitionRoutesProps {
   children: ReactNode;
@@ -57,6 +59,9 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
     if (!isDesktop) {
       setDisplayed(location);
       resetScroll();
+      /* Señal de fin de transición para la página de destino */
+      document.documentElement.setAttribute("data-transition", "done");
+      window.dispatchEvent(new CustomEvent("page-transition-done"));
       return;
     }
 
@@ -67,19 +72,32 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       });
       resetScroll();
 
-      const video = document.getElementById(
-        "transition-video",
-      ) as HTMLVideoElement | null;
-      if (video) {
-        const done = () => {
+      const type = routeTransitionType(location.pathname);
+
+      if (type === "fade") {
+        /* El fundido de entrada ya se ejecutó antes de navigate()
+           (en CommandNavItem). La página está montada bajo el negro.
+           Solo queda retirar el negro y emitir page-transition-done. */
+        animateFade("out").then(() => {
+          document.documentElement.setAttribute("data-transition", "done");
+          window.dispatchEvent(new CustomEvent("page-transition-done"));
           transitioning.current = false;
-          video.removeEventListener("ended", done);
-          video.removeEventListener("error", done);
-        };
-        video.addEventListener("ended", done, { once: true });
-        video.addEventListener("error", done, { once: true });
+        });
       } else {
-        transitioning.current = false;
+        const video = document.getElementById(
+          "transition-video",
+        ) as HTMLVideoElement | null;
+        if (video) {
+          const done = () => {
+            transitioning.current = false;
+            video.removeEventListener("ended", done);
+            video.removeEventListener("error", done);
+          };
+          video.addEventListener("ended", done, { once: true });
+          video.addEventListener("error", done, { once: true });
+        } else {
+          transitioning.current = false;
+        }
       }
       return;
     }
@@ -93,6 +111,26 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
         setDisplayed(location);
       });
       resetScroll();
+      return;
+    }
+
+    /* Transicion de video (tren) para rutas que no son fade */
+    if (routeTransitionType(location.pathname) === "fade") {
+      /* Navegacion no iniciada externamente hacia una ruta de fundido:
+         fundir a negro, montar pagina, retirar negro. */
+      transitioning.current = true;
+
+      requestAnimationFrame(async () => {
+        await animateFade("in");
+        flushSync(() => {
+          setDisplayed(location);
+        });
+        resetScroll();
+        await animateFade("out");
+        document.documentElement.setAttribute("data-transition", "done");
+        window.dispatchEvent(new CustomEvent("page-transition-done"));
+        transitioning.current = false;
+      });
       return;
     }
 
