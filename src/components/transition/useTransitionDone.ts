@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 /**
  * Devuelve una promesa que se resuelve cuando la transición de página ha
