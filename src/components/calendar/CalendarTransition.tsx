@@ -275,8 +275,8 @@ export function CalendarTransition() {
   // El calendario no se muestra hasta que todas las imagenes esten cargadas.
   useEffect(() => {
     const sources: string[] = [
-      calendarAsset("calendar_day.png"),
-      calendarAsset("calendar_night.png"),
+      calendarAsset("calendar_day.webp"),
+      calendarAsset("calendar_night.webp"),
       calendarAsset("calendar_knife.png"),
       ...dates.map((d) => calendarAsset(d.weekdayFile)),
     ];

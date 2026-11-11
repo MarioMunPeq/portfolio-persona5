@@ -24,6 +24,7 @@ export function Home() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const reducedMotion = useReducedMotion();
   const isPhone = useMediaQuery("(max-width: 639px)");
+  const isTouch = useMediaQuery("(hover: none) and (pointer: coarse)");
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -163,20 +164,32 @@ export function Home() {
     <Screen className="bg-ink text-paper">
       <section className="relative h-dvh w-full overflow-hidden">
         {/* Video de metro como fondo */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="pointer-events-none fixed inset-0 z-0 w-[100vw] h-[100dvh] object-cover object-[center_center]"
-          aria-hidden="true"
-        >
-          <source
-            src={`${import.meta.env.BASE_URL}videos/metro-background.webm`}
-            type="video/webm"
+        {isTouch ? (
+          <img
+            src={`${import.meta.env.BASE_URL}images/background/background_redstars.webp`}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none fixed inset-0 z-0 w-[100vw] h-[100dvh] object-cover object-[center_center]"
+            decoding="async"
+            fetchPriority="low"
           />
-        </video>
+        ) : (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={`${import.meta.env.BASE_URL}images/background/background_redstars.webp`}
+            className="pointer-events-none fixed inset-0 z-0 w-[100vw] h-[100dvh] object-cover object-[center_center]"
+            aria-hidden="true"
+          >
+            <source
+              src={`${import.meta.env.BASE_URL}videos/metro-background.webm`}
+              type="video/webm"
+            />
+          </video>
+        )}
 
         {/* Capa de oscuridad sutil para legibilidad de la UI */}
         <div
