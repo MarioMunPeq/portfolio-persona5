@@ -1,11 +1,13 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { Screen } from "../components/transition/Screen";
 import { SectionTitle } from "../components/ui/SectionTitle";
 import { PageBackground } from "../components/layout/PageBackground";
 import { useTransitionDone } from "../components/transition/useTransitionDone";
+import { useMediaQuery } from "../lib/use-media-query";
 import {
   EDU_TREE,
   type EduNode,
@@ -22,6 +24,8 @@ import {
   faMicrochip,
   faCircleQuestion,
 } from "@fortawesome/free-solid-svg-icons";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /* ══════════════════════════════════════════════════════════════════════
    Iconos FontAwesome (misma clave que skill-tree.ts: EduNode.icon)
@@ -91,7 +95,7 @@ export const YEAR_ANCHOR: Record<string, { x: number; y: number }> = {
   telecomunicaciones: { x: 20, y: -14 },
   dam: { x: 280, y: -14 },
   ari: { x: 280, y: -14 },
-  bootcamp: { x: 280, y: 132 },
+  bootcamp: { x: 150, y: 140 },
 };
 
 export const NODE_YEAR: Record<string, number | undefined> = {
@@ -150,8 +154,9 @@ const STYLES = `
   position: relative;
   z-index: 2;
   /* padding-top empuja el contenido por debajo de la topbar fija;
-     ResizeObserver mide --topbar-h para que el título quede 100% visible */
-  padding-top: calc(var(--topbar-h, 120px) + 12px);
+     ResizeObserver mide --topbar-h para que el título quede 100% visible.
+     Margen extra de 24px para que el botón menu no roce el título. */
+  padding-top: calc(var(--topbar-h, 120px) + 24px);
 }
 
 /* Título HABILIDADES: p5hatty, clamp(44px, 4.4vw, 84px), 100% visible bajo la topbar */
@@ -646,8 +651,8 @@ const STYLES = `
   stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
 }
+/* El relleno del rombo se pinta en línea por ruta (rojo/blanco/gris); aquí solo trazo y geometría. */
 .edu-route-diamond {
-  fill: #fff;
   stroke: #111;
   stroke-width: 3;
   vector-effect: non-scaling-stroke;
@@ -666,6 +671,382 @@ const STYLES = `
   .edu-scenario { position: static; width: 100%; height: auto; aspect-ratio: 420 / 760; }
   .edu-panel-wrap { position: static; width: 100%; height: auto; margin-top: 24px; transform: none; }
   .edu-node-wrap { position: static; margin: 0 auto; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Educación móvil (máx. 768px): cronología vertical, cabecera y barra
+   propias. Sólo se aplica aquí; el escritorio no se toca.
+   ═════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Seguridad de scroll: sólo vertical, sin desbordamiento horizontal.
+     Root cause del corte a la derecha: las tarjetas usaban margin-left +
+     width: 100% + margin-right dentro de un contenedor con padding
+     horizontal, lo que excedía el ancho del viewport. Se corrige aquí con
+     margin-left: 40px y width: calc(100% - 40px), y se refuerza con
+     overflow-x: clip + max-width: 100vw en raíz, body y envoltura. */
+  html,
+  body,
+  #root,
+  #main,
+  .edu-page {
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100vw;
+  }
+  body {
+    overflow-x: hidden;
+  }
+  html {
+    width: 100%;
+    max-width: 100vw;
+  }
+  /* La cabecera fija (TopBar) y la barra inferior (BottomBar) las provee
+     Layout; se deja espacio en el main y al final de la cronología. */
+  #main.education-main {
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .edu-page {
+    overflow: visible;
+  }
+
+  /* Ocultar la cabecera de escritorio (no se usa en móvil). */
+  .edu-header {
+    display: none !important;
+  }
+
+  /* Fondo: estrellas (PageBackground) y overlay sólido. */
+  .page-background__overlay {
+    background: rgba(13, 13, 13, 0.72) !important;
+  }
+
+  /* Cronología vertical. El padding inferior reserva el espacio del
+     reproductor de la barra inferior (player height + 24px). */
+  .edu-m-timeline {
+    position: relative;
+    padding: 20px 16px calc(var(--bottombar-h) + 24px) 16px;
+  }
+
+  /* Espina roja sobre la que se centran los marcadores de nodo. */
+  .edu-m-spine {
+    position: absolute;
+    left: 11px;
+    width: 3px;
+    background: #FF1A3C;
+    transform-origin: top;
+  }
+  .edu-m-segment--dash {
+    background: repeating-linear-gradient(180deg, #FF1A3C 0 6px, transparent 6px 12px);
+  }
+
+  /* Tarjetas: margin-left 40px + width calc(100% - 40px) impide el
+     desbordamiento a la derecha (ver cálculo de seguridad arriba). La
+     altura sigue al contenido (no hay alturas fijas ni huecos vacíos). */
+  .edu-m-card {
+    position: relative;
+    margin-left: 40px;
+    width: calc(100% - 40px);
+    margin-bottom: 24px;
+    padding: 16px;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+  .edu-m-card:not(.is-active) {
+    opacity: 0.78;
+  }
+  .edu-m-card.is-active {
+    opacity: 1;
+    z-index: 2;
+  }
+
+  .edu-m-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: #1C1C1C;
+    border: 2px solid #F2F2F2;
+    transform: skewY(-2deg);
+  }
+  .edu-m-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #FF1A3C;
+    transform: skewY(-2deg) translate(6px, 6px);
+    transition: transform 0.2s;
+    /* La sombra desplazada queda dentro de la caja de la tarjeta, que no
+       excede el viewport (ver cálculo de ancho arriba). */
+  }
+  .edu-m-card.is-active::after {
+    transform: skewY(-2deg) translate(8px, 8px);
+  }
+  .edu-m-card--proximo::before {
+    background: rgba(255, 26, 60, 0.12);
+    border: 2px dashed #F2F2F2;
+  }
+  .edu-m-card--proximo::after {
+    background: transparent;
+  }
+
+  .edu-m-wrap {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Icono de categoría (esquina superior derecha de la tarjeta). */
+  .edu-m-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #F2F2F2;
+    background: #0D0D0D;
+    border-radius: 50%;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+  }
+  .edu-m-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: #F2F2F2;
+  }
+
+  /* Sobres de llegada (sólo transform/opacity). */
+  .edu-m-wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: #FF1A3C;
+    transform-origin: left center;
+    transform: scaleX(0);
+    pointer-events: none;
+  }
+  .edu-m-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: #F2F2F2;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Etiqueta de grado (colocada dentro del padding, nunca cubierta por el
+     borde de la tarjeta). */
+  .edu-m-tag {
+    height: 28px;
+    padding: 0 14px;
+    background: #FF1A3C;
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.25em;
+    color: #F2F2F2;
+    text-transform: uppercase;
+    margin: 0 0 10px 0;
+    max-width: calc(100% - 52px);
+    align-self: flex-start;
+  }
+
+  .edu-m-card-title {
+    margin: 0 0 10px 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #F2F2F2;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .edu-m-year-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 10px 0;
+    min-width: 0;
+  }
+  .edu-m-year {
+    font-family: var(--font-hatty);
+    font-size: clamp(44px, 14vw, 60px);
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 2px #F2F2F2;
+    text-shadow: 3px 3px 0 #FF1A3C;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .edu-m-hours {
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.3em;
+    color: #FF1A3C;
+  }
+
+  /* Línea separadora horizontal (2px x 64px, huecos de 12px). */
+  .edu-m-line {
+    width: 64px;
+    height: 2px;
+    background: #FF1A3C;
+    margin: 12px 0;
+  }
+
+  .edu-m-meta {
+    min-width: 0;
+  }
+  .edu-m-meta .edu-m-block {
+    margin: 0 0 10px 0;
+    min-width: 0;
+  }
+  .edu-m-meta dt {
+    margin: 0 0 2px 0;
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 1;
+    letter-spacing: 0.3em;
+    color: #FF1A3C;
+    text-transform: uppercase;
+  }
+  .edu-m-meta dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 1;
+    color: #F2F2F2;
+  }
+
+  .edu-m-stamp {
+    display: inline-block;
+    rotate: -6deg;
+    border: 2px solid #FF1A3C;
+    outline: 1px solid #FF1A3C;
+    outline-offset: 3px;
+    padding: 4px 10px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.25em;
+    color: #FF1A3C;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .edu-m-card--proximo .edu-m-wrap {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .edu-m-card--proximo .edu-m-tag {
+    margin: 0 0 10px 0;
+  }
+  .edu-m-q {
+    font-family: var(--font-hatty);
+    font-size: 48px;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 2px #F2F2F2;
+    text-shadow: 3px 3px 0 #FF1A3C;
+  }
+
+  /* Marcador de nodo en la espina, centrado sobre ella. */
+  .edu-m-marker {
+    position: absolute;
+    left: -50.5px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #0D0D0D;
+    background: #F2F2F2;
+    box-sizing: border-box;
+    transform: translateY(-50%) rotate(45deg);
+    z-index: 5;
+    transition: transform 0.2s;
+  }
+  .edu-m-marker.is-active {
+    background: #FF1A3C;
+    border-color: #F2F2F2;
+    transform: translateY(-50%) rotate(45deg) scale(1.4);
+  }
+  .edu-m-marker--proximo {
+    background: transparent;
+    border: 2px dashed #F2F2F2;
+  }
+
+  /* Fila de progreso bajo el título: diamantes + contador, sin barra ni fondo. */
+  .edu-m-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 16px;
+    margin-top: 6px;
+  }
+  .edu-m-diamonds {
+    display: flex;
+    gap: 8px;
+  }
+  .edu-m-diamond {
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid #F2F2F2;
+    background: transparent;
+    transform: rotate(45deg);
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  }
+  .edu-m-diamond.is-active {
+    background: #FF1A3C;
+    border-color: #FF1A3C;
+    transform: rotate(45deg) scale(1.3);
+  }
+  .edu-m-counter {
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    color: #FF1A3C;
+  }
+
+  /* Cabecera de sección (label + título + subrayado + rombo). */
+  .edu-m-title-block {
+    padding-left: 16px;
+  }
+  .edu-m-label {
+    margin: 0 0 2px 0;
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 1;
+    letter-spacing: 0.3em;
+    color: #FF1A3C;
+    text-transform: uppercase;
+  }
+  .edu-m-title-block .section-title__h1 {
+    white-space: nowrap;
+  }
+
+  /* Reducido de movimiento: sin animaciones, todo visible de inmediato. */
+  @media (prefers-reduced-motion: reduce) {
+    .edu-m-wrap {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .edu-m-diamond,
+    .edu-m-marker {
+      transition: none !important;
+    }
+    .edu-m-wipe,
+    .edu-m-flash {
+      display: none !important;
+    }
+  }
 }
 `;
 
@@ -721,6 +1102,49 @@ function PlateNode({
     registerRefs(node.id, "pop", popRef.current);
   }, [node.id, registerRefs]);
 
+  /* prefers-reduced-motion: se lee en cliente y se respeta en el hover. */
+  const [prefersReduced, setPrefersReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mq.matches);
+    const onChange = () => setPrefersReduced(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  /* Hover snappy: escala el nodo con overshoot (back.out) al entrar y vuelve al salir.
+     Solo transform/opacity (60 fps). Se mata el tween previo antes de lanzar uno nuevo
+     y al desmontar, así no se acumulan animaciones ni se desplaza el nodo bajo el cursor.
+     Bajo prefers-reduced-motion no hay movimiento: el nodo queda estático. */
+  useEffect(() => {
+    return () => {
+      if (popRef.current) gsap.killTweensOf(popRef.current);
+    };
+  }, []);
+
+  const handleNodeEnter = () => {
+    if (locked || prefersReduced || !popRef.current) return;
+    gsap.killTweensOf(popRef.current);
+    gsap.to(popRef.current, {
+      scale: 1.12,
+      duration: 0.14,
+      ease: "back.out(1.7)",
+      overwrite: true,
+    });
+  };
+
+  const handleNodeLeave = () => {
+    if (locked || prefersReduced || !popRef.current) return;
+    gsap.killTweensOf(popRef.current);
+    gsap.to(popRef.current, {
+      scale: 1,
+      duration: 0.14,
+      ease: "back.in(1.7)",
+      overwrite: true,
+    });
+  };
+
   // Autoajuste del nombre tras carga de fuentes
   useEffect(() => {
     if (!nombreRef.current) return;
@@ -761,6 +1185,7 @@ function PlateNode({
   const yearEl = year && anchor ? (
     <div
       className="edu-year"
+      data-node={node.id}
       style={{
         left: anchor.x,
         top: anchor.y,
@@ -796,7 +1221,8 @@ function PlateNode({
       onClick={handleSelect}
       onFocus={handleSelect}
       onKeyDown={handleKey}
-      onMouseEnter={!locked ? handleSelect : undefined}
+      onPointerEnter={handleNodeEnter}
+      onPointerLeave={handleNodeLeave}
     >
       <div className="edu-drop" ref={dropRef}>
         <div className="edu-pop" ref={popRef}>
@@ -806,7 +1232,7 @@ function PlateNode({
             height="100%"
             preserveAspectRatio="none"
             overflow="visible"
-            style={{ display: "block" }}
+            style={{ display: "block", pointerEvents: "none" }}
           >
             {locked ? (
               <defs>
@@ -968,37 +1394,44 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
       />
 
       <g clipPath="url(#edu-cp)">
+        {/* Slashes rojos diagonales, bordes afilados (estilo cómic P5) */}
         <polygon
-          className="edu-tajo-a"
+          className="edu-tajo edu-tajo-a"
+          data-parallax
           points="-100,720 170,0 250,0 -20,720"
-          fill="#a80f22"
-          opacity={0.85}
+          fill="#e8112d"
+          opacity={0.9}
         />
         <polygon
-          className="edu-tajo-b"
+          className="edu-tajo edu-tajo-b"
+          data-parallax
           points="800,720 960,0 1010,0 850,720"
-          fill="#a80f22"
-          opacity={0.6}
+          fill="#e8112d"
+          opacity={0.75}
         />
-        <polygon points="380,720 600,0 626,0 406,720" fill="#fff" opacity={0.08} />
+        <polygon points="380,720 600,0 626,0 406,720" fill="#e8112d" opacity={0.18} />
+        {/* Textura halftone / puntos de cómic más marcada */}
         <rect
           width="1060"
           height="720"
           fill="url(#edu-halftone)"
-          opacity={0.07}
+          opacity={0.14}
           mask="url(#edu-halftone-mask-el)"
         />
+        {/* Marca de agua FORMACIÓN integrada: mayor, más oscura, sesgada */}
         <text
+          className="edu-watermark"
+          data-parallax
           x={530}
           y={400}
           textAnchor="middle"
           dominantBaseline="central"
           fontFamily="var(--font-hatty)"
-          fontSize={230}
+          fontSize={300}
           fill="none"
-          stroke="#fff"
-          strokeWidth={3}
-          style={{ opacity: 0.08 }}
+          stroke="#e8112d"
+          strokeWidth={2}
+          style={{ opacity: 0.16 }}
           transform="rotate(-6 530 400)"
           pointerEvents="none"
         >
@@ -1012,7 +1445,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
             fontFamily="var(--font-display)"
             fontSize={34}
             fill="#fff"
-            opacity={0.16}
+            opacity={0.22}
             pointerEvents="none"
           >
             »
@@ -1028,10 +1461,25 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
         const key = `${edge.from}-${edge.to}`;
         const midX = (from.x + to.x) / 2;
         const midY = (from.y + to.y) / 2;
+        /* Ángulo real de la línea para que el rombo quede alineado con el trazo */
+        const lineAngle = (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
         const d = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+        /* Rombo pequeño, sesgado, rojo/blanco — marcador angular sobre la línea */
+        const diamond = (
+          <path
+            className="edu-route-diamond"
+            data-edge={key}
+            d="M -7,-7 L 7,-7 L 7,7 L -7,7 Z"
+            transform={`translate(${midX} ${midY}) rotate(${lineAngle}) skewX(-12)`}
+            fill={edge.locked ? "#777" : "#e8112d"}
+            stroke="#fff"
+            strokeWidth={2}
+            style={{ vectorEffect: "non-scaling-stroke" }}
+          />
+        );
         if (edge.locked) {
           return (
-            <g key={key} data-edge from={edge.from} to={edge.to} aria-hidden="true">
+            <g key={key} data-edge={key} aria-hidden="true">
               <path
                 ref={(el) => registerRouteRefs(key, "white", el)}
                 data-route
@@ -1043,15 +1491,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
                 strokeDasharray="14 12"
                 style={{ vectorEffect: "non-scaling-stroke" }}
               />
-              <path
-                className="edu-route-diamond"
-                d="M -13,-13 L 13,-13 L 13,13 L -13,13 Z"
-                transform={`translate(${midX} ${midY}) rotate(45)`}
-                fill="#fff"
-                stroke="#111"
-                strokeWidth={3}
-                style={{ vectorEffect: "non-scaling-stroke" }}
-              />
+              {diamond}
             </g>
           );
         }
@@ -1083,15 +1523,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
               strokeDashoffset={1}
               style={{ vectorEffect: "non-scaling-stroke" }}
             />
-            <path
-              className="edu-route-diamond"
-              d="M -13,-13 L 13,-13 L 13,13 L -13,13 Z"
-              transform={`translate(${midX} ${midY}) rotate(45)`}
-              fill="#fff"
-              stroke="#111"
-              strokeWidth={3}
-              style={{ vectorEffect: "non-scaling-stroke" }}
-            />
+            {diamond}
           </g>
         );
       })}
@@ -1118,27 +1550,48 @@ function GuideLabels() {
    ══════════════════════════════════════════════════════════════════════ */
 interface EduDetailPanelProps {
   node: EduNode;
-  writing: boolean;
 }
 
-function EduDetailPanel({ node, writing }: EduDetailPanelProps) {
+function EduDetailPanel({ node }: EduDetailPanelProps) {
   const locked = node.status === "locked";
   const showHours = node.hours != null;
   const horas = showHours ? node.hours : node.year;
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [hoursDisplay, setHoursDisplay] = useState(0);
+  const prevValueRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
 
+  /* Contador del año/horas: se dispara una sola vez por cambio de nodo activo.
+     Nunca parte de 0: rueda del valor anterior al nuevo. Limpia el RAF previo. */
   useEffect(() => {
     const end = horas != null ? horas : 0;
-    const dur = 500;
+    if (end === 0) {
+      setHoursDisplay(0);
+      prevValueRef.current = 0;
+      return undefined;
+    }
+
+    const start = prevValueRef.current ?? 0;
+    const dur = 400;
     const startTime = performance.now();
+
     const tick = (now: number) => {
       const t = Math.min((now - startTime) / dur, 1);
-      setHoursDisplay(Math.floor(t * end));
-      if (t < 1) requestAnimationFrame(tick);
+      const value = Math.floor(start + (end - start) * t);
+      setHoursDisplay(value);
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        prevValueRef.current = end;
+      }
     };
-    requestAnimationFrame(tick);
-  }, [writing, horas]);
+
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [horas]);
 
   return (
     <div className="edu-panel-wrap">
@@ -1181,6 +1634,235 @@ function EduDetailPanel({ node, writing }: EduDetailPanelProps) {
 /* ══════════════════════════════════════════════════════════════════════
    PÁGINA
    ══════════════════════════════════════════════════════════════════════ */
+/* ═════════════════════════════════════════════════════════════════════════
+   Educación móvil (máx. 768px) — cronología vertical de tarjetas.
+   Sólo se monta en esta vista; el escritorio sigue intacto.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* Orden cronológico de la ruta formativa. */
+const EDU_MOBILE_ORDER: string[] = [
+  "telecomunicaciones",
+  "ari",
+  "dam",
+  "bootcamp",
+  "siguiente",
+];
+
+const EDU_MOBILE_NODES: EduNode[] = EDU_MOBILE_ORDER.map((id) => findNode(id)!);
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PÁGINA MÓVIL
+   ═════════════════════════════════════════════════════════════════════════ */
+
+function EducationMobile() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cardEls = useRef<Record<string, HTMLElement | null>>({});
+  const rolledRef = useRef(new Set<string>());
+  const yearObjRef = useRef({ v: 0 });
+  const [activeId, setActiveId] = useState(EDU_MOBILE_NODES[0]!.id);
+
+  const activeIndex = EDU_MOBILE_NODES.findIndex((n) => n.id === activeId);
+
+  /* Nodo activo: tarjeta más cercana al centro del viewport (spec §scroll). */
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const centerY = window.innerHeight / 2;
+        let bestId: string | null = null;
+        let bestDist = Infinity;
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const r = entry.boundingClientRect;
+          const d = Math.abs((r.top + r.bottom) / 2 - centerY);
+          if (d < bestDist) {
+            bestDist = d;
+            bestId = (entry.target as HTMLElement).dataset.id ?? null;
+          }
+        }
+        if (bestId) setActiveId(bestId);
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 },
+    );
+    EDU_MOBILE_NODES.forEach((n) => {
+      const el = cardEls.current[n.id];
+      if (el) io.observe(el);
+    });
+    return () => io.disconnect();
+  }, []);
+
+  /* GSAP: revelación al scroll, números y sellos (sólo transform/opacity). */
+  useLayoutEffect(() => {
+    if (!rootRef.current) return;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scope = rootRef.current;
+    const ctx = gsap.context(() => {
+      const cards = Array.from(scope.querySelectorAll<HTMLElement>(".edu-m-card"));
+      cards.forEach((card, i) => {
+        const node = EDU_MOBILE_NODES[i];
+        const value = node.hours != null ? node.hours : node.year;
+        const wrap = card.querySelector<HTMLElement>(".edu-m-wrap")!;
+        const yearEl = card.querySelector<HTMLElement>(".edu-m-year");
+        const stampEl = card.querySelector<HTMLElement>(".edu-m-stamp");
+        const wipeEl = card.querySelector<HTMLElement>(".edu-m-wipe");
+        const flashEl = card.querySelector<HTMLElement>(".edu-m-flash");
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: "top 88%",
+            once: true,
+            toggleActions: "play none none none",
+          },
+        });
+        tl.fromTo(
+          wrap,
+          { x: 30, skewX: -8, opacity: 0 },
+          { x: 0, skewX: 0, opacity: 1, duration: 0.4, ease: "back.out(1.7)" },
+        );
+        if (!reduced) {
+          tl.fromTo(wipeEl, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to(wipeEl, { scaleX: 0, duration: 0.3, ease: "none" });
+          tl.set(flashEl, { opacity: 0.8 }, 0.04);
+          tl.to(flashEl, { opacity: 0, duration: 0.12 }, 0.04);
+        }
+        /* Año/horas: rueda del valor anterior al propio, una vez por tarjeta
+           (ref guard para que StrictMode no lo dispare dos veces). */
+        if (
+          yearEl &&
+          typeof value === "number" &&
+          !rolledRef.current.has(node.id)
+        ) {
+          rolledRef.current.add(node.id);
+          const prevNode = EDU_MOBILE_NODES[i - 1];
+          const from =
+            i === 0
+              ? value
+              : prevNode!.hours != null
+                ? prevNode!.hours
+                : prevNode!.year;
+          tl.call(() => {
+            gsap.killTweensOf(yearObjRef.current);
+            gsap.fromTo(yearObjRef.current, { v: from }, {
+              v: value,
+              duration: 0.5,
+              ease: "power2.out",
+              onUpdate: () => {
+                yearEl.textContent = String(Math.round(yearObjRef.current.v));
+              },
+              onComplete: () => {
+                yearEl.textContent = String(value);
+              },
+            });
+          }, [], 0.3);
+        }
+        if (!reduced && stampEl) {
+          tl.fromTo(
+            stampEl,
+            { scale: 1.4 },
+            { scale: 1, duration: 0.25, ease: "back.out(1.7)" },
+            0.42,
+          );
+        }
+      });
+    }, scope);
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
+  return (
+    <div ref={rootRef} className="edu-m-page">
+      <div className="edu-m-title-block">
+        <p className="edu-m-label">RUTA DE FORMACIÓN</p>
+        <SectionTitle title="HABILIDADES" persona compact />
+      </div>
+      <div className="edu-m-progress" aria-label="Progreso">
+        <div className="edu-m-diamonds" aria-hidden="true">
+          {EDU_MOBILE_NODES.map((_, i) => (
+            <span
+              key={i}
+              className={`edu-m-diamond${i === activeIndex ? " is-active" : ""}`}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+        <span className="edu-m-counter" aria-label="Progreso">
+          {String(activeIndex + 1).padStart(2, "0")} /
+          {String(EDU_MOBILE_NODES.length).padStart(2, "0")}
+        </span>
+      </div>
+      <div className="edu-m-timeline">
+        <div className="edu-m-spine" aria-hidden="true" />
+        {EDU_MOBILE_NODES.map((node) => {
+          const isProximo = node.id === "siguiente";
+          const value = node.hours != null ? node.hours : node.year;
+          const showYear = value != null;
+          const typeText = isProximo ? "PRÓXIMO ▶" : node.type.toUpperCase();
+          return (
+            <div
+              key={node.id}
+              className={`edu-m-card${isProximo ? " edu-m-card--proximo" : ""}${
+                node.id === activeId ? " is-active" : ""
+              }`}
+              data-id={node.id}
+              ref={(el) => {
+                cardEls.current[node.id] = el;
+              }}
+            >
+              <div className="edu-m-wrap">
+                <div className="edu-m-wipe" />
+                <div className="edu-m-flash" />
+                <span className="edu-m-tag">{typeText}</span>
+                {!isProximo && (
+                  <>
+                    <h2 className="edu-m-card-title">{node.title}</h2>
+                    {showYear && (
+                      <div className="edu-m-year-row">
+                        <span className="edu-m-year">
+                          {typeof value === "number" ? value : ""}
+                        </span>
+                        {node.hours != null && <span className="edu-m-hours">HORAS</span>}
+                      </div>
+                    )}
+                    {showYear && <div className="edu-m-line" />}
+                    <div className="edu-m-meta">
+                      {node.period && (
+                        <div className="edu-m-block">
+                          <dt>PERIODO</dt>
+                          <dd>{node.period}</dd>
+                        </div>
+                      )}
+                      {node.center && (
+                        <div className="edu-m-block">
+                          <dt>CENTRO</dt>
+                          <dd>{node.center}</dd>
+                        </div>
+                      )}
+                    </div>
+                    {!isProximo && node.status === "completed" && (
+                      <span className="edu-m-stamp">COMPLETADO</span>
+                    )}
+                  </>
+                )}
+                {isProximo && <span className="edu-m-q">?</span>}
+              </div>
+              <div
+                className={`edu-m-marker${isProximo ? " edu-m-marker--proximo" : ""}${
+                  node.id === activeId ? " is-active" : ""
+                }`}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function Education() {
   const navigate = useNavigate();
   const transitionDonePromise = useTransitionDone();
@@ -1189,6 +1871,7 @@ export function Education() {
   const [selectedId, setSelectedId] = useState("bootcamp");
   const [writing, setWriting] = useState(false);
   const [animado, setAnimado] = useState(false);
+  const mobile768 = useMediaQuery("(max-width: 768px)");
 
   const containerRef = useRef<HTMLDivElement>(null);
   const colRef = useRef<HTMLDivElement>(null);      // .edu-col
@@ -1235,16 +1918,32 @@ export function Education() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* Cálculo de --edu-s con ResizeObserver (spec §1) */
+  /* --topbar-h se mide siempre (desktop y móvil) para que el padding del
+     encabezado nunca quede corto y la TopBar fija no tape el título. */
+  useEffect(() => {
+    let raf = 0;
+    const apply = () => {
+      const topbar = document.querySelector(".p5-topbar");
+      const topbarH = topbar ? topbar.getBoundingClientRect().height : 120;
+      document.documentElement.style.setProperty("--topbar-h", `${topbarH}px`);
+    };
+    apply();
+    raf = requestAnimationFrame(apply);
+    window.addEventListener("resize", apply);
+    document.fonts.ready.then(apply);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", apply);
+    };
+  }, []);
+
+  /* Cálculo de --edu-s con ResizeObserver (spec §1) — solo escritorio. */
   useEffect(() => {
     if (!isDesktop) return;
     let raf = 0;
     const apply = () => {
       const header = eduHeaderRef.current;
       const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
-      const topbar = document.querySelector(".p5-topbar");
-      const topbarH = topbar ? topbar.getBoundingClientRect().height : 120;
-      document.documentElement.style.setProperty("--topbar-h", `${topbarH}px`);
       const player =
         document.querySelector(".p5-bb-player-wrapper") ??
         document.querySelector(".p5-bottombar");
@@ -1317,182 +2016,117 @@ export function Education() {
 
         /* Estado inicial */
         Object.values(nodeRefs.current).forEach(({ drop, pop }) => {
-          setSafe(drop, { y: -160 });
-          setSafe(pop, { scale: 0, opacity: 0 });
+          setSafe(drop, { y: -160, skewX: -20, rotation: -15, opacity: 0 });
+          setSafe(pop, { scale: 0, rotation: 15, opacity: 0 });
         });
         Object.values(routeRefs.current).forEach(({ white, red }) => {
           setSafe(white, { strokeDasharray: "1", strokeDashoffset: 1, strokeLinecap: "butt" });
           setSafe(red, { strokeDasharray: "1", strokeDashoffset: 1, strokeLinecap: "butt" });
         });
-        document.querySelectorAll<HTMLElement>(".edu-year").forEach((el) => setSafe(el, { scale: 0, opacity: 0 }));
+        document.querySelectorAll<HTMLElement>(".edu-year").forEach((el) => setSafe(el, { scale: 0, opacity: 0, rotation: 12 }));
         document.querySelectorAll<SVGElement>(".edu-route-diamond").forEach((el) => setSafe(el, { scale: 0, opacity: 0 }));
 
         const tl = gsap.timeline();
 
-        /* ── Pegatina SKILL TREE UNLOCKED ── */
-        const sticker = document.createElement("div");
-        sticker.className = "edu-sticker";
-        sticker.innerHTML = `
-          <div class="edu-sticker-band">
-            <div class="edu-sticker-poly edu-sticker-poly--red"></div>
-            <div class="edu-sticker-poly edu-sticker-poly--black"></div>
-            <div class="edu-sticker-poly edu-sticker-poly--white"></div>
-            <span class="edu-sticker-text">SKILL TREE UNLOCKED</span>
-          </div>
-        `;
-        document.body.appendChild(sticker);
-        const band = sticker.querySelector(".edu-sticker-band") as HTMLElement;
-        const stickerText = sticker.querySelector(".edu-sticker-text") as HTMLElement;
-
-        const shakeSticker = () => {
-          if (!band) return;
-          gsap.killTweensOf(band);
-          gsap.fromTo(band, { x: -6 }, { x: 6, duration: 0.06, repeat: 9, yoyo: true, ease: "none" });
-        };
-        const flashSticker = () => {
-          if (!stickerText) return;
-          gsap.killTweensOf(stickerText);
-          gsap.fromTo(stickerText, { filter: "brightness(1)" }, { filter: "brightness(2)", duration: 0.08, yoyo: true, repeat: 1, ease: "none" });
-        };
-
-        tl.fromTo(sticker, { x: "-110%" }, { x: "0%", duration: 0.25, ease: "power4.out" })
-          .to({}, { duration: 0.55 })
-          .call(() => { shakeSticker(); flashSticker(); })
-          .to(sticker, { x: "110%", duration: 0.2, ease: "power3.in" })
-          .call(() => sticker.remove());
-
-        /* ── Escenario aparece t=0.9 ── */
+        /* ── Escenario aparece ── */
         tl.fromTo(
           ".edu-scenario",
           { clipPath: "polygon(100% 0,100% 0,100% 100%,100% 100%)" },
-          { clipPath: "polygon(0 0,100% 0,100% 100%,0 100%)", duration: 0.5, ease: "power3.out" },
-          0.9
+          { clipPath: "polygon(0 0,100% 0,100% 100%,0 100%)", duration: 0.4, ease: "power3.out" },
+          0
         )
-        .fromTo(".edu-tajo-a", { x: -400 }, { x: 0, duration: 0.5, ease: "power2.out" }, 0.9)
-        .fromTo(".edu-tajo-b", { x: 400 }, { x: 0, duration: 0.5, ease: "power2.out" }, 0.9);
+        .fromTo(".edu-tajo-a", { x: -400 }, { x: 0, duration: 0.4, ease: "power2.out" }, 0)
+        .fromTo(".edu-tajo-b", { x: 400 }, { x: 0, duration: 0.4, ease: "power2.out" }, 0);
 
-        const flashWhite = () => {
-          const board = boardRef.current;
-          if (!board) return;
-          gsap.killTweensOf(board);
-          gsap.fromTo(board, { filter: "brightness(1)" }, { filter: "brightness(1.35)", duration: 0.05, yoyo: true, repeat: 1, ease: "none" });
+        /* ── Nodos: entrada escalonada en orden de ruta ──
+            Teleco → Dam → Ari → Bootcamp → Siguiente.
+            Cada nodo desliza desde fuera de eje con skew, aterriza con
+            back.out (overshoot), destello rojo al llegar y las líneas se
+            dibujan entre nodos. Total < 1s. */
+        const PATH_ORDER = ["telecomunicaciones", "dam", "ari", "bootcamp", "siguiente"];
+        let t = 0;
+        const STAGGER = 0.13;
+
+        const flashRed = (el: HTMLElement | null) => {
+          if (!el) return;
+          gsap.killTweensOf(el);
+          gsap.fromTo(el, { filter: "brightness(1)" }, {
+            filter: "brightness(2.2)", duration: 0.06, yoyo: true, repeat: 1, ease: "none",
+          });
         };
 
-        const shakeBoard = () => {
-          if (!shakeWrapRef.current) return;
-          gsap.killTweensOf(shakeWrapRef.current);
-          gsap.fromTo(shakeWrapRef.current, { x: -7 }, { x: 0, duration: 0.35, ease: "power1.out" });
+        const flashWhite = (el: HTMLElement | null) => {
+          if (!el) return;
+          gsap.killTweensOf(el);
+          gsap.fromTo(el, { scale: 1 }, {
+            scale: 1.18, duration: 0.08, yoyo: true, repeat: 1, ease: "none",
+          });
         };
 
-        const shadowLand = (id: string) => {
-          const n = getNode(id);
-          if (!n || !n.drop) return;
-          const shadow = n.drop.querySelector<SVGElement>(".edu-shadow");
-          if (!shadow) return;
-          gsap.fromTo(shadow, { transform: "translate(0,0)" }, { transform: "translate(12px,12px)", duration: 0.3, ease: "back.out(2)" });
+        /* Sello del año: aparece tras su nodo con un pequeño shake (rotate) */
+        const stampYear = (id: string, at: number) => {
+          const yr = document.querySelector<HTMLElement>(`.edu-year[data-node='${id}']`);
+          if (!yr) return;
+          tl.fromTo(yr, { scale: 0, opacity: 0, rotation: 12 }, {
+            scale: 1, opacity: 1, rotation: 6,
+            duration: 0.22, ease: "back.out(1.6)",
+          }, at);
+          tl.to(yr, { rotation: -4, duration: 0.1, yoyo: true, repeat: 1, ease: "none" }, at + 0.18);
         };
 
-        const selloAnio = (id: string) => {
-          const n = getNode(id);
-          if (!n || !n.drop) return;
-          const year = n.drop.querySelector<HTMLElement>(".edu-year");
-          if (!year) return;
-          gsap.fromTo(year, { scale: 2.4, rotation: -14 }, { scale: 1, rotation: 6, duration: 0.3, ease: "back.out(2.2)" });
-        };
-
-        const animateLetters = (id: string) => {
-          const n = getNode(id);
-          if (!n || !n.drop) return;
-          const nombre = n.drop.querySelector<HTMLElement>(".edu-nombre");
-          if (!nombre) return;
-          const letters = Array.from(nombre.querySelectorAll("span"));
-          gsap.killTweensOf(letters);
-          gsap.fromTo(letters, { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out", stagger: 0.025 });
-        };
-
-        const drawRoutes = (fromId: string) => {
-          const edge = EDGES.find((e) => e.from === fromId);
-          if (!edge) return;
-          const key = `${edge.from}-${edge.to}`;
-          const r = getRoute(key);
-          const white = r.white;
-          if (!white) return;
-          const len = white.getTotalLength();
-          const midDiamond = document.querySelector(
-            `[data-edge][from="${edge.from}"][to="${edge.to}"] .edu-route-diamond`,
-          );
-          const spark = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          spark.setAttribute("width", "10");
-          spark.setAttribute("height", "10");
-          spark.setAttribute("fill", "#fff");
-          spark.style.transformBox = "fill-box";
-          spark.style.transformOrigin = "center";
-          white.parentNode?.appendChild(spark);
-          const label = `draw-${key}`;
-          const red = r.red;
-          tl.to(white, { strokeDashoffset: 0, duration: 0.38, ease: "power2.inOut" }, label);
-          if (red) tl.to(red, { strokeDashoffset: 0, duration: 0.38, ease: "power2.inOut" }, `${label} += 0.08`);
-          tl.call(() => {
-            let t = 0;
-            const anim = () => {
-              t += 0.02;
-              if (t > 1) { spark.remove(); return; }
-              const p = white.getPointAtLength(t * len);
-              gsap.set(spark, { x: p.x - 5, y: p.y - 5, rotate: 45 });
-              requestAnimationFrame(anim);
-            };
-            requestAnimationFrame(anim);
-          }, [], label);
-          tl.call(() => {
-            if (midDiamond) {
-              gsap.fromTo(midDiamond, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(3)" });
-            }
-            spark.remove();
-          }, [], `${label} += 0.38`);
-        };
-
-        const fallWithEffects = (id: string) => {
+        PATH_ORDER.forEach((id) => {
           const n = getNode(id);
           if (!n || !n.drop || !n.pop) return;
-          const rot = ROT_BY_NODE[id];
-          tl.to(n.drop, { y: 0, duration: 0.38, ease: "power4.in" })
-            .to(n.pop, { scale: 1.3, rotation: rot > 0 ? 7 : -7, duration: 0.12, ease: "power2.out" }, "-=0.15")
-            .to(n.pop, { scale: 1, rotation: 0, duration: 0.6, ease: "elastic.out(1, 0.45)" })
-            .call(() => flashWhite())
-            .call(() => shakeBoard())
-            .call(() => shadowLand(id))
-            .call(() => selloAnio(id))
-            .call(() => animateLetters(id))
-            .to({}, { duration: 0.2 })
-            .call(() => drawRoutes(id));
-        };
 
-        /* Secuencia de nodos */
-        fallWithEffects("telecomunicaciones");
-        tl.to({}, { duration: 0.55 });
-        fallWithEffects("dam");
-        fallWithEffects("ari");
-        tl.to({}, { duration: 0.55 });
-        fallWithEffects("bootcamp");
-        tl.to({}, { duration: 0.55 });
-        fallWithEffects("siguiente");
-        tl.call(() => {
-          const siguiente = document.querySelector("[data-id='siguiente']") as HTMLElement | null;
-          if (siguiente) {
-            gsap.to(siguiente, { opacity: 0, duration: 0.05, repeat: 3, yoyo: true, ease: "none" });
+          const start = t;
+          t += STAGGER;
+
+          /* Slash in from off-axis with skew → snap to place with overshoot */
+          tl.to(n.drop, {
+            x: 0, y: 0, skewX: 0, rotation: 0, opacity: 1,
+            duration: 0.32, ease: "back.out(1.7)",
+          }, start);
+          tl.to(n.pop, {
+            scale: 1, rotation: 0,
+            duration: 0.24, ease: "back.out(1.7)",
+          }, start - 0.06);
+
+          /* Red wipe + white flash on arrival */
+          tl.call(() => flashRed(n.drop), [], start + 0.32);
+          tl.call(() => flashWhite(n.pop), [], start + 0.28);
+
+          /* Año: sello tras el nodo */
+          stampYear(id, start + 0.36);
+
+          /* Rombo de la ruta: pulso hacia el nodo destino */
+          const edge = EDGES.find((e) => e.from === id);
+          if (edge) {
+            const key = `${edge.from}-${edge.to}`;
+            const r = getRoute(key);
+            [r.white, r.red].filter(Boolean).forEach((el, j) => {
+              if (el) tl.to(el, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, start + 0.32 + j * 0.03);
+            });
+            const dia = document.querySelector<SVGElement>(`.edu-route-diamond[data-edge='${key}']`);
+            if (dia) tl.fromTo(dia, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "back.out(1.4)" }, start + 0.42);
           }
         });
 
         /* Estado final estático */
         tl.call(() => {
           Object.values(nodeRefs.current).forEach(({ drop, pop }) => {
-            setSafe(drop, { y: 0 });
+            setSafe(drop, { x: 0, y: 0, skewX: 0, rotation: 0, opacity: 1 });
             setSafe(pop, { scale: 1, rotation: 0, opacity: 1 });
           });
+          Object.values(routeRefs.current).forEach(({ white, red }) => {
+            setSafe(white, { strokeDashoffset: 0, strokeDasharray: "none" });
+            setSafe(red, { strokeDashoffset: 0, strokeDasharray: "none" });
+          });
+          document.querySelectorAll<HTMLElement>(".edu-year").forEach((el) => setSafe(el, { scale: 1, opacity: 1, rotation: 6 }));
+          document.querySelectorAll<SVGElement>(".edu-route-diamond").forEach((el) => setSafe(el, { scale: 1, opacity: 1 }));
         });
 
         /* Final: seleccionar BOOTCAMP IA y entrar panel */
-        tl.to({}, { duration: 0.6 }).call(() => {
+        tl.call(() => {
           setSelectedId("bootcamp");
           setAnimado(true);
           entrarPanel();
@@ -1564,6 +2198,17 @@ export function Education() {
           duration: 0.25,
         });
       });
+      /* Rombo de la ruta: late más cuando la ruta está activa */
+      const dia = document.querySelector<SVGElement>(`.edu-route-diamond[data-edge='${edgeEl.getAttribute("data-edge") ?? ""}']`);
+      if (dia) {
+        gsap.killTweensOf(dia);
+        gsap.to(dia, {
+          scale: activa ? 1.5 : 1,
+          fill: activa ? "#fff" : "#e8112d",
+          duration: 0.25,
+          ease: "back.out(1.4)",
+        });
+      }
     });
     Object.keys(nodeRefs.current).forEach((nid) => {
       const el = document.querySelector(`[data-id='${nid}']`);
@@ -1704,7 +2349,24 @@ export function Education() {
       glitchTimer = window.setTimeout(doGlitch, 5000);
     }
 
-    /* Parallax solo palabra fantasma, no táctil */
+    /* Drift lento de los slashes y la marca de fondo (sólo transform) */
+    const driftEls = document.querySelectorAll<SVGElement>("[data-parallax]");
+    const driftTweens: gsap.core.Tween[] = [];
+    driftEls.forEach((el, i) => {
+      driftTweens.push(
+        gsap.to(el, {
+          x: Math.sin(i) * 12,
+          y: Math.cos(i) * 8,
+          duration: 6 + i * 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 1.5,
+        })
+      );
+    });
+
+    /* Parallax de la palabra fantasma al mover el ratón, no táctil */
     let parallaxRAF = 0;
     if (!("ontouchstart" in window)) {
       const ghost = document.querySelector(".edu-scenario text") as SVGElement | null;
@@ -1722,6 +2384,7 @@ export function Education() {
         window.addEventListener("mousemove", handleMove);
         return () => {
           window.removeEventListener("mousemove", handleMove);
+          driftTweens.forEach((t) => t.kill());
           cancelAnimationFrame(parallaxRAF);
         };
       }
@@ -1730,12 +2393,13 @@ export function Education() {
     return () => {
       rombos.forEach((r) => r.remove());
       gsap.killTweensOf(".edu-shadow");
+      driftTweens.forEach((t) => t.kill());
       if (glitchTimer) window.clearTimeout(glitchTimer);
       cancelAnimationFrame(parallaxRAF);
     };
   }, [animado]);
 
-  const paddingBottom = isDesktop ? 0 : undefined;
+  const paddingBottom = isDesktop ? 0 : mobile768 ? "0px" : undefined;
 
   return (
     <Screen className="edu-page">
@@ -1746,7 +2410,7 @@ export function Education() {
         ref={containerRef}
       >
         <div className="edu-col" ref={colRef}>
-          <header className="edu-header" ref={eduHeaderRef}>
+          <header className="edu-header" ref={eduHeaderRef} style={{ paddingLeft: `calc(var(--p5-margin) + 70px)` }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 32, flexWrap: "nowrap" }}>
               <div style={{ flexShrink: 0 }}>
                 <SectionTitle label="Ruta de formación" title="HABILIDADES" persona compact />
@@ -1782,10 +2446,12 @@ export function Education() {
                       />
                     );
                   })}
-                  <EduDetailPanel node={active} writing={writing} />
+                  <EduDetailPanel node={active} />
                 </div>
               </div>
             </div>
+          ) : mobile768 ? (
+            <EducationMobile />
           ) : (
             <div className="edu-mobile">
               <Scenario registerRouteRefs={registerRouteRefs} />
@@ -1804,7 +2470,7 @@ export function Education() {
                   />
                 );
               })}
-              <EduDetailPanel node={active} writing={writing} />
+              <EduDetailPanel node={active} />
             </div>
           )}
         </div>

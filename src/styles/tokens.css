@@ -3970,13 +3970,19 @@ html {
     gap: 6px;
   }
   .p5-plate--social {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     padding: 0;
     gap: 0;
   }
   .p5-bottombar .p5-plate--social {
     transform: none;
+  }
+  .p5-ctrl-btn {
+    width: 44px;
+    height: 44px;
   }
   .p5-plate--social > span,
   .p5-plate--social .p5-social__btnimg {
@@ -4067,8 +4073,8 @@ html {
     font-size: 18px;
   }
   .p5-plate--social {
-    width: 36px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -4591,10 +4597,10 @@ html {
     --p5-disc-d: 60px;
   }
   .p5-bottombar .p5-plate--social {
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
-    min-height: 42px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
   }
   .p5-bb-inner {
     gap: 5px;
