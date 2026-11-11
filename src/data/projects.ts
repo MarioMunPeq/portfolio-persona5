@@ -104,33 +104,33 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/images/projects/dungeon-archive/home.png",
+        src: "/images/projects/dungeon-archive/home.webp",
         alt: "Dungeon Archive home screen",
       },
     ],
     screenshots: [
       {
-        src: "/images/projects/dungeon-archive/home.png",
+        src: "/images/projects/dungeon-archive/home.webp",
         alt: "Dungeon Archive home screen",
         caption: "Home",
       },
       {
-        src: "/images/projects/dungeon-archive/character.png",
+        src: "/images/projects/dungeon-archive/character.webp",
         alt: "Character manager",
         caption: "Character",
       },
       {
-        src: "/images/projects/dungeon-archive/combat.png",
+        src: "/images/projects/dungeon-archive/combat.webp",
         alt: "Combat tracker",
         caption: "Combat",
       },
       {
-        src: "/images/projects/dungeon-archive/dice.png",
+        src: "/images/projects/dungeon-archive/dice.webp",
         alt: "Dice roller",
         caption: "Dice roller",
       },
       {
-        src: "/images/projects/dungeon-archive/backup.png",
+        src: "/images/projects/dungeon-archive/backup.webp",
         alt: "Cloud Backup screen",
         caption: "Backup",
       },
@@ -314,18 +314,18 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/images/projects/euromario/main.png",
+        src: "/images/projects/euromario/main.webp",
         alt: "Vista principal del radar de noticias de Euromario",
       },
     ],
     screenshots: [
       {
-        src: "/images/projects/euromario/main.png",
+        src: "/images/projects/euromario/main.webp",
         alt: "Captura de la vista principal del radar de noticias de Euromario",
         caption: "Logo",
       },
       {
-        src: "/images/projects/euromario/banner.png",
+        src: "/images/projects/euromario/banner.webp",
         alt: "Banner de Euromario",
         caption: "Visualizacion principal",
       },
@@ -918,7 +918,7 @@ export const projects: Project[] = [
         caption: "Datos manuales",
       },
       {
-        src: "/images/projects/proyecto-gambia/servidor.png",
+        src: "/images/projects/proyecto-gambia/servidor.webp",
         alt: "Opciones del servidor, sincronizacion y libro de vida",
         caption: "Servidor",
       },
@@ -1093,28 +1093,28 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/images/projects/repository-library/1.png",
+        src: "/images/projects/repository-library/1.webp",
         alt: "Pantalla de inicio de Repository Library con la biblioteca de portfolios",
       },
     ],
     screenshots: [
       {
-        src: "/images/projects/repository-library/Inicio.png",
+        src: "/images/projects/repository-library/Inicio.webp",
         alt: "Biblioteca de portfolios en Repository Library",
         caption: "Biblioteca",
       },
       {
-        src: "/images/projects/repository-library/Tienda.png",
+        src: "/images/projects/repository-library/Tienda.webp",
         alt: "Pagina de tienda de un proyecto en Repository Library",
         caption: "Tienda",
       },
       {
-        src: "/images/projects/repository-library/Detalles%20Juego.png",
+        src: "/images/projects/repository-library/Detalles%20Juego.webp",
         alt: "Vista de detalles de un juego en Repository Library",
         caption: "Detalles del juego",
       },
       {
-        src: "/images/projects/repository-library/Perfil.png",
+        src: "/images/projects/repository-library/Perfil.webp",
         alt: "Perfil de usuario en Repository Library",
         caption: "Perfil",
       },
@@ -1255,28 +1255,28 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/images/projects/vault-archive/1.png",
+        src: "/images/projects/vault-archive/1.webp",
         alt: "Vault Archive con el Pip-Boy 3000 y la barra de modulos",
       },
     ],
     screenshots: [
       {
-        src: "/images/projects/vault-archive/data.png",
+        src: "/images/projects/vault-archive/data.webp",
         alt: "Modulo DATA con los registros personales del operador",
         caption: "Modulo DATA",
       },
       {
-        src: "/images/projects/vault-archive/mapa.png",
+        src: "/images/projects/vault-archive/mapa.webp",
         alt: "Mapa interactivo de Valladolid en el modulo MAP",
         caption: "Modulo MAP",
       },
       {
-        src: "/images/projects/vault-archive/misiones.png",
+        src: "/images/projects/vault-archive/misiones.webp",
         alt: "Diario de misiones del Pip-Boy",
         caption: "Modulo MISIONES",
       },
       {
-        src: "/images/projects/vault-archive/radio.png",
+        src: "/images/projects/vault-archive/radio.webp",
         alt: "Radio del Pip-Boy con sintonizador y espectro de audio",
         caption: "Modulo RADIO",
       },
