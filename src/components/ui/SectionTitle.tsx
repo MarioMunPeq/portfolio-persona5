@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { DiamondMarker } from "../shared/DiamondMarker";
+import { DiamondMarker } from "../primitives/DiamondMarker";
 
 interface SectionTitleProps {
   title: ReactNode;

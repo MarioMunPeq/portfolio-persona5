@@ -14,7 +14,7 @@ import { gsap } from "gsap";
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-const DISC_IMG = "/images/ui/music_disc.webp";
+const DISC_IMG = `${import.meta.env.BASE_URL}images/ui/music_disc.webp`;
 
 function formatTime(s: number): string {
   if (!isFinite(s) || s < 0 || s !== s) return "0:00";

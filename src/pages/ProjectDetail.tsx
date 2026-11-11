@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { Reveal } from "../components/primitives/Reveal";
 import { Screen } from "../components/transition/Screen";
 import { IMAGE_DIMS } from "../data/image-dims";
-import { DiamondMarker } from "../components/shared/DiamondMarker";
+import { DiamondMarker } from "../components/primitives/DiamondMarker";
 import { PreviewBox } from "../components/ui/PreviewBox";
 import { Lightbox } from "../components/ui/Lightbox";
 import { projects } from "../data/projects";

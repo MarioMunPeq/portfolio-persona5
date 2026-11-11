@@ -1,6 +1,6 @@
 import { Reveal } from "../components/primitives/Reveal";
 import { Screen } from "../components/transition/Screen";
-import { DiamondMarker } from "../components/shared/DiamondMarker";
+import { DiamondMarker } from "../components/primitives/DiamondMarker";
 import { SectionTitle } from "../components/ui/SectionTitle";
 import { Tag } from "../components/ui/Tag";
 import { StatTag } from "../components/ui/StatTag";

@@ -10,11 +10,11 @@ import { animateFade } from "../transition/FadeTransition";
 export type HeroIcon = "triangle" | "square" | "circle" | "cross" | "asterisk";
 
 const ICON_IMAGES: Record<HeroIcon, string> = {
-  triangle: "/images/ui/Button_Triangle.png",
-  square: "/images/ui/Button_Square.png",
-  circle: "/images/ui/Button_Circle.png",
-  cross: "/images/ui/Button_X.png",
-  asterisk: "/images/ui/Button_X.png",
+  triangle: `${import.meta.env.BASE_URL}images/ui/Button_Triangle.png`,
+  square: `${import.meta.env.BASE_URL}images/ui/Button_Square.png`,
+  circle: `${import.meta.env.BASE_URL}images/ui/Button_Circle.png`,
+  cross: `${import.meta.env.BASE_URL}images/ui/Button_X.png`,
+  asterisk: `${import.meta.env.BASE_URL}images/ui/Button_X.png`,
 };
 
 interface CommandNavItemProps {

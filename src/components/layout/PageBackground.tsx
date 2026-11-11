@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const poster = "/images/background/background_redstars.webp";
-const videoSource = "/images/background/background_blackstars.webm";
+const poster = `${import.meta.env.BASE_URL}images/background/background_redstars.webp`;
+const videoSource = `${import.meta.env.BASE_URL}images/background/background_blackstars.webm`;
 const mp4FallbackSource =
-  "/images/background/background_blackstars_fallback.mp4";
+  `${import.meta.env.BASE_URL}images/background/background_blackstars_fallback.mp4`;
 const MOBILE_QUERY = "(max-width: 767px), (hover: none) and (pointer: coarse)";
 
 interface PageBackgroundProps {

@@ -115,5 +115,5 @@ export function getDayNight(): "day" | "night" {
  * Ruta publica completa para un asset del calendario.
  */
 export function calendarAsset(name: string): string {
-  return `${import.meta.env.BASE_URL}images/Calendar/${name}`;
+  return `${import.meta.env.BASE_URL}images/calendar/${name}`;
 }

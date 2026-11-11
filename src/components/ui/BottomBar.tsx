@@ -331,7 +331,7 @@ export function BottomBar() {
               icon={faGithub}
               label={profile.links.github.label}
               url={profile.links.github.url}
-              btnImg="/images/ui/Button_L3.png"
+              btnImg={`${import.meta.env.BASE_URL}images/ui/Button_L3.png`}
               delay="160ms"
               rot={-1.5}
             />
@@ -341,7 +341,7 @@ export function BottomBar() {
               icon={faLinkedin}
               label={profile.links.linkedin.label}
               url={profile.links.linkedin.url}
-              btnImg="/images/ui/Button_R3.png"
+              btnImg={`${import.meta.env.BASE_URL}images/ui/Button_R3.png`}
               delay="240ms"
               rot={1}
             />

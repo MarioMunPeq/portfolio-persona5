@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
-import { DiamondMarker } from "../shared/DiamondMarker";
+import { DiamondMarker } from "../primitives/DiamondMarker";
 import { NodeIcon } from "./NodeIcon";
 import { SKILL_TREE } from "../../data/skill-tree";
 import type { SkillNode } from "../../data/skill-tree";

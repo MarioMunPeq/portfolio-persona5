@@ -143,7 +143,7 @@ export const profile: Profile = {
     ],
     license: "Permiso de conducir B",
     avatar: {
-      src: "/images/retrato.webp",
+      src: `${import.meta.env.BASE_URL}images/profile/retrato.webp`,
       alt: "Retrato de Mario Muñoz Pequeño",
     },
   },
