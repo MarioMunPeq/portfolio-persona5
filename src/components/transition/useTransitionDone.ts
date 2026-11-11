@@ -1,11 +1,11 @@
 import { useRef } from "react";
 
 /**
- * Devuelve una promesa que se resuelve cuando la transición de página ha
+ * Devuelve una promesa que se resuelve cuando la transicion de pagina ha
  * terminado.
  *
- * - Si `data-transition="done"` ya está en <html> (carga directa o
- *   transición ya resuelta), resuelve al instante.
+ * - Si `data-transition="done"` ya esta en <html> (carga directa o
+ *   transicion ya resuelta), resuelve al instante.
  * - Si no, espera el evento `page-transition-done`.
  * - Seguridad: se resuelve solo a los 5s aunque nunca llegue el evento.
  */

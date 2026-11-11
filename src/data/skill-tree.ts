@@ -136,7 +136,7 @@ export interface EduNode {
   center: string;
   /** Horas lectivas (null si no aplica). */
   hours: number | null;
-  /** Año de egreso / finalización (para mostrar en el nodo). */
+  /** Año de egreso / finalizacion (para mostrar en el nodo). */
   year?: number;
   /** Clave del icono (Font Awesome solido). */
   icon: SkillIconKind;
@@ -166,8 +166,8 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     },
     {
       id: "ari",
-      title: "Automatización y robótica industrial",
-      shortTitle: "ROBÓTICA",
+      title: "Automatizacion y robotica industrial",
+      shortTitle: "ROBOTICA",
       type: "Grado Superior",
       status: "completed",
       period: "Septiembre 2020 — Junio 2022",
@@ -309,8 +309,8 @@ export function nearestNeighbor(
 }
 
 /**
- * Coordenadas del arbol "ruta de infiltración": x e y en porcentaje (0-100)
- * del centro de cada nodo dentro de la caja del árbol.
+ * Coordenadas del arbol "ruta de infiltracion": x e y en porcentaje (0-100)
+ * del centro de cada nodo dentro de la caja del arbol.
  * Se posicionan con left: x %; top: y %; transform: translate(-50%,-50%).
  * La ruta sube en diagonal de abajo-izquierda (TELECO) a arriba-derecha (?).
  */

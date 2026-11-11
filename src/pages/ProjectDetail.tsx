@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { Reveal } from "../components/primitives/Reveal";
 import { Screen } from "../components/transition/Screen";
+import { IMAGE_DIMS } from "../data/image-dims";
 import { DiamondMarker } from "../components/shared/DiamondMarker";
 import { PreviewBox } from "../components/ui/PreviewBox";
 import { Lightbox } from "../components/ui/Lightbox";
@@ -258,6 +259,7 @@ function GalleryImage({
   index: number;
   onOpen: () => void;
 }) {
+  const dims = screenshot.src ? IMAGE_DIMS[screenshot.src] : undefined;
   const offsets = [
     "md:ml-[4%]",
     "md:ml-[8%]",
@@ -289,6 +291,10 @@ function GalleryImage({
           src={screenshot.src}
           alt={screenshot.alt}
           caption={screenshot.caption}
+          width={dims?.width}
+          height={dims?.height}
+          loading="lazy"
+          decoding="async"
           className="relative"
         >
           <span

@@ -46,7 +46,7 @@
     no-repeat;
 }
 
-/* Móvil: solo imagen estática, el vídeo nunca se monta en esta vista. */
+/* Movil: solo imagen estatica, el video nunca se monta en esta vista. */
 .page-background__mobile-img {
   position: fixed;
   inset: 0;

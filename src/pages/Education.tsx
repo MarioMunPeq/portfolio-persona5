@@ -48,7 +48,7 @@ const ICON_VIEWS: Record<string, string> = {
 };
 
 /* ══════════════════════════════════════════════════════════════════════
-   Layout desktop (píxeles lógicos del escenario, espec §2.b)
+   Layout desktop (pixeles logicos del escenario, espec §2.b)
    ══════════════════════════════════════════════════════════════════════ */
 export const LAYOUT_DESKTOP: Record<string, { x: number; y: number }> = {
   telecomunicaciones: { x: 210, y: 390 },
@@ -121,7 +121,7 @@ const ROT_PATTERN = [-4, 3, -2, 4];
 const TY_PATTERN = [3, -3, 3, -3];
 
 /* ══════════════════════════════════════════════════════════════════════
-   Estilos de la página (todo el CSS vive aquí; no hay CSS muerto)
+   Estilos de la pagina (todo el CSS vive aqui; no hay CSS muerto)
    ══════════════════════════════════════════════════════════════════════ */
 const STYLES = `
 /* Reset necesario del main de Layout para education (sin scroll desktop) */
@@ -154,12 +154,12 @@ const STYLES = `
   position: relative;
   z-index: 2;
   /* padding-top empuja el contenido por debajo de la topbar fija;
-     ResizeObserver mide --topbar-h para que el título quede 100% visible.
-     Margen extra de 24px para que el botón menu no roce el título. */
+     ResizeObserver mide --topbar-h para que el titulo quede 100% visible.
+     Margen extra de 24px para que el boton menu no roce el titulo. */
   padding-top: calc(var(--topbar-h, 120px) + 24px);
 }
 
-/* Título HABILIDADES: p5hatty, clamp(44px, 4.4vw, 84px), 100% visible bajo la topbar */
+/* Titulo HABILIDADES: p5hatty, clamp(44px, 4.4vw, 84px), 100% visible bajo la topbar */
 .edu-header .section-title__h1 {
   font-family: var(--font-hatty) !important;
   font-size: clamp(44px, 4.4vw, 84px) !important;
@@ -170,20 +170,20 @@ const STYLES = `
   text-transform: uppercase !important;
 }
 
-/* Etiqueta RUTA DE FORMACIÓN */
+/* Etiqueta RUTA DE FORMACION */
 .edu-header header > p {
   margin: 0 !important;
   padding: 0 !important;
 }
 
-/* Ocultar subrayado rojo y rombo dorado del SectionTitle (no rectángulos decorativos) */
+/* Ocultar subrayado rojo y rombo dorado del SectionTitle (no rectangulos decorativos) */
 .edu-header span[class*="bg-accent"],
 .edu-header span[class*="bg-gold"],
 .edu-header .section-title__deco {
   display: none !important;
 }
 
-/* Fila ◆◆◆◆◇ + 04 / 05 alineada al borde izquierdo del título */
+/* Fila ◆◆◆◆◇ + 04 / 05 alineada al borde izquierdo del titulo */
 .edu-progress {
   display: flex;
   align-items: flex-start;
@@ -209,7 +209,7 @@ const STYLES = `
   color: #e8112d;
 }
 
-/* ═══ Tablero: escala y posición absoluta en píxeles lógicos ═══ */
+/* ═══ Tablero: escala y posicion absoluta en pixeles logicos ═══ */
 .edu-sizer {
   width: calc(1760px * var(--edu-s));
   height: calc(720px * var(--edu-s));
@@ -266,7 +266,7 @@ const STYLES = `
   outline-offset: 4px;
 }
 
-/* drop anima SOLO y (caída); pop anima SOLO scale y rotation (aterrizaje) */
+/* drop anima SOLO y (caida); pop anima SOLO scale y rotation (aterrizaje) */
 .edu-drop {
   position: relative;
 }
@@ -354,7 +354,7 @@ const STYLES = `
   fill: #fff;
 }
 
-/* Triángulo ◀ seleccionado (CSS) */
+/* Triangulo ◀ seleccionado (CSS) */
 .edu-tri {
   position: absolute;
   left: 300px;
@@ -382,7 +382,7 @@ const STYLES = `
   transform-box: fill-box;
 }
 
-/* Etiquetas guía INICIO / PRÓXIMO */
+/* Etiquetas guia INICIO / PROXIMO */
 .edu-guide {
   position: absolute;
   transform-origin: center;
@@ -445,8 +445,8 @@ const STYLES = `
   stroke-width: 5;
 }
 .edu-panel-wrap {
-  /* Panel alineado con el escenario (misma top/bottom); rotación omitida para
-     cumplir la verificación de que nada excede el rect del tablero. */
+  /* Panel alineado con el escenario (misma top/bottom); rotacion omitida para
+     cumplir la verificacion de que nada excede el rect del tablero. */
   transform-origin: center;
 }
 
@@ -484,7 +484,7 @@ const STYLES = `
   flex-shrink: 0;
 }
 
-/* Título */
+/* Titulo */
 .edu-panel-title {
   font-family: var(--font-hatty);
   font-size: 46px;
@@ -524,7 +524,7 @@ const STYLES = `
   line-height: 1;
 }
 
-/* Línea diagonal roja */
+/* Linea diagonal roja */
 .edu-panel-line {
   width: 200px;
   height: 5px;
@@ -651,7 +651,7 @@ const STYLES = `
   stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
 }
-/* El relleno del rombo se pinta en línea por ruta (rojo/blanco/gris); aquí solo trazo y geometría. */
+/* El relleno del rombo se pinta en linea por ruta (rojo/blanco/gris); aqui solo trazo y geometria. */
 .edu-route-diamond {
   stroke: #111;
   stroke-width: 3;
@@ -660,7 +660,7 @@ const STYLES = `
   transform-box: fill-box;
 }
 
-/* Móvil */
+/* Movil */
 @media (max-width: 1023px), (max-height: 559px) {
   .edu-page {
     padding-bottom: calc(var(--bottombar-h, 0) + 24px);
@@ -674,16 +674,16 @@ const STYLES = `
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
-   Educación móvil (máx. 768px): cronología vertical, cabecera y barra
-   propias. Sólo se aplica aquí; el escritorio no se toca.
+   Educacion movil (max. 768px): cronologia vertical, cabecera y barra
+   propias. Solo se aplica aqui; el escritorio no se toca.
    ═════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Seguridad de scroll: sólo vertical, sin desbordamiento horizontal.
+  /* Seguridad de scroll: solo vertical, sin desbordamiento horizontal.
      Root cause del corte a la derecha: las tarjetas usaban margin-left +
      width: 100% + margin-right dentro de un contenedor con padding
-     horizontal, lo que excedía el ancho del viewport. Se corrige aquí con
+     horizontal, lo que excedia el ancho del viewport. Se corrige aqui con
      margin-left: 40px y width: calc(100% - 40px), y se refuerza con
-     overflow-x: clip + max-width: 100vw en raíz, body y envoltura. */
+     overflow-x: clip + max-width: 100vw en raiz, body y envoltura. */
   html,
   body,
   #root,
@@ -701,7 +701,7 @@ const STYLES = `
     max-width: 100vw;
   }
   /* La cabecera fija (TopBar) y la barra inferior (BottomBar) las provee
-     Layout; se deja espacio en el main y al final de la cronología. */
+     Layout; se deja espacio en el main y al final de la cronologia. */
   #main.education-main {
     min-height: auto !important;
     height: auto !important;
@@ -711,17 +711,17 @@ const STYLES = `
     overflow: visible;
   }
 
-  /* Ocultar la cabecera de escritorio (no se usa en móvil). */
+  /* Ocultar la cabecera de escritorio (no se usa en movil). */
   .edu-header {
     display: none !important;
   }
 
-  /* Fondo: estrellas (PageBackground) y overlay sólido. */
+  /* Fondo: estrellas (PageBackground) y overlay solido. */
   .page-background__overlay {
     background: rgba(13, 13, 13, 0.72) !important;
   }
 
-  /* Cronología vertical. El padding inferior reserva el espacio del
+  /* Cronologia vertical. El padding inferior reserva el espacio del
      reproductor de la barra inferior (player height + 24px). */
   .edu-m-timeline {
     position: relative;
@@ -741,8 +741,8 @@ const STYLES = `
   }
 
   /* Tarjetas: margin-left 40px + width calc(100% - 40px) impide el
-     desbordamiento a la derecha (ver cálculo de seguridad arriba). La
-     altura sigue al contenido (no hay alturas fijas ni huecos vacíos). */
+     desbordamiento a la derecha (ver calculo de seguridad arriba). La
+     altura sigue al contenido (no hay alturas fijas ni huecos vacios). */
   .edu-m-card {
     position: relative;
     margin-left: 40px;
@@ -778,7 +778,7 @@ const STYLES = `
     transform: skewY(-2deg) translate(6px, 6px);
     transition: transform 0.2s;
     /* La sombra desplazada queda dentro de la caja de la tarjeta, que no
-       excede el viewport (ver cálculo de ancho arriba). */
+       excede el viewport (ver calculo de ancho arriba). */
   }
   .edu-m-card.is-active::after {
     transform: skewY(-2deg) translate(8px, 8px);
@@ -799,7 +799,7 @@ const STYLES = `
     flex-direction: column;
   }
 
-  /* Icono de categoría (esquina superior derecha de la tarjeta). */
+  /* Icono de categoria (esquina superior derecha de la tarjeta). */
   .edu-m-icon {
     position: absolute;
     top: 8px;
@@ -819,7 +819,7 @@ const STYLES = `
     fill: #F2F2F2;
   }
 
-  /* Sobres de llegada (sólo transform/opacity). */
+  /* Sobres de llegada (solo transform/opacity). */
   .edu-m-wipe {
     position: absolute;
     inset: 0;
@@ -892,7 +892,7 @@ const STYLES = `
     color: #FF1A3C;
   }
 
-  /* Línea separadora horizontal (2px x 64px, huecos de 12px). */
+  /* Linea separadora horizontal (2px x 64px, huecos de 12px). */
   .edu-m-line {
     width: 64px;
     height: 2px;
@@ -982,7 +982,7 @@ const STYLES = `
     border: 2px dashed #F2F2F2;
   }
 
-  /* Fila de progreso bajo el título: diamantes + contador, sin barra ni fondo. */
+  /* Fila de progreso bajo el titulo: diamantes + contador, sin barra ni fondo. */
   .edu-m-progress {
     display: flex;
     align-items: center;
@@ -1015,7 +1015,7 @@ const STYLES = `
     color: #FF1A3C;
   }
 
-  /* Cabecera de sección (label + título + subrayado + rombo). */
+  /* Cabecera de seccion (label + titulo + subrayado + rombo). */
   .edu-m-title-block {
     padding-left: 16px;
   }
@@ -1115,8 +1115,8 @@ function PlateNode({
 
   /* Hover snappy: escala el nodo con overshoot (back.out) al entrar y vuelve al salir.
      Solo transform/opacity (60 fps). Se mata el tween previo antes de lanzar uno nuevo
-     y al desmontar, así no se acumulan animaciones ni se desplaza el nodo bajo el cursor.
-     Bajo prefers-reduced-motion no hay movimiento: el nodo queda estático. */
+     y al desmontar, asi no se acumulan animaciones ni se desplaza el nodo bajo el cursor.
+     Bajo prefers-reduced-motion no hay movimiento: el nodo queda estatico. */
   useEffect(() => {
     return () => {
       if (popRef.current) gsap.killTweensOf(popRef.current);
@@ -1197,7 +1197,7 @@ function PlateNode({
   ) : null;
 
   const ariaLabel = locked
-    ? `Bloqueado: ${node.title}. Próxima etapa.`
+    ? `Bloqueado: ${node.title}. Proxima etapa.`
     : `${node.title}. ${node.type}. ${node.period} en ${node.center}.`;
 
   return (
@@ -1332,7 +1332,7 @@ function PlateNode({
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Escenario (SVG 1:1) + etiquetas guía + rutas
+   Escenario (SVG 1:1) + etiquetas guia + rutas
    ══════════════════════════════════════════════════════════════════════ */
 interface ScenarioProps {
   registerRouteRefs: (key: string, field: "white" | "red", el: SVGPathElement | null) => void;
@@ -1394,7 +1394,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
       />
 
       <g clipPath="url(#edu-cp)">
-        {/* Slashes rojos diagonales, bordes afilados (estilo cómic P5) */}
+        {/* Slashes rojos diagonales, bordes afilados (estilo comic P5) */}
         <polygon
           className="edu-tajo edu-tajo-a"
           data-parallax
@@ -1410,7 +1410,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
           opacity={0.75}
         />
         <polygon points="380,720 600,0 626,0 406,720" fill="#e8112d" opacity={0.18} />
-        {/* Textura halftone / puntos de cómic más marcada */}
+        {/* Textura halftone / puntos de comic mas marcada */}
         <rect
           width="1060"
           height="720"
@@ -1418,7 +1418,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
           opacity={0.14}
           mask="url(#edu-halftone-mask-el)"
         />
-        {/* Marca de agua FORMACIÓN integrada: mayor, más oscura, sesgada */}
+        {/* Marca de agua FORMACION integrada: mayor, mas oscura, sesgada */}
         <text
           className="edu-watermark"
           data-parallax
@@ -1435,7 +1435,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
           transform="rotate(-6 530 400)"
           pointerEvents="none"
         >
-          FORMACIÓN
+          FORMACION
         </text>
         {chevronXs.map((x) => (
           <text
@@ -1453,7 +1453,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
         ))}
       </g>
 
-      {/* Rutas (después del fondo, no recortadas) */}
+      {/* Rutas (despues del fondo, no recortadas) */}
       {EDGES.map((edge) => {
         const from = LAYOUT_DESKTOP[edge.from];
         const to = LAYOUT_DESKTOP[edge.to];
@@ -1461,10 +1461,10 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
         const key = `${edge.from}-${edge.to}`;
         const midX = (from.x + to.x) / 2;
         const midY = (from.y + to.y) / 2;
-        /* Ángulo real de la línea para que el rombo quede alineado con el trazo */
+        /* Ángulo real de la linea para que el rombo quede alineado con el trazo */
         const lineAngle = (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
         const d = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
-        /* Rombo pequeño, sesgado, rojo/blanco — marcador angular sobre la línea */
+        /* Rombo pequeño, sesgado, rojo/blanco — marcador angular sobre la linea */
         const diamond = (
           <path
             className="edu-route-diamond"
@@ -1531,7 +1531,7 @@ function Scenario({ registerRouteRefs }: ScenarioProps) {
   );
 }
 
-/* Etiquetas guía HTML */
+/* Etiquetas guia HTML */
 function GuideLabels() {
   return (
     <>
@@ -1539,7 +1539,7 @@ function GuideLabels() {
         <div className="edu-guide-plate">INICIO</div>
       </div>
       <div className="edu-guide proximo">
-        <div className="edu-guide-plate">PRÓXIMO ▶</div>
+        <div className="edu-guide-plate">PROXIMO ▶</div>
       </div>
     </>
   );
@@ -1624,7 +1624,7 @@ function EduDetailPanel({ node }: EduDetailPanelProps) {
           </div>
         </div>
         <span className={`edu-panel-seal ${locked ? "locked" : ""}`}>
-          {locked ? "PRÓXIMAMENTE" : "COMPLETADO"}
+          {locked ? "PROXIMAMENTE" : "COMPLETADO"}
         </span>
       </div>
     </div>
@@ -1635,11 +1635,11 @@ function EduDetailPanel({ node }: EduDetailPanelProps) {
    PÁGINA
    ══════════════════════════════════════════════════════════════════════ */
 /* ═════════════════════════════════════════════════════════════════════════
-   Educación móvil (máx. 768px) — cronología vertical de tarjetas.
-   Sólo se monta en esta vista; el escritorio sigue intacto.
+   Educacion movil (max. 768px) — cronologia vertical de tarjetas.
+   Solo se monta en esta vista; el escritorio sigue intacto.
    ═════════════════════════════════════════════════════════════════════════ */
 
-/* Orden cronológico de la ruta formativa. */
+/* Orden cronologico de la ruta formativa. */
 const EDU_MOBILE_ORDER: string[] = [
   "telecomunicaciones",
   "ari",
@@ -1652,7 +1652,7 @@ const EDU_MOBILE_NODES: EduNode[] = EDU_MOBILE_ORDER.map((id) => findNode(id)!);
 
 
 /* ═════════════════════════════════════════════════════════════════════════
-   PÁGINA MÓVIL
+   PÁGINA MOVIL
    ═════════════════════════════════════════════════════════════════════════ */
 
 function EducationMobile() {
@@ -1664,7 +1664,7 @@ function EducationMobile() {
 
   const activeIndex = EDU_MOBILE_NODES.findIndex((n) => n.id === activeId);
 
-  /* Nodo activo: tarjeta más cercana al centro del viewport (spec §scroll). */
+  /* Nodo activo: tarjeta mas cercana al centro del viewport (spec §scroll). */
   useEffect(() => {
     if (!rootRef.current) return;
     const io = new IntersectionObserver(
@@ -1692,7 +1692,7 @@ function EducationMobile() {
     return () => io.disconnect();
   }, []);
 
-  /* GSAP: revelación al scroll, números y sellos (sólo transform/opacity). */
+  /* GSAP: revelacion al scroll, numeros y sellos (solo transform/opacity). */
   useLayoutEffect(() => {
     if (!rootRef.current) return;
     const reduced =
@@ -1777,7 +1777,7 @@ function EducationMobile() {
   return (
     <div ref={rootRef} className="edu-m-page">
       <div className="edu-m-title-block">
-        <p className="edu-m-label">RUTA DE FORMACIÓN</p>
+        <p className="edu-m-label">RUTA DE FORMACION</p>
         <SectionTitle title="HABILIDADES" persona compact />
       </div>
       <div className="edu-m-progress" aria-label="Progreso">
@@ -1801,7 +1801,7 @@ function EducationMobile() {
           const isProximo = node.id === "siguiente";
           const value = node.hours != null ? node.hours : node.year;
           const showYear = value != null;
-          const typeText = isProximo ? "PRÓXIMO ▶" : node.type.toUpperCase();
+          const typeText = isProximo ? "PROXIMO ▶" : node.type.toUpperCase();
           return (
             <div
               key={node.id}
@@ -1918,8 +1918,8 @@ export function Education() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* --topbar-h se mide siempre (desktop y móvil) para que el padding del
-     encabezado nunca quede corto y la TopBar fija no tape el título. */
+  /* --topbar-h se mide siempre (desktop y movil) para que el padding del
+     encabezado nunca quede corto y la TopBar fija no tape el titulo. */
   useEffect(() => {
     let raf = 0;
     const apply = () => {
@@ -1937,7 +1937,7 @@ export function Education() {
     };
   }, []);
 
-  /* Cálculo de --edu-s con ResizeObserver (spec §1) — solo escritorio. */
+  /* Calculo de --edu-s con ResizeObserver (spec §1) — solo escritorio. */
   useEffect(() => {
     if (!isDesktop) return;
     let raf = 0;
@@ -2041,7 +2041,7 @@ export function Education() {
         /* ── Nodos: entrada escalonada en orden de ruta ──
             Teleco → Dam → Ari → Bootcamp → Siguiente.
             Cada nodo desliza desde fuera de eje con skew, aterriza con
-            back.out (overshoot), destello rojo al llegar y las líneas se
+            back.out (overshoot), destello rojo al llegar y las lineas se
             dibujan entre nodos. Total < 1s. */
         const PATH_ORDER = ["telecomunicaciones", "dam", "ari", "bootcamp", "siguiente"];
         let t = 0;
@@ -2111,7 +2111,7 @@ export function Education() {
           }
         });
 
-        /* Estado final estático */
+        /* Estado final estatico */
         tl.call(() => {
           Object.values(nodeRefs.current).forEach(({ drop, pop }) => {
             setSafe(drop, { x: 0, y: 0, skewX: 0, rotation: 0, opacity: 1 });
@@ -2148,7 +2148,7 @@ export function Education() {
         };
       }, scope);
     } catch (e) {
-      console.error("[education animación] error:", e);
+      console.error("[education animacion] error:", e);
       Object.values(nodeRefs.current).forEach(({ drop, pop }) => {
         if (drop) gsap.set(drop, { y: 0 });
         if (pop) gsap.set(pop, { scale: 1, rotation: 0, opacity: 1 });
@@ -2198,7 +2198,7 @@ export function Education() {
           duration: 0.25,
         });
       });
-      /* Rombo de la ruta: late más cuando la ruta está activa */
+      /* Rombo de la ruta: late mas cuando la ruta esta activa */
       const dia = document.querySelector<SVGElement>(`.edu-route-diamond[data-edge='${edgeEl.getAttribute("data-edge") ?? ""}']`);
       if (dia) {
         gsap.killTweensOf(dia);
@@ -2278,13 +2278,13 @@ export function Education() {
     return () => document.removeEventListener("keydown", onKey);
   }, [selectedId, handleSelect, navigate]);
 
-  /* Vida continua: rombos, respiración, glitch, parallax */
+  /* Vida continua: rombos, respiracion, glitch, parallax */
   useEffect(() => {
     if (!animado || typeof window === "undefined") return;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
-    /* Respiración sombras */
+    /* Respiracion sombras */
     ["telecomunicaciones", "dam", "ari", "bootcamp"].forEach((id) => {
       const n = nodeRefs.current[id];
       const shadow = n?.drop?.querySelector<SVGElement>(".edu-shadow");
@@ -2349,7 +2349,7 @@ export function Education() {
       glitchTimer = window.setTimeout(doGlitch, 5000);
     }
 
-    /* Drift lento de los slashes y la marca de fondo (sólo transform) */
+    /* Drift lento de los slashes y la marca de fondo (solo transform) */
     const driftEls = document.querySelectorAll<SVGElement>("[data-parallax]");
     const driftTweens: gsap.core.Tween[] = [];
     driftEls.forEach((el, i) => {
@@ -2366,7 +2366,7 @@ export function Education() {
       );
     });
 
-    /* Parallax de la palabra fantasma al mover el ratón, no táctil */
+    /* Parallax de la palabra fantasma al mover el raton, no tactil */
     let parallaxRAF = 0;
     if (!("ontouchstart" in window)) {
       const ghost = document.querySelector(".edu-scenario text") as SVGElement | null;
@@ -2413,9 +2413,9 @@ export function Education() {
           <header className="edu-header" ref={eduHeaderRef} style={{ paddingLeft: `calc(var(--p5-margin) + 70px)` }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 32, flexWrap: "nowrap" }}>
               <div style={{ flexShrink: 0 }}>
-                <SectionTitle label="Ruta de formación" title="HABILIDADES" persona compact />
+                <SectionTitle label="Ruta de formacion" title="HABILIDADES" persona compact />
               </div>
-              <div className="edu-progress" aria-label="Progreso de formación">
+              <div className="edu-progress" aria-label="Progreso de formacion">
                 <span className="edu-progress-diamonds" aria-hidden="true">
                   {"◆".repeat(completedCount())}{"◇".repeat(totalCount() - completedCount())}
                 </span>

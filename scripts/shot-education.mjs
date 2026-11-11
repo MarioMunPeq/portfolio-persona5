@@ -1,7 +1,7 @@
 /**
  * shot-education.mjs
- * Verificación completa de /education.
- * Entra desde el menú principal haciendo clic en Habilidades.
+ * Verificacion completa de /education.
+ * Entra desde el menu principal haciendo clic en Habilidades.
  */
 import { chromium } from "playwright";
 
@@ -31,11 +31,11 @@ async function runForSize({ name, width, height }) {
   page.on("console", (m) => console.log(`[${name}] CONSOLE`, m.type(), m.text()));
   page.on("pageerror", (e) => console.log(`[${name}] PAGEERROR`, e.message));
 
-  // 1. Ir al menú principal
+  // 1. Ir al menu principal
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.waitForTimeout(1000);
 
-  // Hacer clic en Habilidades (4º botón, index 3)
+  // Hacer clic en Habilidades (4º boton, index 3)
   const buttons = await page.locator("button.hero-cmd").all();
   if (buttons.length < 4) {
     console.log(`[${name}] ERROR: no se encontraron 4 botones de comando`);
@@ -55,7 +55,7 @@ async function runForSize({ name, width, height }) {
   console.log(`\n=== ${name} (${width}x${height}) ===`);
   console.log(`[shot] transition-done at t=${tDone}`);
 
-  // Registrar cuándo empieza la pegatina
+  // Registrar cuando empieza la pegatina
   const stickerStart = await page.evaluate(() => new Promise((resolve) => {
     if (document.querySelector(".edu-sticker")) { resolve(Date.now()); return; }
     const obs = new MutationObserver(() => {
@@ -64,9 +64,9 @@ async function runForSize({ name, width, height }) {
     obs.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => { obs.disconnect(); resolve(null); }, 3000);
   }));
-  console.log(`[shot] sticker at t=${stickerStart} (${stickerStart ? (stickerStart - tDone) + "ms después de done" : "N/A"})`);
+  console.log(`[shot] sticker at t=${stickerStart} (${stickerStart ? (stickerStart - tDone) + "ms despues de done" : "N/A"})`);
 
-  // Capturas a +0.5s, +1.5s y +5s tras la transición
+  // Capturas a +0.5s, +1.5s y +5s tras la transicion
   for (const delay of [500, 1500, 5000]) {
     await page.waitForTimeout(delay);
     const out = `/tmp/edu-${name}-t${delay}ms.png`;
@@ -74,7 +74,7 @@ async function runForSize({ name, width, height }) {
     console.log(`[shot] captura: ${out} (+${delay}ms)`);
   }
 
-  // Esperar a los 6s tras la transición para verificaciones
+  // Esperar a los 6s tras la transicion para verificaciones
   await page.waitForTimeout(6000);
 
   const checks = await page.evaluate((w) => {

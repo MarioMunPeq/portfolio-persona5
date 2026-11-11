@@ -5,7 +5,7 @@ import routeMetadata from "../../data/route-metadata.json";
 const SITE_URL = "https://mariomunpeq.is-a.dev";
 const SITE_NAME = "Mario Muñoz Pequeño";
 const DEFAULT_DESCRIPTION =
-  "Desarrollador de aplicaciones en Valladolid. Descubre mis proyectos, experiencia profesional y formación.";
+  "Desarrollador de aplicaciones en Valladolid. Descubre mis proyectos, experiencia profesional y formacion.";
 
 interface PageMetadata {
   title: string;
@@ -14,7 +14,7 @@ interface PageMetadata {
 }
 
 const defaultMetadata: PageMetadata = {
-  title: `Página no encontrada — ${SITE_NAME}`,
+  title: `Pagina no encontrada — ${SITE_NAME}`,
   description: DEFAULT_DESCRIPTION,
   indexable: false,
 };

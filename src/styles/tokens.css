@@ -15,7 +15,7 @@
   font-family: "P5 Menu";
   src: url("/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 
 /* P5 Hatty: manuscrita de Persona 5 para etiquetas y anotaciones pequeÃ±as
@@ -25,7 +25,7 @@
   font-family: "P5 Hatty";
   src: url("/fonts/p5hatty.ttf") format("truetype");
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 
 /* Expose: fuente display para encabezados y etiquetas del inventario y
@@ -36,7 +36,7 @@
   font-family: "Expose";
   src: url("/fonts/Expose-Regular.otf") format("opentype");
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 
 /* Fuentes autoalojadas (antes Google Fonts) — solo los pesos y subsets usados. */
@@ -46,7 +46,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -54,7 +54,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -62,7 +62,7 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
   font-family: "Space Grotesk";
@@ -70,7 +70,7 @@
   font-weight: 700;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
   font-family: "Caveat";
@@ -78,7 +78,7 @@
   font-weight: 600;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
   font-family: "Share Tech Mono";
@@ -86,7 +86,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-007F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
 }
 
 /* Utilidad: texto hueco con trazo en color acento (solo tipografia grande) */

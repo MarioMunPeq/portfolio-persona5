@@ -1,9 +1,9 @@
 /**
  * diag-education.mjs
- * Diagnóstico de la animación de entrada de /education.
+ * Diagnostico de la animacion de entrada de /education.
  * Captura a 1s, 3s, 6s y 10s y, para cada [data-node], imprime:
  *   getBoundingClientRect, opacity, visibility, atributo transform
- * También imprime gsap.globalTimeline.getChildren().length a los 10s.
+ * Tambien imprime gsap.globalTimeline.getChildren().length a los 10s.
  */
 import { chromium } from "playwright";
 

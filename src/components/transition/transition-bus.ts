@@ -50,7 +50,7 @@ export const transitionBus = {
 
     const onEnded = () => {
       cleanup();
-      /* Señal de fin de transición para la página de destino */
+      /* Señal de fin de transicion para la pagina de destino */
       document.documentElement.setAttribute("data-transition", "done");
       window.dispatchEvent(new CustomEvent("page-transition-done"));
       onDone();

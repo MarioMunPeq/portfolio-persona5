@@ -1105,7 +1105,7 @@ export const projects: Project[] = [
       },
       {
         src: "/images/projects/repository-library/Tienda.png",
-        alt: "Página de tienda de un proyecto en Repository Library",
+        alt: "Pagina de tienda de un proyecto en Repository Library",
         caption: "Tienda",
       },
       {

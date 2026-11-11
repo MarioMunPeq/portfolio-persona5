@@ -59,7 +59,7 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
     if (!isDesktop) {
       setDisplayed(location);
       resetScroll();
-      /* Señal de fin de transición para la página de destino */
+      /* Señal de fin de transicion para la pagina de destino */
       document.documentElement.setAttribute("data-transition", "done");
       window.dispatchEvent(new CustomEvent("page-transition-done"));
       return;
@@ -75,8 +75,8 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       const type = routeTransitionType(location.pathname);
 
       if (type === "fade") {
-        /* El fundido de entrada ya se ejecutó antes de navigate()
-           (en CommandNavItem). La página está montada bajo el negro.
+        /* El fundido de entrada ya se ejecuto antes de navigate()
+           (en CommandNavItem). La pagina esta montada bajo el negro.
            Solo queda retirar el negro y emitir page-transition-done. */
         animateFade("out").then(() => {
           document.documentElement.setAttribute("data-transition", "done");

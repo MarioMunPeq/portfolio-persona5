@@ -366,7 +366,7 @@ export function CalendarTransition() {
 
     // Temporizador de seguridad: nunca dejar la app bloqueada en el intro.
     // Se dispara aunque la animacion no haya podido montarse (por ejemplo,
-    // en telefonos los índices de nodo visible y las refs renderizadas no
+    // en telefonos los indices de nodo visible y las refs renderizadas no
     // coinciden), para que el scroll de la pagina quede desbloqueado.
     safetyRef.current = setTimeout(() => {
       if (!finishedRef.current) {

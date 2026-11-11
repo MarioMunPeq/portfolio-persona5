@@ -1,4 +1,5 @@
 import type { Project } from "../../data/projects";
+import { IMAGE_DIMS } from "../../data/image-dims";
 import { PreviewBox } from "../ui/PreviewBox";
 
 /**
@@ -9,6 +10,7 @@ import { PreviewBox } from "../ui/PreviewBox";
  */
 export function ProjectPreview({ project }: { project: Project }) {
   const image = project.images?.[0] ?? null;
+  const dims = image?.src ? IMAGE_DIMS[image.src] : undefined;
 
   return (
     <article className="project-preview relative">
@@ -22,6 +24,10 @@ export function ProjectPreview({ project }: { project: Project }) {
         <PreviewBox
           src={image?.src ?? null}
           alt={image?.alt ?? `Captura pendiente de ${project.name}`}
+          width={dims?.width}
+          height={dims?.height}
+          loading="eager"
+          decoding="async"
           className="project-preview__frame"
         >
           {/* Franja de rayas del pie del marco */}

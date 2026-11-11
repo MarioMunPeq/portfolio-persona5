@@ -6,24 +6,24 @@ import { chromium } from "playwright";
   page.on("console", (m) => console.log(`[PAGE] ${m.type()}: ${m.text()}`));
   page.on("pageerror", (e) => console.log(`[PAGE ERROR] ${e.message}`));
 
-  console.log("Navegando al menú principal...");
+  console.log("Navegando al menu principal...");
   await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
   await page.waitForTimeout(2000);
 
-  // Buscar el botón de Habilidades (4º CommandNavItem)
-  console.log("Buscando botón de Habilidades...");
+  // Buscar el boton de Habilidades (4º CommandNavItem)
+  console.log("Buscando boton de Habilidades...");
   const buttons = await page.locator("button.hero-cmd").all();
   console.log(`Encontrados ${buttons.length} botones de comando`);
 
   for (let i = 0; i < buttons.length; i++) {
     const txt = await buttons[i].textContent();
-    console.log(`  Botón ${i}: "${txt?.trim()}"`);
+    console.log(`  Boton ${i}: "${txt?.trim()}"`);
   }
 
   // Hacer clic en el 4º (index 3) - habilidades
   const habilidadBtn = buttons[3];
   if (!habilidadBtn) {
-    console.log("No se encontró el botón de Habilidades");
+    console.log("No se encontro el boton de Habilidades");
     await browser.close();
     return;
   }
@@ -36,7 +36,7 @@ import { chromium } from "playwright";
     await page.waitForURL("**/education", { timeout: 10000 });
     console.log("URL cambiada a /education");
   } catch (e) {
-    console.log("URL no cambió en 10s:", e.message);
+    console.log("URL no cambio en 10s:", e.message);
   }
 
   await page.waitForTimeout(3000);

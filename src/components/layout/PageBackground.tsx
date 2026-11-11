@@ -25,14 +25,14 @@ function prefersReducedMotion() {
 
 export function PageBackground({ variant }: PageBackgroundProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  /* Lectura síncrona en el primer render: en móvil nunca se monta el
+  /* Lectura sincrona en el primer render: en movil nunca se monta el
      <video>, ni siquiera un instante antes de detectar. */
   const [isMobile, setIsMobile] = useState(isMobileMatch);
   const [reducedMotion, setReducedMotion] = useState(prefersReducedMotion);
   const [videoSourceUrl, setVideoSourceUrl] = useState(videoSource);
 
-  /* Reacciona a rotación y redimensionado: desktop -> móvil desmonta el
-     <video>, móvil -> desktop lo monta de nuevo. */
+  /* Reacciona a rotacion y redimensionado: desktop -> movil desmonta el
+     <video>, movil -> desktop lo monta de nuevo. */
   useEffect(() => {
     const mediaQuery = window.matchMedia(MOBILE_QUERY);
     const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
@@ -79,7 +79,7 @@ export function PageBackground({ variant }: PageBackgroundProps) {
     };
   }, [handleVideoError, reducedMotion, variant, videoSourceUrl, isMobile]);
 
-  /* Al pasar de desktop a móvil se libera el vídeo para bajar el consumo
+  /* Al pasar de desktop a movil se libera el video para bajar el consumo
      de memoria y ancho de banda. */
   useEffect(() => {
     if (!isMobile) return;

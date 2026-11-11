@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Verificación de la versión móvil (≤768px) de /education.
+ * Verificacion de la version movil (≤768px) de /education.
  * Reusa la cabecera (TopBar) y la barra inferior (BottomBar) del Inventario.
  * Capturas en 360x740, 390x844 y 430x932, en scroll top / middle / bottom.
  */
@@ -19,7 +19,7 @@ const SCROLLS: Array<{ name: string; ratio: number }> = [
 
 const SHOT_DIR = "C:/Users/Mario/AppData/Local/Temp/opencode/screenshots";
 
-test.describe("educación móvil — ruta de formación", () => {
+test.describe("educacion movil — ruta de formacion", () => {
   for (const vp of VIEWPORTS) {
     test.describe(vp.name, () => {
       test.use({ viewport: vp });
@@ -27,7 +27,7 @@ test.describe("educación móvil — ruta de formación", () => {
       for (const scroll of SCROLLS) {
         test(`layout sin scroll horizontal (${scroll.name})`, async ({ page }) => {
           await page.goto("/education", { waitUntil: "networkidle" });
-          /* Esperar a que termine la introducción del calendario (CalendarTransition
+          /* Esperar a que termine la introduccion del calendario (CalendarTransition
              deja document.documentElement.style.overflow = "hidden" mientras dura;
              el temporizador de seguridad la libera a los ~10 s). */
           await page
@@ -35,7 +35,7 @@ test.describe("educación móvil — ruta de formación", () => {
               timeout: 15000,
             })
             .catch(() => {});
-          await page.waitForTimeout(900); /* fuentes y montaje GSAP tras la introducción */
+          await page.waitForTimeout(900); /* fuentes y montaje GSAP tras la introduccion */
 
           const maxScroll = await page.evaluate(() => {
             const el = document.scrollingElement;
@@ -51,7 +51,7 @@ test.describe("educación móvil — ruta de formación", () => {
             const innerH = window.innerHeight;
             const scrollOk = doc.scrollWidth === innerW;
 
-            /* Título visible y dentro del viewport. */
+            /* Titulo visible y dentro del viewport. */
             const title = document.querySelector(".section-title__h1");
             let titleOk = false;
             let titleMsg = "no-title";
@@ -97,7 +97,7 @@ test.describe("educación móvil — ruta de formación", () => {
                 .join(",");
             }
 
-            /* Tap targets >= 44px (menú y redes sociales). */
+            /* Tap targets >= 44px (menu y redes sociales). */
             const rect = (el: Element | null) => el ? el.getBoundingClientRect() : null;
             const tapOk = (r: DOMRect | null) => !!r && r.width >= 44 && r.height >= 44;
             const menuEl = document.querySelector(".p5-topbar-back");
@@ -108,7 +108,7 @@ test.describe("educación móvil — ruta de formación", () => {
               .map((el) => el.getBoundingClientRect());
             const visibleCtrls = ctrls.filter((r) => r && r.width > 0.5 && r.height > 0.5);
 
-            /* Solapamiento barra inferior vs última tarjeta (solo en scroll bottom). */
+            /* Solapamiento barra inferior vs ultima tarjeta (solo en scroll bottom). */
             const barEl = document.querySelector(".p5-bottombar");
             const bar = rect(barEl);
             const lastCard = cards[cards.length - 1]?.getBoundingClientRect();

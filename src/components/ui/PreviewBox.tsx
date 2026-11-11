@@ -6,6 +6,14 @@ interface PreviewBoxProps {
   alt: string;
   /** Pie opcional sobre el marco. */
   caption?: string;
+  /** Ancho intrinseco de la imagen (evita saltos de layout). */
+  width?: number;
+  /** Alto intrinseco de la imagen (evita saltos de layout). */
+  height?: number;
+  /** Politica de carga diferida (capturas no criticas: "lazy"). */
+  loading?: "eager" | "lazy";
+  /** Politica de descodificado de la imagen. */
+  decoding?: "async" | "sync" | "auto";
   /** Capas decorativas sobre el marco (sombra roja, corchetes, sellos…). */
   children?: ReactNode;
   className?: string;
@@ -21,6 +29,10 @@ export function PreviewBox({
   src,
   alt,
   caption,
+  width,
+  height,
+  loading = "lazy",
+  decoding = "async",
   children,
   className = "",
 }: PreviewBoxProps) {
@@ -33,6 +45,10 @@ export function PreviewBox({
           <img
             src={src}
             alt={alt}
+            width={width}
+            height={height}
+            loading={loading}
+            decoding={decoding}
             className="block h-full w-full object-cover"
           />
         ) : (
