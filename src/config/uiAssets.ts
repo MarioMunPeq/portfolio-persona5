@@ -1,8 +1,8 @@
 /* ════════════════════════════════════════════════════════════════════════════════════
    Assets de UI de /education
    Las medidas naturales se leyeron de los archivos reales (PIL/identify) y se
-   usan para limitar cada sprite a 1.25 × su altura natural. Nunca se amplía un
-   sprite por encima de ese límite.
+   usan para limitar cada sprite a 1.25 × su altura natural. Nunca se amplia un
+   sprite por encima de ese limite.
    ════════════════════════════════════════════════════════════════════════════════════ */
 
 const BASE = import.meta.env.BASE_URL;
@@ -10,13 +10,13 @@ const BASE = import.meta.env.BASE_URL;
 export interface UIAsset {
   /** Nombre del archivo dentro de public/images/ui. */
   file: string;
-  /** URL pública lista para <img src>. */
+  /** URL publica lista para <img src>. */
   src: string;
-  /** Ancho natural en píxeles. */
+  /** Ancho natural en pixeles. */
   width: number;
-  /** Alto natural en píxeles. */
+  /** Alto natural en pixeles. */
   height: number;
-  /** Alto máximo permitido: 1.25 × alto natural. */
+  /** Alto maximo permitido: 1.25 × alto natural. */
   maxHeight: number;
 }
 
@@ -66,10 +66,10 @@ export const LOADER_ASSETS = {
   flames: uiAsset("loader-flames.webp", 1330, 138),
 } as const;
 
-/** Asset opcional disponible en el proyecto (no se usa en esta página). */
+/** Asset opcional disponible en el proyecto (no se usa en esta pagina). */
 export const TAKE_YOUR_TIME = uiAsset("take-your-time.webp", 447, 97);
 
-/** Devuelve el asset del arcano a partir de su número romano de tarot. */
+/** Devuelve el asset del arcano a partir de su numero romano de tarot. */
 export function arcanaAsset(roman: string): UIAsset {
   return ARCANA_ASSETS[roman as keyof typeof ARCANA_ASSETS] ?? ARCANA_ASSETS["0"];
 }

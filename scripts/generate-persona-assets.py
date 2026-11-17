@@ -6,7 +6,7 @@ Recorta sprites originales (PNG con alfa) de assets-src/persona/ y los
 exporta como WebP con alfa en public/assets/persona/.
 
 Reglas:
-  - Ningún sprite se amplía por encima del 1.25x de su tamaño nativo.
+  - Ningun sprite se amplia por encima del 1.25x de su tamaño nativo.
   - Si falta un sprite, se salta con un TODO (la web usa CSS/SVG de fallback).
   - Salida con transparencia alfa (WebP lossless/near-lossless).
 
@@ -25,11 +25,11 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets-src" / "persona"
 OUT = ROOT / "public" / "assets" / "persona"
 
-MAX_SCALE = 1.25  # nunca ampliar un sprite más de 1.25x su tamaño nativo
+MAX_SCALE = 1.25  # nunca ampliar un sprite mas de 1.25x su tamaño nativo
 
 # Cada entrada: (origen_rel, caja_recorte (l,t,r,b) o None, salida_rel, ancho_max, alto_max)
 # La caja es sobre la imagen de origen. Si es None se usa la imagen entera.
-# ancho_max/alto_max son el tamaño destino deseado (px). Si el origen es más
+# ancho_max/alto_max son el tamaño destino deseado (px). Si el origen es mas
 # pequeño y alcanzar el destino requiere > 1.25x, se mantiene el tamaño nativo.
 SPRITES: list[tuple[str, tuple[int, int, int, int] | None, str, int, int]] = [
     # ── Arcanos: miniatura de placa (36×64) y sello de carta (96×168) ──
@@ -64,7 +64,7 @@ SPRITES: list[tuple[str, tuple[int, int, int, int] | None, str, int, int]] = [
     ("joker-bust.png", None, "joker-bust.webp", 400, 400),
 ]
 
-# Si tus sprites vienen en una hoja (sprite sheet), indica aquí la caja de
+# Si tus sprites vienen en una hoja (sprite sheet), indica aqui la caja de
 # recorte de cada uno en lugar de None, p. ej.:
 # ("arcana/hoja-arcanos.png", (1024, 0, 1120, 168), "arcana/0-le-mat-seal.webp", 96, 168),
 
@@ -79,7 +79,7 @@ def save_webp(im: Image.Image, dest: Path, max_w: int, max_h: int, src_size: tup
     scale = max(scale_w, scale_h)
 
     if scale > MAX_SCALE:
-        # No ampliar más de 1.25x: se queda en tamaño nativo (o lo más cerca
+        # No ampliar mas de 1.25x: se queda en tamaño nativo (o lo mas cerca
         # posible dentro del destino) y se avisa.
         scale = 1.0
         note = f"TODO: destino {max_w}x{max_h} excede 1.25x del nativo {sw}x{sh}; se usa CSS/SVG o sprite mayor"
@@ -96,7 +96,7 @@ def save_webp(im: Image.Image, dest: Path, max_w: int, max_h: int, src_size: tup
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    print(f"Orígenes: {SRC}")
+    print(f"Origenes: {SRC}")
     print(f"Salida:   {OUT}\n")
 
     total_bytes = 0
@@ -126,12 +126,12 @@ def main() -> int:
             print(f"[ERROR] {src_rel}: {exc}")
             todos.append(out_rel)
 
-    print(f"\nPeso total generado: {total_bytes/1024:.1f} kB (límite ruta: 1500 kB)")
+    print(f"\nPeso total generado: {total_bytes/1024:.1f} kB (limite ruta: 1500 kB)")
     if todos:
         print(f"\nTODOS ({len(todos)}): sprites pendientes o sin recorte definido:")
         for t in todos:
             print(f"  - {t}")
-        print("\nMientras tanto la página usa placeholders en CSS/SVG (marcados TODO en el código).")
+        print("\nMientras tanto la pagina usa placeholders en CSS/SVG (marcados TODO en el codigo).")
     return 0 if not todos else 0  # no falla el build por assets pendientes
 
 

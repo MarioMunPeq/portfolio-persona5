@@ -24,7 +24,7 @@ export const CalendarLoadingHud = forwardRef<CalendarLoadingHudHandle, CalendarL
     return (
       <aside className="calendar-loading-hud" aria-label="Progreso de carga del calendario">
         <div className="calendar-loading-hud__heading">
-          <span className="calendar-loading-hud__caption">CAMBIANDO DE DÍA</span>
+          <span className="calendar-loading-hud__caption">CAMBIANDO DE DIA</span>
         </div>
         <div className="calendar-loading-hud__readout">
           <div className="calendar-loading-hud__meter" role="progressbar" aria-label="Carga del calendario" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} ref={progressRef}>

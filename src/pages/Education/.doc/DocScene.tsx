@@ -35,11 +35,11 @@ export default function DocScene({ doc, onOpen, flipBack = false }: DocSceneProp
         </div>
 
         <div className="doc-file-stage">
-          <button className="doc-paper-stage" type="button" onClick={onOpen} aria-label={`Ampliar la primera página de ${doc.title}`}>
+          <button className="doc-paper-stage" type="button" onClick={onOpen} aria-label={`Ampliar la primera pagina de ${doc.title}`}>
             {previewFailed ? (
               <span className="doc-preview-fallback">Vista previa no disponible</span>
             ) : (
-              <img className="doc-hoja" src={previewSrc} alt={`Página 1 de ${doc.title}`} width="1600" height="1131" decoding="async" onError={() => setPreviewFailed(true)} />
+              <img className="doc-hoja" src={previewSrc} alt={`Pagina 1 de ${doc.title}`} width="1600" height="1131" decoding="async" onError={() => setPreviewFailed(true)} />
             )}
           </button>
 

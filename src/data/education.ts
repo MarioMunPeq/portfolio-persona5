@@ -1,42 +1,42 @@
 /* ═════════════════════════════════════════════════════════════════════════════════
-   Ruta de formación — Habilidades (página /education)
+   Ruta de formacion — Habilidades (pagina /education)
    Datos reales de las certificaciones (PDFs en public/certifications).
-   Los previews de página se generan en public/previews/<slug>-<n>.webp.
+   Los previews de pagina se generan en public/previews/<slug>-<n>.webp.
    ═════════════════════════════════════════════════════════════════════════════════ */
 
 export type EduCategory = "ESTUDIOS" | "BOOTCAMP" | "IDIOMAS" | "PRL";
 
 export interface EduDocument {
-  /** Clave del documento y de sus previews de página. */
+  /** Clave del documento y de sus previews de pagina. */
   slug: string;
-  /** Título completo del certificado. */
+  /** Titulo completo del certificado. */
   title: string;
-  /** Título corto de la placa. */
+  /** Titulo corto de la placa. */
   shortTitle: string;
   /** Entidad emisora. */
   entity: string;
-  /** Fecha de expedición, formato legible (es-ES). */
+  /** Fecha de expedicion, formato legible (es-ES). */
   date: string;
-  /** Fecha ISO para ordenación y cálculo de "novedad". */
+  /** Fecha ISO para ordenacion y calculo de "novedad". */
   dateISO: string;
   /** Horas lectivas (null si no aplica). */
   hours: number | null;
-  /** Ruta pública del PDF. */
+  /** Ruta publica del PDF. */
   file: string;
-  /** Categoría para el kicker del panel y la etiqueta de fila. */
+  /** Categoria para el kicker del panel y la etiqueta de fila. */
   category: EduCategory;
-  /** Número romano cronológico del documento (I = más antiguo … VII = más reciente). */
+  /** Numero romano cronologico del documento (I = mas antiguo … VII = mas reciente). */
   roman: string;
-  /** Arcano del tarot asociado: su nombre se imprime en la carta y su número
+  /** Arcano del tarot asociado: su nombre se imprime en la carta y su numero
      romano es el que se muestra en placas, carta superior y visor. */
   arcana: { name: string; number: string };
-  /** Nº de páginas renderizadas (se rellena al generar previews). */
+  /** Nº de paginas renderizadas (se rellena al generar previews). */
   pages: number;
 }
 
 /** Fecha de referencia del entorno para calcular la etiqueta "NEW!"
-   (< 60 días). Coincide con los dos certificados PRL de septiembre/
-   octubre de 2026 y con ninguno de los demás. */
+   (< 60 dias). Coincide con los dos certificados PRL de septiembre/
+   octubre de 2026 y con ninguno de los demas. */
 export const REF_TODAY_ISO = "2026-11-13";
 
 export function isNew(dateISO: string): boolean {
@@ -51,9 +51,9 @@ export function isNew(dateISO: string): boolean {
 export const EDU_DOCUMENTS: EduDocument[] = [
   {
     slug: "eso-graduado",
-    title: "Título de Graduado en ESO",
+    title: "Titulo de Graduado en ESO",
     shortTitle: "ESO",
-    entity: "Junta de Castilla y León",
+    entity: "Junta de Castilla y Leon",
     date: "16 nov 2018",
     dateISO: "2018-11-16",
     hours: null,
@@ -65,7 +65,7 @@ export const EDU_DOCUMENTS: EduDocument[] = [
   },
   {
     slug: "telecomunicaciones",
-    title: "Técnico en Instalaciones de Telecomunicaciones",
+    title: "Tecnico en Instalaciones de Telecomunicaciones",
     shortTitle: "TELECO",
     entity: "IES La Merced",
     date: "06 jun 2022",
@@ -79,9 +79,9 @@ export const EDU_DOCUMENTS: EduDocument[] = [
   },
   {
     slug: "desarrollo-aplicaciones-multiplataforma",
-    title: "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma",
+    title: "Tecnico Superior en Desarrollo de Aplicaciones Multiplataforma",
     shortTitle: "DAM",
-    entity: "IES Julián Marías",
+    entity: "IES Julian Marias",
     date: "03 jun 2024",
     dateISO: "2024-06-03",
     hours: null,
@@ -102,13 +102,13 @@ export const EDU_DOCUMENTS: EduDocument[] = [
     file: "certifications/ia/bootcamp-inteligencia-artificial.pdf",
     category: "BOOTCAMP",
     roman: "IV",
-    arcana: { name: "L'ÉTOILE", number: "XVII" },
+    arcana: { name: "L'ETOILE", number: "XVII" },
     pages: 2,
   },
   {
     slug: "ingles-b2",
-    title: "Trinity ISE II — Inglés B2",
-    shortTitle: "INGLÉS B2",
+    title: "Trinity ISE II — Ingles B2",
+    shortTitle: "INGLES B2",
     entity: "Trinity College London",
     date: "oct 2025",
     dateISO: "2025-10-01",
@@ -123,7 +123,7 @@ export const EDU_DOCUMENTS: EduDocument[] = [
     slug: "prl-safety-telework",
     title: "Safety & Telework",
     shortTitle: "SAFETY & TELEWORK",
-    entity: "ASPY Prevención",
+    entity: "ASPY Prevencion",
     date: "1 oct 2026",
     dateISO: "2026-10-01",
     hours: 3,
@@ -137,7 +137,7 @@ export const EDU_DOCUMENTS: EduDocument[] = [
     slug: "prl-consultant",
     title: "PRL · Consultant",
     shortTitle: "PRL CONSULTANT",
-    entity: "ASPY Prevención",
+    entity: "ASPY Prevencion",
     date: "25 sep 2026",
     dateISO: "2026-09-25",
     hours: 2,
@@ -157,16 +157,16 @@ export interface EduNode {
   id: string;
   /** Etiqueta corta del nodo (ESO, TELECO…). */
   shortTitle: string;
-  /** Título completo (cómic). */
+  /** Titulo completo (comic). */
   title: string;
-  /** Tipo de formación (sans mayúsculas). */
+  /** Tipo de formacion (sans mayusculas). */
   type: string;
   status: "completed" | "locked";
   period: string;
   center: string;
-  /** Año del título (se muestra en el nodo y como cifra si no hay horas). */
+  /** Año del titulo (se muestra en el nodo y como cifra si no hay horas). */
   year: number | null;
-  /** Fecha del título, formato legible. */
+  /** Fecha del titulo, formato legible. */
   dateTitle: string;
   /** Horas del nodo (cifra grande si hay; si no, el año). */
   hours: number | null;
@@ -175,7 +175,7 @@ export interface EduNode {
   /** Nodos previos requeridos. */
   requires: string[];
   documents: EduDocument[];
-  /** Nota destacada (p. ej. mención honorífica en el TFG). */
+  /** Nota destacada (p. ej. mencion honorifica en el TFG). */
   detail?: string;
 }
 
@@ -188,7 +188,7 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
       type: "ESO",
       status: "completed",
       period: "—",
-      center: "Junta de Castilla y León",
+      center: "Junta de Castilla y Leon",
       year: 2018,
       dateTitle: "16 nov 2018",
       hours: null,
@@ -200,7 +200,7 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     {
       id: "telecomunicaciones",
       shortTitle: "TELECO",
-      title: "Técnico en Instalaciones de Telecomunicaciones",
+      title: "Tecnico en Instalaciones de Telecomunicaciones",
       type: "Grado Medio",
       status: "completed",
       period: "Septiembre 2018 — Junio 2020",
@@ -215,8 +215,8 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     },
     {
       id: "ari",
-      shortTitle: "ROBÓTICA",
-      title: "Automatización y robótica Industrial",
+      shortTitle: "ROBOTICA",
+      title: "Automatizacion y robotica Industrial",
       type: "Grado Superior",
       status: "completed",
       period: "Septiembre 2020 — Junio 2022",
@@ -232,17 +232,17 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     {
       id: "dam",
       shortTitle: "DAM",
-      title: "Técnico Superior en DAM",
+      title: "Tecnico Superior en DAM",
       type: "Grado Superior",
       status: "completed",
       period: "Septiembre 2022 — Junio 2024",
-      center: "IES Julián Marías",
+      center: "IES Julian Marias",
       year: 2024,
       dateTitle: "03 jun 2024",
       hours: null,
       icon: "code",
       category: "ESTUDIOS",
-      detail: "Mención honorífica en el TFG",
+      detail: "Mencion honorifica en el TFG",
       requires: ["telecomunicaciones"],
       documents: [EDU_DOCUMENTS[2]],
     },
@@ -264,8 +264,8 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     },
     {
       id: "ingles",
-      shortTitle: "INGLÉS B2",
-      title: "Inglés B2",
+      shortTitle: "INGLES B2",
+      title: "Ingles B2",
       type: "Idiomas",
       status: "completed",
       period: "—",
@@ -281,11 +281,11 @@ export const EDU_TREE: { nodes: EduNode[]; edges: EduEdge[] } = {
     {
       id: "prl",
       shortTitle: "PRL",
-      title: "Prevención de Riesgos Laborales",
+      title: "Prevencion de Riesgos Laborales",
       type: "PRL",
       status: "completed",
       period: "sep — oct 2026",
-      center: "ASPY Prevención",
+      center: "ASPY Prevencion",
       year: 2026,
       dateTitle: "25 sep 2026 — 1 oct 2026",
       hours: 5,
@@ -361,8 +361,8 @@ export function lastUnlockedId(): string {
   return unlocked[0] ?? EDU_TREE.nodes[0]!.id;
 }
 
-/** Ruta principal ordenada (para el progreso y la navegación por teclado).
-   Incluye Robótica tras Teleco, tal como está en el expediente. */
+/** Ruta principal ordenada (para el progreso y la navegacion por teclado).
+   Incluye Robotica tras Teleco, tal como esta en el expediente. */
 export const ROUTE_ORDER: string[] = [
   "eso",
   "telecomunicaciones",
@@ -374,7 +374,7 @@ export const ROUTE_ORDER: string[] = [
   "siguiente",
 ];
 
-/** Nodos con al menos un documento, ordenados por fecha descendente (lista rápida). */
+/** Nodos con al menos un documento, ordenados por fecha descendente (lista rapida). */
 export const DOCUMENTS_BY_DATE_DESC: EduDocument[] = [...EDU_DOCUMENTS].sort(
   (a, b) => b.dateISO.localeCompare(a.dateISO),
 );

@@ -80,16 +80,16 @@ export default function DocViewer({ docIndex, onSelect, onClose }: DocViewerProp
             ref={scrollRef}
             className="edu-viewer__page-scroll"
             onScroll={(event) => setPageNumber(Math.min(doc.pages, Math.floor(event.currentTarget.scrollTop / event.currentTarget.clientHeight) + 1))}
-            aria-label="Páginas del documento"
+            aria-label="Paginas del documento"
           >
             {Array.from({ length: doc.pages }, (_, index) => (
               <ViewerPage key={`${doc.slug}-${index + 1}`} doc={doc} page={index + 1} />
             ))}
           </div>
-          <span className="edu-viewer__page-count">PÁG. {pageNumber} / {doc.pages}</span>
+          <span className="edu-viewer__page-count">PAG. {pageNumber} / {doc.pages}</span>
         </div>
 
-        <section className="edu-viewer__info" aria-label="Información del documento">
+        <section className="edu-viewer__info" aria-label="Informacion del documento">
           <div className="edu-viewer__topline">
             <span className="doc-category">{doc.category}</span>
             <img className="edu-viewer__arcana" src={arcana.src} width={arcana.width} height={arcana.height} alt={`Arcano ${arcana.name}`} />
@@ -123,11 +123,11 @@ export default function DocViewer({ docIndex, onSelect, onClose }: DocViewerProp
         className="edu-backplate"
         type="button"
         onClick={onClose}
-        aria-label="Atrás, cerrar visor"
+        aria-label="Atras, cerrar visor"
         style={menuRectStyle()}
       >
         <img src={BUTTON_ASSETS.cross.src} width={BUTTON_ASSETS.cross.width} height={BUTTON_ASSETS.cross.height} alt="" />
-        <span>ATRÁS</span>
+        <span>ATRAS</span>
       </button>
     </div>
   );
@@ -144,7 +144,7 @@ function ViewerPage({ doc, page }: { doc: EducationDoc; page: number }) {
   const src = `${import.meta.env.BASE_URL}previews/${doc.slug}-${page}.webp`;
   return (
     <div className="edu-viewer__page">
-      {failed ? <p className="edu-viewer__fallback">Vista previa no disponible</p> : <img src={src} alt={`Página ${page} de ${doc.title}`} onError={() => setFailed(true)} />}
+      {failed ? <p className="edu-viewer__fallback">Vista previa no disponible</p> : <img src={src} alt={`Pagina ${page} de ${doc.title}`} onError={() => setFailed(true)} />}
     </div>
   );
 }

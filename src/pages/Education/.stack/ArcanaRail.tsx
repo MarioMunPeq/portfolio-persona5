@@ -8,7 +8,7 @@ interface ArcanaRailProps {
 
 export function ArcanaRail({ documents, selectedIndex, onSelect }: ArcanaRailProps) {
   return (
-    <nav className="arcana-rail" aria-label="Menú de arcanos: elige una formación">
+    <nav className="arcana-rail" aria-label="Menu de arcanos: elige una formacion">
       {documents.map((doc, index) => (
         <button
           key={doc.slug}

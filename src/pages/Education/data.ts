@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════════════════════════
-   /education — datos de los 7 documentos de formación (esqueleto).
+   /education — datos de los 7 documentos de formacion (esqueleto).
    Importa los documentos existentes de src/data/education (no se duplican) y
    resuelve por cada uno: arcanaFile (sprite en public/images/ui/),
-   isNew (fecha con menos de 60 días). Orden: más reciente primero.
+   isNew (fecha con menos de 60 dias). Orden: mas reciente primero.
    ══════════════════════════════════════════════════════════════════════════════════════════════ */
 
 import {
@@ -14,9 +14,9 @@ import { ARCANA_ASSETS } from "../../config/uiAssets";
 
 const BASE = import.meta.env.BASE_URL;
 
-/* Número romano del tarot → clave del sprite public/images/ui/arcana-<n>.webp.
+/* Numero romano del tarot → clave del sprite public/images/ui/arcana-<n>.webp.
    0 le-mat → ESO · 1 le-bateleur → Teleco · 4 l-empereur → DAM ·
-   17 l-etoile → Bootcamp IA · 21 le-monde → Inglés B2 ·
+   17 l-etoile → Bootcamp IA · 21 le-monde → Ingles B2 ·
    8 la-justice → Safety & Telework · 9 l-hermite → PRL Consultant */
 const ROMAN_TO_ARABIC: Record<string, string> = {
   "0": "0",
@@ -29,13 +29,13 @@ const ROMAN_TO_ARABIC: Record<string, string> = {
 };
 
 export interface EducationDoc extends EduDocument {
-  /** URL pública del sprite del arcano (public/images/ui/arcana-<n>.webp). */
+  /** URL publica del sprite del arcano (public/images/ui/arcana-<n>.webp). */
   arcanaFile: string;
-  /** ¿Novedad? Fecha del título con menos de 60 días (ref. 2026-11-13). */
+  /** ¿Novedad? Fecha del titulo con menos de 60 dias (ref. 2026-11-13). */
   isNew: boolean;
 }
 
-/** 7 documentos, más reciente primero, con arcanaFile resuelto. */
+/** 7 documentos, mas reciente primero, con arcanaFile resuelto. */
 export const EDUCATION_DOCS: EducationDoc[] = BASE_DOCS.map((doc) => {
   const arabic = ROMAN_TO_ARABIC[doc.arcana.number] ?? "0";
   const asset =
@@ -59,12 +59,12 @@ export const DOCS_TOTAL = EDUCATION_DOCS.length;
 export { isNew };
 export type { EduDocument };
 
-/** Comprueba si un slug es válido. */
+/** Comprueba si un slug es valido. */
 export function isValidSlug(slug: string): boolean {
   return DOC_BY_SLUG.has(slug);
 }
 
-/** URL pública del PDF de un documento. */
+/** URL publica del PDF de un documento. */
 export function pdfSrc(doc: EducationDoc): string {
   return `${BASE}${doc.file}`;
 }

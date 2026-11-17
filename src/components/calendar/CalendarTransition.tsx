@@ -82,10 +82,10 @@ const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 /**
  * Constantes de la animacion de caida (ajustar a mano).
  */
-const FALL_S = 0.78; // caída larga con aceleración final de bloque pesado
+const FALL_S = 0.78; // caida larga con aceleracion final de bloque pesado
 const START_ROT_DEG_MIN = 14; // rotacion inicial extra minima (grados)
 const START_ROT_DEG_MAX = 28; // rotacion inicial extra maxima (grados)
-const TODAY_DELAY_S = 0.2; // el impacto del montón dispara la fecha activa
+const TODAY_DELAY_S = 0.2; // el impacto del monton dispara la fecha activa
 const KNIFE_FLIGHT_S = 0.42;
 const KNIFE_HOLD_S = 1;
 const KNIFE_LANDED_ROTATION = 315;

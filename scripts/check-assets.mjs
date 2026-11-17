@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════════════════════════════════════
    check:assets — Verifica que los assets Persona 5 de /education existen en
-   public/assets/persona/. Imprime los que faltan y sale con código distinto
+   public/assets/persona/. Imprime los que faltan y sale con codigo distinto
    de cero si hay alguno ausente (sin fallar el build de Vite).
    ════════════════════════════════════════════════════════════════════════════════════ */
 import { existsSync } from "node:fs";
@@ -8,13 +8,13 @@ import { resolve } from "node:path";
 
 const PERSONA_ASSETS_DIR = "public/assets/persona";
 
-/* Nombres fijos de los archivos esperados (idénticos a src/config/personaAssets.ts). */
+/* Nombres fijos de los archivos esperados (identicos a src/config/personaAssets.ts). */
 const ARCANA = {
   "0": "arcana-0-le-mat.webp",        /* ESO → Le Mat */
   "1": "arcana-1-le-bateleur.webp",   /* Teleco → Le Bateleur */
   "4": "arcana-4-l-empereur.webp",    /* DAM → L'Empereur */
-  "17": "arcana-17-l-etoile.webp",    /* Bootcamp IA → L'Étoile */
-  "21": "arcana-21-le-monde.webp",    /* Inglés B2 → Le Monde */
+  "17": "arcana-17-l-etoile.webp",    /* Bootcamp IA → L'Etoile */
+  "21": "arcana-21-le-monde.webp",    /* Ingles B2 → Le Monde */
   "8": "arcana-8-la-justice.webp",    /* Safety & Telework → La Justice */
   "9": "arcana-9-l-hermite.webp",     /* PRL Consultant → L'Hermite */
 };
@@ -51,7 +51,7 @@ const expected = [
 const missing = expected.filter((name) => !existsSync(resolve(dir, name)));
 
 if (missing.length === 0) {
-  console.log(`[check:assets] OK — todos los ${expected.length} assets están en ${PERSONA_ASSETS_DIR}/`);
+  console.log(`[check:assets] OK — todos los ${expected.length} assets estan en ${PERSONA_ASSETS_DIR}/`);
   process.exit(0);
 }
 
@@ -60,6 +60,6 @@ for (const name of missing) {
   console.log(`  - ${name}`);
 }
 console.log(
-  "La página usa fallbacks CSS limpios para los assets ausentes (placa con el número romano, rombo rojo, pastillas L1/R1…).",
+  "La pagina usa fallbacks CSS limpios para los assets ausentes (placa con el numero romano, rombo rojo, pastillas L1/R1…).",
 );
 process.exit(missing.length);

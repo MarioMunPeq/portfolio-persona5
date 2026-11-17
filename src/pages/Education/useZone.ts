@@ -1,12 +1,12 @@
 /* ════════════════════════════════════════════════════════════════════════════════════════════════
-   useZone — mide los rectángulos reales de la UI fija y del título, y publica
+   useZone — mide los rectangulos reales de la UI fija y del titulo, y publica
    --zone-top / --zone-bottom / --zone-h en el elemento .edu-root.
 
-   --zone-top  = max(31vh, título.bottom + 2vh)
+   --zone-top  = max(31vh, titulo.bottom + 2vh)
    --zone-bottom = min(84vh, min(top reproductor, reloj, GitHub, LinkedIn) − 2vh)
-   --zone-h = --zone-bottom − --zone-top (mínimo 0)
+   --zone-h = --zone-bottom − --zone-top (minimo 0)
 
-   Se mide también el menú y el título (referencia superior), pero ninguno de
+   Se mide tambien el menu y el titulo (referencia superior), pero ninguno de
    los dos entra en --zone-bottom. Se ejecuta en useLayoutEffect +
    ResizeObserver, y se re-mide tras las animaciones de entrada de TopBar y
    BottomBar (deslizamiento 0.5s) para que las zonas queden definitivas.
@@ -15,8 +15,8 @@
 import { useLayoutEffect, useState } from "react";
 
 /* Selectores de la UI fija (TopBar / BottomBar de Layout, se reutilizan sin tocar). */
-const MENU_SELECTOR = ".p5-topbar-back"; /* botón menú */
-const TITLE_SELECTOR = ".section-title__h1"; /* título FORMACIÓN */
+const MENU_SELECTOR = ".p5-topbar-back"; /* boton menu */
+const TITLE_SELECTOR = ".section-title__h1"; /* titulo FORMACION */
 const BOTTOM_SELECTORS = [
   ".p5-bb-player-wrapper", /* reproductor */
   ".p5-bb-clock",          /* reloj */

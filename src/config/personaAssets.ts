@@ -1,9 +1,9 @@
 /* ════════════════════════════════════════════════════════════════════════════════════
    Assets Persona 5 de la ruta /education.
    Los archivos originales van en public/assets/persona/ (no se publican desde
-   assets-src/). Si falta un archivo, la página usa un fallback CSS limpio
-   (placa con el número romano, rombo rojo, pastillas L1/R1…), nunca un
-   recuadro negro vacío.
+   assets-src/). Si falta un archivo, la pagina usa un fallback CSS limpio
+   (placa con el numero romano, rombo rojo, pastillas L1/R1…), nunca un
+   recuadro negro vacio.
    ════════════════════════════════════════════════════════════════════════════════════ */
 
 export const PERSONA_ASSETS_DIR = "public/assets/persona";
@@ -11,13 +11,13 @@ export const PERSONA_ASSETS_DIR = "public/assets/persona";
 /* Nombres fijos de los archivos esperados. */
 export const PERSONA_ASSETS = {
   /* Arcanos (una imagen por arcano). Se usa en la minicarta de la placa y en
-     el sello de la carta. La clave es el número romano del arcano. */
+     el sello de la carta. La clave es el numero romano del arcano. */
   arcana: {
     "0": "arcana-0-le-mat.webp",        /* ESO → Le Mat */
     "1": "arcana-1-le-bateleur.webp",   /* Teleco → Le Bateleur */
     "4": "arcana-4-l-empereur.webp",    /* DAM → L'Empereur */
-    "17": "arcana-17-l-etoile.webp",    /* Bootcamp IA → L'Étoile */
-    "21": "arcana-21-le-monde.webp",    /* Inglés B2 → Le Monde */
+    "17": "arcana-17-l-etoile.webp",    /* Bootcamp IA → L'Etoile */
+    "21": "arcana-21-le-monde.webp",    /* Ingles B2 → Le Monde */
     "8": "arcana-8-la-justice.webp",    /* Safety & Telework → La Justice */
     "9": "arcana-9-l-hermite.webp",     /* PRL Consultant → L'Hermite */
   },
@@ -34,8 +34,8 @@ export const PERSONA_ASSETS = {
   /* Etiquetas de estado. */
   tag: {
     get: "tag-get.webp",     /* GET! al descargar */
-    new: "tag-new.webp",     /* NEW! (< 60 días) */
-    levelup: "tag-levelup.webp", /* LEVEL UP! (una vez por sesión) */
+    new: "tag-new.webp",     /* NEW! (< 60 dias) */
+    levelup: "tag-levelup.webp", /* LEVEL UP! (una vez por sesion) */
   },
   /* Indicador de carga del visor: tira horizontal de 10 frames del mismo
      tamaño (steps(10), 0.8s en bucle). */
@@ -48,12 +48,12 @@ export const PERSONA_ASSETS = {
   bgLoading: "bg-loading.webp",   /* fondo del visor: blur 6px, opacity .14 */
 } as const;
 
-/* Ruta pública de un asset. */
+/* Ruta publica de un asset. */
 export function assetPath(name: string): string {
   return `/${PERSONA_ASSETS_DIR}/${name}`;
 }
 
-/* Lista plana de todos los archivos esperados (para el script de verificación). */
+/* Lista plana de todos los archivos esperados (para el script de verificacion). */
 export function listExpectedAssets(): string[] {
   const out: string[] = [];
   for (const name of Object.values(PERSONA_ASSETS.arcana)) out.push(name);

@@ -136,7 +136,7 @@ function Badge({lineId, endpoint}:{lineId:SkillLineId;endpoint:"start"|"end"}){
 function MetroArtwork({selectedId,svgRef,vanRef}:{selectedId:string;svgRef:React.RefObject<SVGSVGElement|null>;vanRef:React.RefObject<SVGGElement|null>}){
   return <svg ref={svgRef} className="metro-map__svg" viewBox="-80 -80 1800 920" role="img" aria-labelledby="metro-svg-title metro-svg-desc" preserveAspectRatio="none">
     <title id="metro-svg-title">Mapa de habilidades de Mementos</title>
-    <desc id="metro-svg-desc">Siete líneas de programación conectan diecinueve estaciones. Git y GitHub es el cruce principal.</desc>
+    <desc id="metro-svg-desc">Siete lineas de programacion conectan diecinueve estaciones. Git y GitHub es el cruce principal.</desc>
     <defs><pattern id="metro-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="rgba(245,245,240,.075)" strokeWidth="1" /></pattern></defs>
     <rect x="-80" y="-80" width="1800" height="920" fill="url(#metro-grid)" />
     {skillLines.map((line)=><g key={line.id} className={`metro-route metro-route--${line.id}`} style={{"--line-color":line.color} as CSSProperties} data-line={line.id} data-line-color={line.color}>
@@ -178,7 +178,7 @@ function MetroArtwork({selectedId,svgRef,vanRef}:{selectedId:string;svgRef:React
 }
 
 function LineLegend({active,onSelect}:{active:SkillLineId|null;onSelect?:(id:SkillLineId)=>void}){
-  return <div className="metro-legend" role="group" aria-label="Líneas del mapa">
+  return <div className="metro-legend" role="group" aria-label="Lineas del mapa">
     {skillLines.map((line)=><button key={line.id} type="button" className={`metro-legend__item metro-legend__item--${line.id}${active===line.id?" is-active":""}`} style={{"--line-color":line.color} as CSSProperties} data-line-color={line.color} onClick={()=>onSelect?.(line.id)} aria-pressed={active===line.id}>
       <span className="metro-legend__mark" style={{"--line-color":line.color} as CSSProperties} data-line-color={line.color} aria-hidden="true"><span>{line.badge}</span></span>
       <span>{line.name}</span>
@@ -188,7 +188,7 @@ function LineLegend({active,onSelect}:{active:SkillLineId|null;onSelect?:(id:Ski
 
 function StationButton({station,onSelect,onHover,selectedId,pinnedId}:{station:SkillStation;onSelect:(id:string)=>void;onHover:(id:string)=>void;selectedId:string;pinnedId:string|null}){
   const lines=station.lines.map((id)=>skillLines.find((line)=>line.id===id)?.name);
-  const aria=station.lines.length>1?`${station.name}, cruce de las líneas ${lines.join(" y ")}`:`${station.name}, línea ${lines[0]}`;
+  const aria=station.lines.length>1?`${station.name}, cruce de las lineas ${lines.join(" y ")}`:`${station.name}, linea ${lines[0]}`;
   const move=(event:React.KeyboardEvent<HTMLButtonElement>)=>{
     const currentLine=station.lines[0];
     let nextId:string|undefined;
@@ -323,7 +323,7 @@ function parkingPoint(svg:SVGSVGElement,van:SVGGElement,station:SkillStation):{x
 }
 
 function MobileMap({onSelect}:{onSelect:(id:string)=>void}){
-  return <div className="metro-mobile-map" aria-label="Líneas y estaciones de habilidades">
+  return <div className="metro-mobile-map" aria-label="Lineas y estaciones de habilidades">
     {skillLines.map((line)=>{
       const ids=MOBILE_LINE_STATIONS[line.id];
       const lineStations=ids.map((id)=>skillStations.find((station)=>station.id===id)).filter((station):station is SkillStation=>Boolean(station));
@@ -331,7 +331,7 @@ function MobileMap({onSelect}:{onSelect:(id:string)=>void}){
         <h3 id={`mobile-line-${line.id}`}><span>{line.badge}</span>{line.name}<small>{lineStations.length} ESTACIONES</small></h3>
         <ol>{lineStations.map((station)=>{
           const cross=station.lines.length>1;
-          return <li key={`${line.id}-${station.id}`}><button type="button" className="metro-mobile-station" data-station={station.id} onClick={()=>onSelect(station.id)} aria-label={`${station.name}, línea ${line.name}${cross?`, cruce con ${station.lines.filter((id)=>id!==line.id).map((id)=>skillLines.find((item)=>item.id===id)?.name).join(", ")}`:""}`}>
+          return <li key={`${line.id}-${station.id}`}><button type="button" className="metro-mobile-station" data-station={station.id} onClick={()=>onSelect(station.id)} aria-label={`${station.name}, linea ${line.name}${cross?`, cruce con ${station.lines.filter((id)=>id!==line.id).map((id)=>skillLines.find((item)=>item.id===id)?.name).join(", ")}`:""}`}>
             <span className="metro-mobile-station__node" aria-hidden="true"/>
             <span className="metro-mobile-station__name">{station.name}</span>
             {cross&&<span className="metro-mobile-station__cross">{station.lines.filter((id)=>id!==line.id).map((id)=>skillLines.find((item)=>item.id===id)?.badge).join(" · ")}</span>}
@@ -353,16 +353,16 @@ function ProjectThumbnail({src}:{src:string|null}){
 function DetailPanel({station}:{station:SkillStation}){
   const title=station.name==="Git/GitHub"?"GITHUB":station.name==="HTML/CSS"?"HTML·CSS":station.name==="Unity/Godot"?"UNITY·GODOT":station.name.toUpperCase();
   return <aside className="metro-detail" aria-label={`Detalle de ${station.name}`} data-detail-station={station.id}>
-    <div className="metro-detail__eyebrow"><span><i/>DOSSIER DE ESTACIÓN</span><b>#{String(skillStations.indexOf(station)+1).padStart(2,"0")}</b></div>
+    <div className="metro-detail__eyebrow"><span><i/>DOSSIER DE ESTACION</span><b>#{String(skillStations.indexOf(station)+1).padStart(2,"0")}</b></div>
     <header className="metro-detail__title">
       <span className="metro-detail__icon">{svgIcon(station.icon)}</span>
       <h3 data-panel-name={station.id}>{title}</h3>
     </header>
-    <div className="metro-detail__lines" aria-label="Líneas conectadas">
+    <div className="metro-detail__lines" aria-label="Lineas conectadas">
       {station.lines.map((id)=>{const line=skillLines.find((item)=>item.id===id)!;return <span key={id} className={`metro-detail__line metro-detail__line--${id}`} style={{"--detail-line":line.color} as CSSProperties} data-line-color={line.color}><b>{line.badge}</b>{line.name}</span>;})}
     </div>
     <section className="metro-detail__projects" aria-labelledby="metro-projects-heading">
-      <div className="metro-detail__section-title"><h4 id="metro-projects-heading">Proyectos</h4><span>{String(station.projects.length).padStart(2,"0")} VÍNCULOS</span></div>
+      <div className="metro-detail__section-title"><h4 id="metro-projects-heading">Proyectos</h4><span>{String(station.projects.length).padStart(2,"0")} VINCULOS</span></div>
       {station.projects.length?<ul>{station.projects.map((project,index)=><li key={project.slug}>
         <a href={`/proyectos/${project.slug}`} className="metro-project" aria-label={`Abrir proyecto ${project.name}`}>
           <ProjectThumbnail src={project.image}/>
@@ -370,7 +370,7 @@ function DetailPanel({station}:{station:SkillStation}){
           <span className="metro-project__copy"><span className="metro-project__name">{project.name}</span><span className="metro-project__summary">{project.summary}</span></span>
           <span className="metro-project__arrow" aria-hidden="true">↗</span>
         </a>
-      </li>)}</ul>:<p className="metro-detail__empty">No hay proyectos asociados a esta estación.</p>}
+      </li>)}</ul>:<p className="metro-detail__empty">No hay proyectos asociados a esta estacion.</p>}
     </section>
     {station.level&&<p className="metro-detail__level">NIVEL <b>{station.level}</b></p>}
     <span className="metro-detail__corner metro-detail__corner--tl" aria-hidden="true"/><span className="metro-detail__corner metro-detail__corner--br" aria-hidden="true"/>
@@ -512,9 +512,9 @@ export function SkillsMetroMap(){
       <span className="skills-metro__heading-mark" aria-hidden="true">✦</span>
       <div>
         <h2 ref={headingRef} id="skills-metro-title">Habilidades</h2>
-        <p>La red de tecnologías y herramientas de Mario.</p>
+        <p>La red de tecnologias y herramientas de Mario.</p>
       </div>
-      <span className="skills-metro__station-count"><b>07</b> LÍNEAS <i /> <b>19</b> ESTACIONES</span>
+      <span className="skills-metro__station-count"><b>07</b> LINEAS <i /> <b>19</b> ESTACIONES</span>
     </div>
     <div className="skills-metro__workspace">
     <div className="skills-metro__map-column">
@@ -526,7 +526,7 @@ export function SkillsMetroMap(){
           const placement=labelSides[station.id];
           const side=placement?.side??"right";
           const index=skillStations.indexOf(station);
-          const aria=station.lines.length>1?`${station.name}, cruce de las líneas ${station.lines.map((id)=>skillLines.find((line)=>line.id===id)?.name).join(" y ")}`:`${station.name}, línea ${skillLines.find((line)=>line.id===station.lines[0])?.name}`;
+          const aria=station.lines.length>1?`${station.name}, cruce de las lineas ${station.lines.map((id)=>skillLines.find((line)=>line.id===id)?.name).join(" y ")}`:`${station.name}, linea ${skillLines.find((line)=>line.id===station.lines[0])?.name}`;
           return <div key={station.id} className={`metro-label metro-label--${side}${station.id===selectedId?" is-selected":""}`} data-station={station.id} style={{left:`${(station.point.x+80)/18}%`,top:`${(station.point.y+80)/9.2}%`,"--label-tilt":index%2===0?"-2deg":"1.5deg","--label-gap":placement?`${placement.gap}px`:station.id==="driving-license"?"7vh":undefined} as CSSProperties}>
             <span>{station.name}</span><small>{station.lines.map((id)=>skillLines.find((line)=>line.id===id)?.badge).join(" · ")}</small>
             <span className="sr-only">{aria}</span>
@@ -545,8 +545,8 @@ export function SkillsMetroMap(){
       <button type="button" className="metro-mobile-sheet__close" onClick={()=>setMobileOpen(false)} aria-label="Cerrar detalle">×</button>
       <DetailPanel station={selected}/>
     </div>}
-    <div className="skills-metro__footer"><span><i /> MEMENTOS // REGISTRO DE HABILIDADES</span><span>◄ SELECCIONA UNA LÍNEA PARA FILTRAR ►</span></div>
-    <div className="sr-only" aria-live="polite" aria-atomic="true">{selected.name}. {selected.lines.map((id)=>skillLines.find((line)=>line.id===id)?.name).join(", ")}. {activeLine?`Línea ${skillLines.find((line)=>line.id===activeLine)?.name} resaltada`:"Todas las líneas visibles"}</div>
+    <div className="skills-metro__footer"><span><i /> MEMENTOS // REGISTRO DE HABILIDADES</span><span>◄ SELECCIONA UNA LINEA PARA FILTRAR ►</span></div>
+    <div className="sr-only" aria-live="polite" aria-atomic="true">{selected.name}. {selected.lines.map((id)=>skillLines.find((line)=>line.id===id)?.name).join(", ")}. {activeLine?`Linea ${skillLines.find((line)=>line.id===activeLine)?.name} resaltada`:"Todas las lineas visibles"}</div>
     <div className="sr-only">{skillStations.map((station)=><span key={station.id}>{station.name}: {station.lines.join(", ")}</span>)}</div>
   </section>;
 }

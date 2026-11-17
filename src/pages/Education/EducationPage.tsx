@@ -1,7 +1,7 @@
 /* ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-   /education — "FORMACIÓN" (esqueleto).
+   /education — "FORMACION" (esqueleto).
    Escena de escritorio 100svh sin scroll: .edu-root fijo, hijos en vw/vh
-   relativos a él. Zona segura publicada por useZone (--zone-*). Sin scroll,
+   relativos a el. Zona segura publicada por useZone (--zone-*). Sin scroll,
    sin position:absolute con coordenadas en px, sin medidas px salvo
    bordes/sombras/blur.
    ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ */
@@ -148,17 +148,17 @@ export default function EducationPage() {
         ))}
       </div>
 
-      {/* Título de Perfil reutilizado; la identidad Persona vive en la carta y el selector. */}
+      {/* Titulo de Perfil reutilizado; la identidad Persona vive en la carta y el selector. */}
       <header className="edu-title">
         <SectionTitle
-          title="FORMACIÓN"
+          title="FORMACION"
           persona
           compact
         />
-        <p className="edu-lead">Siete arcanos. Siete títulos reales. Elige una carta para abrir su expediente.</p>
+        <p className="edu-lead">Siete arcanos. Siete titulos reales. Elige una carta para abrir su expediente.</p>
       </header>
 
-      {/* Menú de arcanos: la lista de texto pasa a ser una fila de cartas reales. */}
+      {/* Menu de arcanos: la lista de texto pasa a ser una fila de cartas reales. */}
       <PlateStack selectedIndex={selectedIndex} onSelect={selectDocument} />
 
       {/* Dos objetos en paralelo: arcano y certificado, sin solaparse. */}

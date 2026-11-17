@@ -1,7 +1,7 @@
-/* Genera previews de página de los certificados PDF.
-   Renderiza cada página con pdf.js dentro de Chromium (Playwright) sobre
+/* Genera previews de pagina de los certificados PDF.
+   Renderiza cada pagina con pdf.js dentro de Chromium (Playwright) sobre
    un canvas de 1600 px de ancho y la exporta a WebP en public/previews/.
-   Máximo 6 páginas por documento. Se ejecuta una sola vez (build-time);
+   Maximo 6 paginas por documento. Se ejecuta una sola vez (build-time);
    no forma parte de npm run build. */
 const http = require("node:http");
 const { parse } = require("node:url");
@@ -143,7 +143,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = "/node_modules/pdfjs-dist/legacy/build/
   server.close();
 
   const countBySlug = Object.fromEntries(manifest.filter((m) => m.pages !== undefined).map((m) => [m.slug, m.pages]));
-  console.log("Páginas por documento:", countBySlug);
+  console.log("Paginas por documento:", countBySlug);
   console.log("errores:", errors);
   process.exit(errors.length ? 1 : 0);
 })();
