@@ -313,7 +313,8 @@
 .morgana-van { pointer-events: none; }
 .morgana-van__shadow { fill: #000; opacity: 0.75; }
 .morgana-van__speed { fill: none; stroke: var(--color-paper); stroke-width: 4px; stroke-linecap: square; opacity: 0; }
-.morgana-van__wheels { transform-box: fill-box; transform-origin: center; }
+.morgana-van__wheels { pointer-events: none; }
+.morgana-van__wheel-rotor { transform-box: fill-box; transform-origin: center; }
 .morgana-van__shell { fill: #111; stroke: var(--color-paper); stroke-width: 5px; stroke-linejoin: round; }
 .morgana-van__window { fill: #202b35; stroke: var(--color-paper); stroke-width: 3px; }
 .morgana-van__stripe { fill: #f5d600; stroke: #111; stroke-width: 2px; }
@@ -650,8 +651,9 @@
   transition: transform 180ms cubic-bezier(.2,.8,.2,1), filter 180ms ease;
 }
 .metro-station::before { position: absolute; z-index: -1; width: 74%; aspect-ratio: 1; background: #ffd400; content: ""; opacity: 0; transform: rotate(45deg); }
-.metro-station__icon { width: 82%; color: #050505; transform: none; filter: drop-shadow(.34vh 0 #fff) drop-shadow(-.34vh 0 #fff) drop-shadow(0 .34vh #fff) drop-shadow(0 -.34vh #fff) drop-shadow(.25vh .25vh #fff) drop-shadow(-.25vh .25vh #fff) drop-shadow(.25vh -.25vh #fff) drop-shadow(-.25vh -.25vh #fff); }
+.metro-station__icon { width: 82%; color: #050505; transform: none; }
 .metro-station__icon svg { fill: #050505; }
+.metro-station__icon svg path { stroke: #fff; stroke-width: 6px; stroke-linejoin: round; paint-order: stroke fill; vector-effect: non-scaling-stroke; }
 .metro-station.is-crossover { width: clamp(2.5rem, 6.5vh, 5rem); border: 0; background: transparent; }
 .metro-station.is-hub { width: clamp(3.2rem, 8vh, 6rem); border: 0; background: transparent; box-shadow: none; }
 .metro-station.is-selected { z-index: 7; border: 0; box-shadow: none; transform: translate(-50%,-50%) scale(1.12); }

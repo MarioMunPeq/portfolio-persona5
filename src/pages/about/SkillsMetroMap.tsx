@@ -168,7 +168,10 @@ function MetroArtwork({selectedId,svgRef,vanRef}:{selectedId:string;svgRef:React
         <circle className="morgana-van__eye" cx="40" cy="-12" r="7"/><circle className="morgana-van__eye" cx="56" cy="-12" r="7"/>
         <path className="morgana-van__whisker" d="m49-6 15 1m-15 4 16 6m-18-11-16 1" />
         <image className="morgana-van__sprite" href={`${import.meta.env.BASE_URL}images/map/morgana.webp`} x="-24" y="-53" width="31" height="40" preserveAspectRatio="xMidYMid meet" />
-        <g className="morgana-van__wheels"><circle cx="-31" cy="11" r="11"/><circle cx="39" cy="11" r="11"/><circle className="morgana-van__hub" cx="-31" cy="11" r="4"/><circle className="morgana-van__hub" cx="39" cy="11" r="4"/></g>
+        <g className="morgana-van__wheels">
+          <g transform="translate(-31 11)"><g className="morgana-van__wheel-rotor"><circle r="11"/><circle className="morgana-van__hub" r="4"/></g></g>
+          <g transform="translate(39 11)"><g className="morgana-van__wheel-rotor"><circle r="11"/><circle className="morgana-van__hub" r="4"/></g></g>
+        </g>
       </g>
     </g>
   </svg>;
@@ -254,16 +257,44 @@ function trackRoute(svg:SVGSVGElement,start:{x:number;y:number},target:SkillStat
     const from=skillStations.find((item)=>item.id===step.from)?.point;
     const to=skillStations.find((item)=>item.id===step.to)?.point;
     if(!path||!from||!to)continue;
-    const count=Math.ceil(path.getTotalLength()/10);
-    const points=Array.from({length:count+1},(_,index)=>path.getPointAtLength(path.getTotalLength()*index/count));
-    const nearestIndex=(point:{x:number;y:number})=>points.reduce((best,p,index)=>Math.hypot(p.x-point.x,p.y-point.y)<Math.hypot(points[best].x-point.x,points[best].y-point.y)?index:best,0);
-    const fromIndex=nearestIndex(from),toIndex=nearestIndex(to);
-    const segment=points.slice(Math.min(fromIndex,toIndex),Math.max(fromIndex,toIndex)+1);
+    const geometry=getRouteGeometry(path,step.line);
+    const fromIndex=geometry.stationIndices.get(step.from)??nearestRoutePoint(geometry.points,from);
+    const toIndex=geometry.stationIndices.get(step.to)??nearestRoutePoint(geometry.points,to);
+    const segment=geometry.points.slice(Math.min(fromIndex,toIndex),Math.max(fromIndex,toIndex)+1);
     if(fromIndex>toIndex)segment.reverse();
     result.push(...segment);
   }
   if(result.length===1)result.push(new DOMPoint(target.point.x,target.point.y));
   return result;
+}
+
+type RouteGeometry={points:DOMPoint[];stationIndices:Map<string,number>};
+const routeGeometryCache=new WeakMap<SVGPathElement,RouteGeometry>();
+
+function nearestRoutePoint(points:DOMPoint[],point:{x:number;y:number}){
+  let best=0,bestDistance=Infinity;
+  for(let index=0;index<points.length;index++){
+    const candidate=points[index];
+    const distance=(candidate.x-point.x)**2+(candidate.y-point.y)**2;
+    if(distance<bestDistance){best=index;bestDistance=distance;}
+  }
+  return best;
+}
+
+function getRouteGeometry(path:SVGPathElement,line:SkillLineId):RouteGeometry{
+  const cached=routeGeometryCache.get(path);
+  if(cached)return cached;
+  const length=path.getTotalLength();
+  const count=Math.max(2,Math.ceil(length/10));
+  const points=Array.from({length:count+1},(_,index)=>path.getPointAtLength(length*index/count));
+  const stationIndices=new Map<string,number>();
+  for(const id of LINE_STATION_ORDER[line]){
+    const station=skillStations.find((item)=>item.id===id);
+    if(station)stationIndices.set(id,nearestRoutePoint(points,station.point));
+  }
+  const geometry={points,stationIndices};
+  routeGeometryCache.set(path,geometry);
+  return geometry;
 }
 
 function parkingPoint(svg:SVGSVGElement,van:SVGGElement,station:SkillStation):{x:number;y:number}{
@@ -385,14 +416,14 @@ export function SkillsMetroMap(){
       const detail=section.querySelector(".metro-detail");
       const van=vanRef.current;
       if(reduced){gsap.to(detail,{opacity:1,duration:0.15});observer.disconnect();return;}
-      routes.forEach((route)=>{const length=route.getTotalLength();gsap.set(route,{strokeDasharray:length,strokeDashoffset:length});});
+      gsap.set(routes,{opacity:0});
       gsap.set(nodes,{scale:0.65,opacity:0,transformOrigin:"center"});
       const timeline=gsap.timeline({onComplete:()=>{
-        gsap.set(routes,{clearProps:"strokeDasharray,strokeDashoffset"});
+        gsap.set(routes,{clearProps:"opacity"});
         gsap.set(nodes,{clearProps:"transform,opacity"});
       }});
       introTimeline.current=timeline;
-      timeline.to(routes,{strokeDashoffset:0,duration:0.28,stagger:0.1,ease:"power1.inOut"})
+      timeline.to(routes,{opacity:1,duration:0.18,stagger:0.035,ease:"none"})
         .to(nodes,{scale:1,opacity:1,duration:0.2,stagger:0.02,ease:"back.out(1.8)"},"-=0.08")
         .fromTo(detail,{clipPath:"polygon(0 0,0 0,0 100%,0 100%)"},{clipPath:"polygon(0 0,100% 0,100% 100%,0 100%)",duration:0.28},"-=0.16");
       if(van)timeline.fromTo(van,{attr:{transform:"translate(1410 700) scale(1.15)"}},{attr:{transform:"translate(1630 700) scale(1.15)"},duration:0.4,ease:"power2.inOut"},"-=0.28");
@@ -420,7 +451,10 @@ export function SkillsMetroMap(){
     const destination=skillStations.find((station)=>station.id===selectedId);
     if(!destination)return;
     const selectedSticker=sectionRef.current?.querySelector<HTMLElement>(`.metro-station[data-station="${selectedId}"]`);
+    if(selectedSticker)gsap.killTweensOf(selectedSticker);
     if(selectedSticker&&!reduced)gsap.fromTo(selectedSticker,{scale:1.28},{scale:1.12,duration:0.42,ease:"elastic.out(1,.48)"});
+    const body=van.querySelector<SVGGElement>(".morgana-van__body");
+    if(body)gsap.killTweensOf(body);
     const current=van.getAttribute("transform")?.match(/translate\(([-\d.]+)[ ,]+([-\d.]+)\)/);
     const start={x:Number(current?.[1]??1630),y:Number(current?.[2]??700)};
     const target=parkingPoint(svg,van,destination);
@@ -428,28 +462,33 @@ export function SkillsMetroMap(){
     if(target.x!==destination.point.x||target.y!==destination.point.y)points.push(new DOMPoint(target.x,target.y));
     const pathLength=points.slice(1).reduce((sum,p,index)=>sum+Math.hypot(p.x-points[index].x,p.y-points[index].y),0);
     const progress={value:0};
-    const wheels=van.querySelector<SVGGElement>(".morgana-van__wheels");
+    const wheels=[...van.querySelectorAll<SVGGElement>(".morgana-van__wheel-rotor")];
     const speed=van.querySelector<SVGPathElement>(".morgana-van__speed");
+    const duration=reduced?0.15:Math.min(1.4,Math.max(0.6,pathLength/1500*1.4));
     previousStation.current=selectedId;
-    if(!reduced&&wheels)gsap.to(wheels,{rotation:360,transformOrigin:"center center",duration:0.3,ease:"none",repeat:-1});
+    if(!reduced&&wheels.length)gsap.to(wheels,{rotation:360,transformOrigin:"50% 50%",duration:Math.max(0.55,duration*0.8),ease:"none",repeat:-1});
     if(!reduced&&speed)gsap.to(speed,{opacity:0.8,duration:0.12,repeat:1,yoyo:true});
-    const vanTween=gsap.to(progress,{value:1,duration:reduced?0.15:Math.min(1.4,Math.max(0.6,pathLength/1500*1.4)),ease:reduced?"none":"power2.inOut",onUpdate:()=>{
+    const cumulative=new Float64Array(points.length);
+    for(let index=1;index<points.length;index++)cumulative[index]=cumulative[index-1]+Math.hypot(points[index].x-points[index-1].x,points[index].y-points[index-1].y);
+    const vanTween=gsap.to(progress,{value:1,duration,ease:reduced?"none":"power2.inOut",onUpdate:()=>{
       const distance=pathLength*progress.value;
-      let walked=0,point=points[0],next=points[1];
-      for(let i=1;i<points.length;i++){
-        const segment=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);
-        if(walked+segment>=distance){const t=segment?(distance-walked)/segment:0;point=new DOMPoint(points[i-1].x+(points[i].x-points[i-1].x)*t,points[i-1].y+(points[i].y-points[i-1].y)*t);next=points[i];break;}
-        walked+=segment;
-      }
+      let low=1,high=cumulative.length-1;
+      while(low<high){const middle=(low+high)>>1;if(cumulative[middle]<distance)low=middle+1;else high=middle;}
+      const segmentIndex=low;
+      const segmentStart=cumulative[segmentIndex-1];
+      const segmentLength=cumulative[segmentIndex]-segmentStart;
+      const t=segmentLength?(distance-segmentStart)/segmentLength:0;
+      const from=points[segmentIndex-1],next=points[segmentIndex];
+      const point=new DOMPoint(from.x+(next.x-from.x)*t,from.y+(next.y-from.y)*t);
       const angle=Math.atan2(next.y-point.y,next.x-point.x)*180/Math.PI;
       van.setAttribute("transform",`translate(${point.x} ${point.y}) scale(1.15) rotate(${Math.max(-14,Math.min(14,angle))}) scale(${next.x<point.x?-1:1} 1)`);
     },onComplete:()=>{
       van.setAttribute("transform",`translate(${target.x} ${target.y}) scale(1.15)`);
-      if(wheels)gsap.killTweensOf(wheels);
+      if(wheels.length){gsap.killTweensOf(wheels);gsap.set(wheels,{rotation:0});}
       if(speed)gsap.to(speed,{opacity:0,duration:0.12});
-      gsap.fromTo(van.querySelector(".morgana-van__body"),{scale:1.08,transformOrigin:"center center"},{scale:1,duration:0.2,ease:"back.out(2)"});
+      if(body)gsap.fromTo(body,{scale:1.08,transformOrigin:"center center"},{scale:1,duration:0.2,ease:"back.out(2)"});
     }});
-    return()=>{vanTween.kill();if(wheels)gsap.killTweensOf(wheels);if(speed)gsap.killTweensOf(speed);};
+    return()=>{vanTween.kill();if(wheels.length)gsap.killTweensOf(wheels);if(speed)gsap.killTweensOf(speed);if(selectedSticker)gsap.killTweensOf(selectedSticker);if(body)gsap.killTweensOf(body);};
   },[selectedId]);
 
   useLayoutEffect(()=>{
