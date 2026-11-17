@@ -1,0 +1,118 @@
+.arcana-rail {
+  position: absolute;
+  left: 8vw;
+  right: 8vw;
+  top: calc(var(--zone-bottom) - 10vh);
+  z-index: 8;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: clamp(0.5vw, 1.3vw, 2vw);
+  height: 10vh;
+  overflow: visible;
+}
+
+.arcana-option {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: end;
+  gap: 0.5vh;
+  flex: 0 1 9vw;
+  min-width: 0;
+  max-width: 10vw;
+  height: 100%;
+  padding: 0 0.4vw 0.6vh;
+  border: 0;
+  border-bottom: 0.32vh solid transparent;
+  background: transparent;
+  color: var(--color-paper);
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 220ms ease, filter 220ms ease;
+}
+.arcana-option__image-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+  filter: brightness(0.7);
+  transition: filter 220ms ease;
+}
+.arcana-option__image {
+  display: block;
+  width: auto;
+  height: min(6.5vh, 90px);
+  max-width: 100%;
+  object-fit: contain;
+  border: 2px solid #0b0b0b;
+  background: #0b0b0b;
+  box-shadow: 0.35vh 0.35vh 0 #080808;
+  transition: height 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease;
+}
+.arcana-option__name {
+  max-width: 100%;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--color-paper) 78%, transparent);
+  font: 700 clamp(10px, 1vh, 13px)/1.05 var(--font-sans);
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+.arcana-option__roman { display: none; }
+.arcana-option:hover,
+.arcana-option:focus-visible,
+.arcana-option--active {
+  transform: translateY(-0.65vh);
+  border-bottom-color: var(--color-accent);
+}
+.arcana-option:hover .arcana-option__image-wrap,
+.arcana-option:focus-visible .arcana-option__image-wrap,
+.arcana-option--active .arcana-option__image-wrap { filter: brightness(1); }
+.arcana-option--active .arcana-option__image { height: min(7vh, 96px); box-shadow: 0.5vh 0.5vh 0 var(--color-accent); }
+.arcana-option--active .arcana-option__name { color: var(--color-paper); }
+.arcana-option:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+
+@media (max-width: 1099px), (max-height: 559px) {
+  .arcana-rail {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    min-height: 14svh;
+    margin: 2.5vh 0 3vh;
+    padding: 0.8vh 0 1.2vh;
+    justify-content: flex-start;
+    gap: 2.5vw;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) transparent;
+  }
+  .arcana-option {
+    flex: 0 0 clamp(68px, 19vw, 88px);
+    max-width: none;
+    height: 13svh;
+    min-height: 92px;
+    gap: 0.7vh;
+  }
+  .arcana-option__image { height: 8.5svh; max-height: 70px; }
+  .arcana-option--active .arcana-option__image { height: 9.4svh; max-height: 78px; }
+  .arcana-option__name { font-size: clamp(10px, 2.6vw, 12px); }
+  .arcana-option__name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
+    line-height: 1.05;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcana-option, .arcana-option__image-wrap, .arcana-option__image { transition: none; }
+  .arcana-option:hover, .arcana-option:focus-visible, .arcana-option--active { transform: none; }
+}

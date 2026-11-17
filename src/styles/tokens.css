@@ -4663,3 +4663,42 @@ html {
     padding-inline: 12px !important;
   }
 }
+
+/* Boton "DOCUMENTOS" (lista rapida) en la topbar de /education. */
+.p5-topbar-docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.p5-topbar-docs__mark {
+  font-family: var(--font-sans);
+  font-size: clamp(20px, 1.6vw, 28px);
+  line-height: 1;
+  color: var(--p5-red);
+}
+.p5-topbar-docs__label {
+  font-family: var(--font-hatty);
+  font-size: clamp(24px, 2vw, 36px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.p5-plate--docs:hover .p5-plate__fill {
+  background: var(--p5-red);
+}
+.p5-plate--docs:hover .p5-topbar-docs__mark,
+.p5-plate--docs:hover .p5-topbar-docs__label {
+  color: #fff;
+}
+.p5-plate--docs:focus-within {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}

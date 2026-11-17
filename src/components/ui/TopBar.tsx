@@ -51,7 +51,7 @@ export function TopBar() {
   return (
     <div className="p5-topbar">
       <div className="p5-topbar__inner">
-        {/* ── Izquierda: boton compacto ── */}
+        {/* ── Izquierda: botones compactos ── */}
         <div className="p5-topbar-left p5-enter--top" style={{ animationDelay: "0ms" }}>
           <P5Plate
             className={isMenu ? "" : "p5-plate--back"}

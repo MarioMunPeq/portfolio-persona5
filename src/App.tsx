@@ -14,7 +14,9 @@ import { RouteMetadata } from "./components/seo/RouteMetadata";
 
 /** Rutas cargadas de forma perezosa para reducir el bundle inicial. */
 const Education = lazy(() =>
-  import("./pages/Education").then((m) => ({ default: m.Education })),
+  import("./pages/Education/EducationPage").then((m) => ({
+    default: m.default,
+  })),
 );
 const ProjectDetail = lazy(() =>
   import("./pages/ProjectDetail").then((m) => ({ default: m.ProjectDetail })),
