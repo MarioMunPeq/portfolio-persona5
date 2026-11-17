@@ -6,11 +6,9 @@
  *   - Contenido interior (numero + PNG del dia de la semana): rotacion ESTATICA
  *     en CSS, nunca se anima su rotacion/x/scale/transformOrigin durante la caida.
  *
- * El numero usa dos capas position:absolute superpuestas con fuente p5hatty:
- *   - Capa trasera (z-index:1): texto blanco con -webkit-text-stroke blanco grueso
- *     (0.24em) que crea un halo BLANCO PURO ancho.
- *   - Capa delantera (z-index:2): mismo texto en color segun el dia, con stroke fino
- *     (0.03em) del mismo color.
+ * El numero usa tipografia Anton con un contorno blanco grueso, rojo o azul en fin
+ * de semana y una ligera inclinacion distinta por digito, inspirado en el calendario
+ * de Persona 5. No depende de imagenes rasterizadas de numeros.
  * La imagen del dia de la semana va DELANTE (z-index:3), empezando en el 85% de la
  * altura del numero (tapa su ~20% inferior).
  *
@@ -50,17 +48,6 @@ function assignRef<T>(ref: Ref<T> | undefined, instance: T | null): void {
     (ref as React.RefObject<T | null>).current = instance;
   }
 }
-
-/** Color de relleno del numero segun el dia de la semana (indice JS: 0=Dom…6=Sab). */
-const NUMBER_FILL_BY_WEEKDAY: Record<number, string> = {
-  0: "#e8112d", // domingo → rojo
-  1: "#111111", // lunes → casi negro
-  2: "#111111", // martes → casi negro
-  3: "#111111", // miercoles → casi negro
-  4: "#111111", // jueves → casi negro
-  5: "#111111", // viernes → casi negro
-  6: "#4fb3f0", // sabado → azul claro
-};
 
 /** Tamaño de fuente del numero (px) — visualmente dominante. */
 const NUMBER_FONT_SIZE_BY_INDEX: Record<number, number> = {
@@ -105,61 +92,15 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>(
     const width = CARD_WIDTH_BY_INDEX[index] * widthScale;
     const fontSize = NUMBER_FONT_SIZE_BY_INDEX[index] * widthScale;
     const src = calendarAsset(date.weekdayFile);
-    const numberFill = NUMBER_FILL_BY_WEEKDAY[date.weekday];
     const numberRotation = NUMBER_ROTATION_BY_INDEX[index];
     const weekdayRotation = WEEKDAY_ROTATION_BY_INDEX[index];
 
-    // Grosor del contorno proporcional al tamaño del numero (en em).
-    const backStrokeEm = 0.24;
-    const frontStrokeEm = 0.03;
-
-    // La imagen empieza en el 85% de la altura del numero (tapa su ~20% inferior).
-    const weekdayTopPx = fontSize * 0.85;
+    const digits = String(date.day).split("");
+    const weekdayTopPx = fontSize * 0.82;
 
     const handleWrapperRef = (el: HTMLDivElement | null) => {
       assignRef(wrapperRef, el);
       assignRef(forwardedRef, el);
-    };
-
-    // Capa trasera: halo blanco ancho (z-index:1)
-    const backStyle: React.CSSProperties = {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      textAlign: "center",
-      fontFamily: "'p5hatty', sans-serif",
-      fontWeight: "400",
-      fontSize: `${fontSize}px`,
-      color: "#fff",
-      WebkitTextFillColor: "#fff",
-      WebkitTextStroke: `${backStrokeEm}em #fff`,
-      paintOrder: "stroke fill",
-      filter: "drop-shadow(4px 4px 0 #000)",
-      transform: `rotate(${numberRotation}deg)`,
-      zIndex: 1,
-      whiteSpace: "nowrap",
-      letterSpacing: "-0.03em",
-    };
-
-    // Capa delantera: relleno de color segun el dia (z-index:2)
-    const frontStyle: React.CSSProperties = {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      textAlign: "center",
-      fontFamily: "'p5hatty', sans-serif",
-      fontWeight: "400",
-      fontSize: `${fontSize}px`,
-      color: numberFill,
-      WebkitTextFillColor: numberFill,
-      WebkitTextStroke: `${frontStrokeEm}em ${numberFill}`,
-      paintOrder: "stroke fill",
-      transform: `rotate(${numberRotation}deg)`,
-      zIndex: 2,
-      whiteSpace: "nowrap",
-      letterSpacing: "-0.03em",
     };
 
     // Imagen del dia de la semana: DELANTE de ambas capas (z-index:3)
@@ -192,23 +133,42 @@ const CalendarCard = forwardRef<HTMLDivElement, CalendarCardProps>(
             width: "100%",
           }}
         >
-          {/* Dia numerico — capa trasera: halo blanco ancho (z-index:1) */}
-          <span
+          <div
             className="calendar-date-number"
+            aria-label={`${date.day}`}
             aria-hidden="true"
-            style={backStyle}
+            style={{
+              position: "relative",
+              left: "50%",
+              width: "max-content",
+              height: `${fontSize}px`,
+              fontSize: `${fontSize}px`,
+              display: "flex",
+              alignItems: "flex-end",
+              gap: `${fontSize * 0.19}px`,
+              transform: "translateX(-50%)",
+              zIndex: 2,
+            }}
           >
-            {date.day}
-          </span>
-
-          {/* Dia numerico — capa delantera: relleno de color (z-index:2) */}
-          <span
-            className="calendar-date-number"
-            aria-hidden="true"
-            style={frontStyle}
-          >
-            {date.day}
-          </span>
+            {digits.map((digit, digitIndex) => {
+              const color = date.weekday === 0 ? "#ed1026" : date.weekday === 6 ? "#42b9f2" : "#101014";
+              const angle = digits.length > 1 ? (digitIndex === 0 ? -3.5 : 6) : -2.5;
+              const lowerLeft = digits.length > 1 && digitIndex === 0 ? fontSize * 0.065 : 0;
+              return (
+                <span
+                  key={`${digit}-${digitIndex}`}
+                  className="calendar-date-digit"
+                  style={{
+                    color,
+                    "--calendar-digit-angle": `${angle}deg`,
+                    "--calendar-digit-lower": `${lowerLeft}px`,
+                  } as React.CSSProperties}
+                >
+                  {digit}
+                </span>
+              );
+            })}
+          </div>
 
           {/* Imagen del dia de la semana (PNG con tipografia original) — DELANTE (z-index:3) */}
           <img

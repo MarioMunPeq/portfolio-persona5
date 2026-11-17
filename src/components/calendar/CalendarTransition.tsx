@@ -63,6 +63,7 @@ import {
 } from "../../lib/calendar";
 import { CalendarCard } from "./CalendarCard";
 import { CalendarKnife } from "./CalendarKnife";
+import { CalendarLoadingHud, type CalendarLoadingHudHandle } from "./CalendarLoadingHud";
 
 /**
  * Marca a nivel de modulo para evitar que React 19 StrictMode vuelva a
@@ -81,12 +82,11 @@ const BLACK_HOLD_MS = 200; // pausa en negro entre calendario y home
 /**
  * Constantes de la animacion de caida (ajustar a mano).
  */
-const FALL_S = 0.55; // duracion de la caida de cada dia (s)
+const FALL_S = 0.78; // caída larga con aceleración final de bloque pesado
 const START_ROT_DEG_MIN = 14; // rotacion inicial extra minima (grados)
 const START_ROT_DEG_MAX = 28; // rotacion inicial extra maxima (grados)
-const TODAY_DELAY_S = 0.24; // la onda del primer impacto desencadena la caida de hoy
+const TODAY_DELAY_S = 0.2; // el impacto del montón dispara la fecha activa
 const KNIFE_FLIGHT_S = 0.42;
-const KNIFE_SETTLE_S = 0.08;
 const KNIFE_HOLD_S = 1;
 const KNIFE_LANDED_ROTATION = 315;
 
@@ -179,6 +179,7 @@ export function CalendarTransition() {
   const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const knifeRef = useRef<HTMLImageElement>(null);
+  const hudRef = useRef<CalendarLoadingHudHandle>(null);
   const visualRefs = useRef<(HTMLDivElement | null)[]>(Array(6).fill(null));
   const contentRefs = useRef<(HTMLDivElement | null)[]>(Array(6).fill(null));
 
@@ -465,9 +466,10 @@ export function CalendarTransition() {
       tl.to(
         wrapper,
         {
-          scaleY: 0.91,
+          scaleY: 0.68,
+          scaleX: 1.14,
           transformOrigin: "50% 100%",
-          duration: 0.055,
+          duration: 0.08,
           ease: "power4.in",
         },
         impactTime,
@@ -475,30 +477,27 @@ export function CalendarTransition() {
       tl.to(
         wrapper,
         {
-          scaleY: 1.018,
-          duration: 0.09,
+          scaleY: 1.045,
+          scaleX: 0.98,
+          duration: 0.13,
           ease: "power2.out",
         },
-        impactTime + 0.055,
+        impactTime + 0.08,
       );
       tl.to(
         wrapper,
-        {
-          scaleY: 1,
-          duration: 0.17,
-          ease: "power2.out",
-        },
-        impactTime + 0.145,
+        { scaleY: 1, scaleX: 1, duration: 0.25, ease: "power3.out" },
+        impactTime + 0.21,
       );
       tl.to(
         wrapper,
-        { y: -6, duration: 0.085, ease: "power2.out" },
+        { y: -18, duration: 0.075, ease: "power2.out" },
         impactTime,
       );
       tl.to(
         wrapper,
-        { y: 0, duration: 0.18, ease: "power3.out" },
-        impactTime + 0.085,
+        { y: 0, duration: 0.28, ease: "bounce.out" },
+        impactTime + 0.075,
       );
 
       tl.to(
@@ -527,10 +526,10 @@ export function CalendarTransition() {
     // Onda de impacto comun: vertical, breve y amortiguada; sin flash ni vibracion lateral.
     const impactWave = {
       keyframes: [
-        { y: 2.6, duration: 0.07, ease: "power4.in" },
-        { y: -1.4, duration: 0.11, ease: "power2.out" },
-        { y: 0.45, duration: 0.12, ease: "power2.inOut" },
-        { y: 0, duration: 0.16, ease: "power2.out" },
+        { y: 8, duration: 0.08, ease: "power4.in" },
+        { y: -3, duration: 0.12, ease: "power2.out" },
+        { y: 1.1, duration: 0.14, ease: "power2.inOut" },
+        { y: 0, duration: 0.2, ease: "power2.out" },
       ],
     };
     tl.to(bgRef.current, impactWave, impactTime);
@@ -565,9 +564,9 @@ export function CalendarTransition() {
       if (rootRect && numberRect) {
         const wrapperY = Number(gsap.getProperty(hoyWrapper, "y")) || 0;
         const targetX =
-          numberRect.left + numberRect.width * 0.54 - rootRect.left;
+        numberRect.left + numberRect.width * (isMobile ? 0.46 : 0.56) - rootRect.left;
         const targetY =
-          numberRect.top + numberRect.height * 0.46 - rootRect.top - wrapperY;
+        numberRect.top + numberRect.height * 0.53 - rootRect.top - wrapperY;
         const originX = knifeRect.width * 0.03;
         const originY = knifeRect.height * 0.5;
         const targetLeft = targetX - originX;
@@ -591,9 +590,10 @@ export function CalendarTransition() {
         tl.to(
           knife,
           {
-            x: targetLeft,
-            y: targetTop,
-            duration: KNIFE_FLIGHT_S,
+            x: targetLeft + rootRect.width * 0.09,
+            y: targetTop - rootRect.height * 0.13,
+            rotation: KNIFE_LANDED_ROTATION - 30,
+            duration: KNIFE_FLIGHT_S * 0.58,
             ease: "power2.in",
           },
           knifeStartTime,
@@ -601,34 +601,47 @@ export function CalendarTransition() {
         tl.to(
           knife,
           {
-            rotation: KNIFE_LANDED_ROTATION,
-            duration: KNIFE_FLIGHT_S,
-            ease: "none",
+            x: targetLeft - 14,
+            y: targetTop + 13,
+            rotation: KNIFE_LANDED_ROTATION + 9,
+            scaleX: 0.94,
+            duration: KNIFE_FLIGHT_S * 0.42,
+            ease: "power4.in",
           },
-          knifeStartTime,
+          knifeStartTime + KNIFE_FLIGHT_S * 0.58,
         );
         tl.to(
           knife,
           {
-            x: targetLeft - 4,
-            y: targetTop + 4,
-            rotation: KNIFE_LANDED_ROTATION + 4,
-            duration: 0.055,
-            ease: "power4.in",
+            x: targetLeft - 7,
+            y: targetTop + 8,
+            rotation: KNIFE_LANDED_ROTATION + 2,
+            scaleX: 1,
+            duration: 0.075,
+            ease: "back.out(2.2)",
           },
           knifeStartTime + KNIFE_FLIGHT_S,
         );
         tl.to(
           knife,
           {
-            x: targetLeft - 1,
-            y: targetTop + 1,
+            x: targetLeft - 8,
+            y: targetTop + 8,
             rotation: KNIFE_LANDED_ROTATION,
-            duration: KNIFE_SETTLE_S,
-            ease: "power2.out",
+            duration: 0.13,
+            ease: "elastic.out(1, 0.48)",
           },
-          knifeStartTime + KNIFE_FLIGHT_S + 0.055,
+          knifeStartTime + KNIFE_FLIGHT_S + 0.075,
         );
+
+        const knifeSettleTime = knifeStartTime + KNIFE_FLIGHT_S + 0.205;
+        tl.set(knife, {
+          x: targetLeft - 8,
+          y: targetTop + 8,
+          rotation: KNIFE_LANDED_ROTATION,
+          scaleX: 1,
+          scaleY: 1,
+        }, knifeSettleTime);
 
         tl.to(
           {},
@@ -636,7 +649,7 @@ export function CalendarTransition() {
             duration: KNIFE_HOLD_S,
             onComplete: startExit,
           },
-          knifeStartTime + KNIFE_FLIGHT_S + 0.055 + KNIFE_SETTLE_S,
+          knifeSettleTime,
         );
       }
 
@@ -661,32 +674,33 @@ export function CalendarTransition() {
       tl.to(
         hoyWrapper,
         {
-          scaleY: 0.95,
+          scaleY: 0.68,
+          scaleX: 1.14,
           transformOrigin: "50% 100%",
-          duration: 0.055,
+          duration: 0.08,
           ease: "power4.in",
         },
         hoyLandTime,
       );
       tl.to(
         hoyWrapper,
-        { scaleY: 1.012, duration: 0.09, ease: "power2.out" },
-        hoyLandTime + 0.055,
+        { scaleY: 1.045, scaleX: 0.98, duration: 0.13, ease: "power2.out" },
+        hoyLandTime + 0.08,
       );
       tl.to(
         hoyWrapper,
-        { scaleY: 1, duration: 0.15, ease: "power2.out" },
-        hoyLandTime + 0.145,
+        { scaleY: 1, scaleX: 1, duration: 0.25, ease: "power3.out" },
+        hoyLandTime + 0.21,
       );
       tl.to(
         hoyWrapper,
-        { y: -4, duration: 0.08, ease: "power2.out" },
+        { y: -18, duration: 0.075, ease: "power2.out" },
         hoyLandTime,
       );
       tl.to(
         hoyWrapper,
-        { y: 0, duration: 0.17, ease: "power3.out" },
-        hoyLandTime + 0.08,
+        { y: 0, duration: 0.28, ease: "bounce.out" },
+        hoyLandTime + 0.075,
       );
 
       tl.to(
@@ -752,6 +766,14 @@ export function CalendarTransition() {
         hoyLandTime,
       );
     }
+
+    const hudProgress = { value: 0 };
+    tl.to(hudProgress, {
+      value: 100,
+      duration: 3.75,
+      ease: "none",
+      onUpdate: () => hudRef.current?.setProgress(hudProgress.value),
+    }, T.datesStart);
 
     return () => {
       isMountedRef.current = false;
@@ -848,6 +870,7 @@ export function CalendarTransition() {
             })}
           </div>
           <CalendarKnife ref={knifeRef} />
+          <CalendarLoadingHud ref={hudRef} />
         </>
       )}
     </div>

@@ -1,0 +1,135 @@
+.calendar-date-number {
+  filter: drop-shadow(.045em .055em 0 #070709);
+  font-family: var(--font-display, Anton, Impact, sans-serif);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: -.11em;
+  line-height: .82;
+  white-space: nowrap;
+}
+.calendar-date-digit {
+  display: block;
+  flex: none;
+  user-select: none;
+  paint-order: stroke fill;
+  -webkit-text-stroke: .23em #fff;
+  text-shadow: 0 .025em 0 rgb(0 0 0 / 72%);
+  transform: translateY(var(--calendar-digit-lower, 0)) rotate(var(--calendar-digit-angle, 0deg));
+}
+
+.calendar-loading-hud {
+  position: absolute;
+  z-index: 30;
+  right: clamp(1.2rem, 4vw, 4.5rem);
+  bottom: clamp(1.25rem, 4.5vh, 4rem);
+  width: clamp(18rem, 30vw, 36rem);
+  color: #fff;
+  font-family: var(--font-digital, "Share Tech Mono", monospace);
+}
+
+.calendar-loading-hud__heading,
+.calendar-loading-hud__footer {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-loading-hud__heading,
+.calendar-loading-hud__footer {
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.calendar-loading-hud__caption {
+  color: #fff;
+  font-size: clamp(.68rem, .9vw, .95rem);
+  font-weight: 700;
+  letter-spacing: .2em;
+  white-space: nowrap;
+}
+
+.calendar-loading-hud__readout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(5rem, 7.5vw, 7.8rem);
+  align-items: center;
+  gap: clamp(.55rem, 1.2vw, 1.35rem);
+  margin-block: .3rem .2rem;
+}
+
+.calendar-loading-hud__meter {
+  position: relative;
+  width: 100%;
+  height: clamp(2.4rem, 4.8vh, 3.6rem);
+  background: #fff;
+  clip-path: polygon(1.5% 16%, 100% 0, 97.5% 88%, 0 100%);
+  --calendar-progress: 0%;
+}
+
+.calendar-loading-hud__meter::before {
+  position: absolute;
+  content: "";
+  inset: 5px;
+  z-index: 0;
+  background: #08080a;
+  clip-path: polygon(1.6% 14%, 100% 0, 97.4% 88%, 0 100%);
+}
+
+.calendar-loading-hud__fill {
+  position: absolute;
+  z-index: 1;
+  inset: 5px auto 5px 5px;
+  width: var(--calendar-progress);
+  max-width: calc(100% - 10px);
+  background: #ed1026;
+  clip-path: polygon(1.6% 14%, 100% 0, 97.4% 88%, 0 100%);
+  transition: width 160ms linear;
+}
+
+.calendar-loading-hud__footer {
+  color: #fff;
+  font-size: clamp(.58rem, .72vw, .78rem);
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.calendar-loading-hud__percent {
+  display: block;
+  width: 100%;
+  color: #ed1026;
+  font-family: var(--font-expose, var(--font-display, Anton, sans-serif));
+  font-size: clamp(2.15rem, 4.2vw, 4.1rem);
+  letter-spacing: -.035em;
+  line-height: .86;
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  -webkit-text-stroke: .025em #08080a;
+  paint-order: stroke fill;
+  text-shadow: 2px 3px 0 #08080a;
+  transform: rotate(-3deg) skewX(-5deg);
+}
+
+.calendar-transition .calendar-knife {
+  width: clamp(15rem, 18vw, 23rem);
+  filter: drop-shadow(8px 10px 0 rgb(0 0 0 / 88%)) drop-shadow(2px 3px 0 rgb(232 17 45 / 42%));
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .calendar-transition .calendar-knife { width: clamp(12rem, 27vw, 17rem); }
+}
+
+@media (max-width: 639px) {
+  .calendar-loading-hud {
+    right: 5vw;
+    bottom: 4svh;
+    width: min(82vw, 22rem);
+  }
+
+  .calendar-loading-hud__caption { font-size: .62rem; }
+  .calendar-loading-hud__meter { height: 2.1rem; }
+  .calendar-loading-hud__percent { font-size: 2.3rem; }
+  .calendar-loading-hud__footer { font-size: .54rem; }
+  .calendar-loading-hud__footer span:last-child { display: none; }
+  .calendar-transition .calendar-knife { width: clamp(7rem, 29vw, 8rem); }
+}
+
