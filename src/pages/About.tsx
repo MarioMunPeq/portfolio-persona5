@@ -5,8 +5,7 @@ import { SectionTitle } from "../components/ui/SectionTitle";
 import { Tag } from "../components/ui/Tag";
 import { StatTag } from "../components/ui/StatTag";
 import { SocialStar } from "../components/social-star/SocialStar";
-import { SkillMenuSection } from "../components/skill-menu/SkillMenuSection";
-import { DrivingCar } from "../components/about/DrivingCar";
+import { SkillsMetroMap } from "./about/SkillsMetroMap";
 import { profile } from "../data/profile";
 
 // Nombre en tres bloques (mismo tratamiento tipografico que el hero).
@@ -235,20 +234,10 @@ export function About() {
             </div>
           </Reveal>
 
-          {/* ===== Habilidades (menu de juego) ===== */}
-          <SkillMenuSection skills={about.skills} />
         </div>
 
-        {/* ===== Permiso de conducir — escena de conduccion a lo ancho ===== */}
-        <Reveal delay={0.2}>
-          <div className="relative mt-16">
-            <p className="flex items-center gap-2 pl-6 text-caption uppercase tracking-[0.2em] text-paper/50 md:pl-12">
-              <DiamondMarker size={5} />
-              {about.license}
-            </p>
-            <DrivingCar className="mt-3" />
-          </div>
-        </Reveal>
+        {/* Sustituye solo el mazo de habilidades y el coche por la red de Mementos. */}
+        <SkillsMetroMap />
       </section>
     </Screen>
   );
